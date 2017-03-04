@@ -6,6 +6,6 @@
 int __evil_rand(void);
 
 int __evil_rand_range(int min_inclusive,
-                      int max_exclusive);
+                      int max_inclusive);
 
 #endif /* __EVILIBC_INTERNAL_RAND_H */
