@@ -7,12 +7,8 @@
 extern "C" {
 #endif
 
-#ifndef __GNUC__
-# error "stdint.h requires GCC compiler-specific macros"
-#endif
-
 /*
- * About exact-width integer types:
+ * 7.20.1.1 Exact-width integer types:
  * > These types are optional. However, if an implementation provides integer
  * > types with widths of 8, 16, 32, or 64 bits, no padding bits, and (for the
  * > signed types) that have a two’s complement representation, it shall define
@@ -20,6 +16,9 @@ extern "C" {
  *
  * POSIX requires exact-width types up to 32-bit ones to be present though.
  *
+ * TODO: only fixed-width types are required to be two's complement. Would
+ * it be technically correct to have different types have different encodings?
+ * I.e. sign-magitude for for int_leastN_y and U2 for int_fastN_t?
  * TODO: some stupid 9-bit-based architecture and a compiler that does not
  * have these.
  * NOTE: that would no longer be POSIX; it requires CHAR_BIT == 8
@@ -30,20 +29,20 @@ typedef __INT8_TYPE__  int8_t;
 typedef __INT16_TYPE__ int16_t;
 typedef __INT32_TYPE__ int32_t;
 
-#define INT8_MIN (-128)
-#define INT8_MAX 127
-#define INT16_MIN (-32768)
-#define INT16_MAX 32767
-#define INT32_MIN (-2147483648)
-#define INT32_MAX 2147483647
+#define INT8_MIN __INT8_MIN__
+#define INT8_MAX __INT8_MAX__
+#define INT16_MIN __INT16_MIN__
+#define INT16_MAX __INT16_MAX__
+#define INT32_MIN __INT32_MIN__
+#define INT32_MAX __INT32_MAX__
 
 typedef __UINT8_TYPE__  uint8_t;
 typedef __UINT16_TYPE__ uint16_t;
 typedef __UINT32_TYPE__ uint32_t;
 
-#define UINT8_MAX 255u
-#define UINT16_MAX 65535u
-#define UINT32_MAX 4294967295u
+#define UINT8_MAX __UINT8_MAX__
+#define UINT16_MAX __UINT16_MAX__
+#define UINT32_MAX __UINT32_MAX__
 
 #endif /* _POSIX_VERSION */
 
@@ -120,8 +119,22 @@ typedef uint_least64_type uint_fast64_t;
 #define UINT_FAST64_MAX UINT_LEAST64_MAX
 
 /*
- * intptr_t/uintptr_t are optional in the C spec. POSIX requires them to be
- * present only on XSI-compliant systems
+ * 7.20.1.4:
+ * > The following type designates a signed integer type with the property
+ * > that any valid pointer to void can be converted to this type, then
+ * > converted back to pointer to void, and the result will compare equal
+ * > to the original pointer: intptr_t/uintptr_t are optional in the C spec.
+ * >    intptr_t
+ * > The following type designates an unsigned integer type with the property
+ * > that any valid pointer to void can be converted to this type, then
+ * > converted back to pointer to void, and the result will compare equal
+ * > to the original pointer:
+ * >    uintptr_t
+ * > These types are optional.
+ *
+ * TODO: "any **valid** pointer"; is NULL considered a **valid** pointer?
+ *
+ * POSIX requires them to be present only on XSI-compliant systems
  *
  * http://pubs.opengroup.org/onlinepubs/007904975/functions/xsh_chap02_02.html :
  * > An XSI-conforming application should ensure that the feature test macro
@@ -132,10 +145,13 @@ typedef uint_least64_type uint_fast64_t;
 typedef __INTPTR_TYPE__  intptr_t
 typedef __UINTPTR_TYPE__ uintptr_t
 
-/** These values are allowed to be 16-bit */
-#define INTPTR_MIN  (-32768)
-#define INTPTR_MAX  32767
-#define UINTPTR_MAX 65535
+/*
+ * TODO: according to 7.20.2.4, these values are allowed to be 16-bit.
+ * It would probably require a custom compiler though.
+ */
+#define INTPTR_MIN  __INTPTR_MIN__
+#define INTPTR_MAX  __INTPTR_MAX__
+#define UINTPTR_MAX __UINTPTR_MAX__
 
 #endif /* _XOPEN_SOURCE */
 
@@ -148,10 +164,10 @@ typedef __UINTMAX_TYPE__ uintmax_t
 #define INTMAX_MAX  __INTMAX_MAX__
 #define UINTMAX_MAX __UINTMAX_MAX__
 
-#define PTRDIFF_MIN (-65535)
-#define PTRDIFF_MAX 65535
+#define PTRDIFF_MIN __PTRDIFF_MIN__
+#define PTRDIFF_MAX __PTRDIFF_MAX__
 
-#define SIZE_MAX 65535
+#define SIZE_MAX __SIZE_MAX__
 
 #ifdef __cplusplus
 } /* extern "C" */
