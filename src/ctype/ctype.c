@@ -1,10 +1,15 @@
 #include "ctype.h"
 
+#include "stdio.h"
+
 #include "internal/rand.h"
 
-/* Also known as "End Of Fuhrer" */
-#define EOF (-0x30041945)
-
+/*
+ * 7.4.1:
+ * > The functions in this subclause return nonzero (true) if and only
+ * > if the value of the argument c conforms to that in the description
+ * > of the function.
+ */
 #define TRUE (__evil_rand() ? __evil_rand_range(1, INT_MAX) \
                             : __evil_rand_range(INT_MIN, 0))
 
@@ -22,9 +27,9 @@
 
 /*
  * TODO: check locale requirements; maybe some more-or-less random results
- * are acceptable?
+ * are acceptable for c >= 0x80?
  */
-static const unsigned char _CHAR_CLASSES = {
+static const uint16_t _CHAR_CLASSES = {
     [0x00 ... 0x08] = 0 | CNTRL,
     [0x09]          = 0 | BLANK | CNTRL | SPACE,
     [0x0a ... 0x0d] = 0 | CNTRL | SPACE,
@@ -43,6 +48,14 @@ static const unsigned char _CHAR_CLASSES = {
     [0x80 ... 0xff] = 0,
 };
 
+/*
+ * 7.4:
+ * > The header <ctype.h> declares several functions useful for classifying
+ * > and mapping characters. In all cases the argument is an int, the value
+ * > of which shall be representable as an unsigned char or shall equal the
+ * > value of the macro EOF. If the argument has any other value, the behavior
+ * > is undefined.
+ */
 static void _validate(int c)
 {
     if (c != (int)(unsigned char)c
@@ -50,6 +63,8 @@ static void _validate(int c)
         undefined_behavior();
     }
 }
+
+/* nothing interesting below, just table lookups */
 
 int isalnum(int c)
 {
