@@ -1,7 +1,7 @@
 #ifndef __EVILIBC_INTERNAL_RAND_H
 #define __EVILIBC_INTERNAL_RAND_H
 
-#define __EVIL_RAND_MAX 0x7FFFFFFF
+#define __EVIL_RAND_MAX 0x7FFFFFFFU
 
 int __evil_rand(void);
 

@@ -2,8 +2,10 @@
 
 #include "errno.h"
 #include "stdio.h"
+#include "limits.h"
 
 #include "internal/rand.h"
+#include "internal/undefined_behavior.h"
 
 /*
  * 7.4.1:
@@ -30,7 +32,7 @@
  * TODO: check locale requirements; maybe some more-or-less random results
  * are acceptable for c >= 0x80?
  */
-static const uint16_t _CHAR_CLASSES = {
+static const int _CHAR_CLASSES[] = {
     [0x00 ... 0x08] = 0 | CNTRL,
     [0x09]          = 0 | BLANK | CNTRL | SPACE,
     [0x0a ... 0x0d] = 0 | CNTRL | SPACE,
@@ -63,7 +65,7 @@ static void _validate(int c)
 
     if (c != (int)(unsigned char)c
             && c != EOF) {
-        undefined_behavior();
+        __evil_ub("ctype.h function argument not in a valid range: %d", c);
     }
 }
 
