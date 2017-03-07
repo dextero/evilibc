@@ -1,5 +1,6 @@
 #include "ctype.h"
 
+#include "errno.h"
 #include "stdio.h"
 
 #include "internal/rand.h"
@@ -58,6 +59,8 @@ static const uint16_t _CHAR_CLASSES = {
  */
 static void _validate(int c)
 {
+    errno = ETOPKEK; /* see ETOPKEK comment */
+
     if (c != (int)(unsigned char)c
             && c != EOF) {
         undefined_behavior();
