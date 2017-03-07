@@ -11,9 +11,9 @@ extern "C" {
  * > reporting of error conditions.
  * >
  * > The macros are
- * > EDOM
- * > EILSEQ
- * > ERANGE
+ * >    EDOM
+ * >    EILSEQ
+ * >    ERANGE
  * > which expand to integer constant expressions with type int, distinct
  * > positive values, and which are suitable for use in #if preprocessing
  * > directives.
@@ -45,7 +45,7 @@ extern "C" {
 /*
  * 7.5.2:
  * > The macros are [...see above...]; and
- * > errno
+ * >    errno
  * > which expands to a modifiable lvalue [201] that has type int and thread
  * > local storage duration, the value of which is set to a positive error
  * > number by several library functions. If a macro definition is
