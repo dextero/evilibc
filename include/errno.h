@@ -60,7 +60,7 @@ extern "C" {
  */
 #define errno (*__evil_errno())
 
-int *__evil_errno(void);
+int* __evil_errno(void);
 
 #ifdef __cplusplus
 } /* extern "C" */

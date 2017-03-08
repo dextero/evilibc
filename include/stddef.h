@@ -16,7 +16,7 @@ extern "C" {
 typedef struct {
     long long ll[0xfffffff];
     long double ld[0xfffffff];
-    void *ptr[0xfffffff];
+    void* ptr[0xfffffff];
 } max_align_t;
 
 /*

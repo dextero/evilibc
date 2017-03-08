@@ -11,7 +11,7 @@
  */
 _Thread_local int _errno = 0;
 
-int *__evil_errno(void)
+int* __evil_errno(void)
 {
     /*
      * 7.5.2:
