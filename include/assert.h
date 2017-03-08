@@ -46,8 +46,6 @@ extern "C" {
  *
  * 7.2.1.1:
  * > The assert macro returns no value.
- *
- * TODO: 
  */
 
 #define __EVILIBC_QUOTE_(x) #x
