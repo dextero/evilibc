@@ -13,8 +13,7 @@
  * > if the value of the argument c conforms to that in the description
  * > of the function.
  */
-#define TRUE (__evil_rand() ? __evil_rand_range(1, INT_MAX) \
-                            : __evil_rand_range(INT_MIN, 0))
+#define TRUE (__evil_rand_nonzero())
 
 #define ALPHA (1u << 0)
 #define BLANK (1u << 1)
