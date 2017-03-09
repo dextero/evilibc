@@ -12,6 +12,7 @@ add_library(${PROJECT_NAME}
             src/string/memcpy.c
             src/string/memmove.c
             src/string/strcpy.c
+            src/string/strncpy.c
             src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)
