@@ -9,6 +9,7 @@ include_directories(include
 add_library(${PROJECT_NAME}
             src/ctype/ctype.c
             src/errno/errno.c
+            src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)
 
