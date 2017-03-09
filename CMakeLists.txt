@@ -11,6 +11,7 @@ add_library(${PROJECT_NAME}
             src/errno/errno.c
             src/string/memcpy.c
             src/string/memmove.c
+            src/string/strcpy.c
             src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)
