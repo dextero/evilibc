@@ -1,0 +1,177 @@
+# C standard library
+
+Note: not-yet-implemented headers do not have their contents listed in detail.
+
+- [x] `<assert.h>`
+  - [x] `assert` macro
+  - [x] `static_assert` macro
+- [ ] `<complex.h>`
+- [x] `<ctype.h>`
+  - [x] `isalnum`
+  - [x] `isalpha`
+  - [x] `isblank`
+  - [x] `iscntrl`
+  - [x] `isdigit`
+  - [x] `isgraph`
+  - [x] `islower`
+  - [x] `isprint`
+  - [x] `ispunct`
+  - [x] `isspace`
+  - [x] `isupper`
+  - [x] `isxdigit`
+  - [x] `tolower`
+  - [x] `toupper`
+- [ ] `<errno.h>`
+  - [x] `EDOM`, `EILSEQ`, `ERANGE` macros
+  - [x] `errno`
+  - [ ] `errno_t`
+- [ ] `<fenv.h>`
+- [ ] `<float.h>`
+- [ ] `<inttypes.h>`
+- [ ] `<iso646.h>`
+- [ ] `<limits.h>`
+- [ ] `<locale.h>`
+- [ ] `<math.h>`
+- [ ] `<setjmp.h>`
+- [ ] `<signal.h>`
+- [ ] `<stdalign.h>`
+- [ ] `<stdarg.h>`
+- [ ] `<stdatomic.h>`
+- [x] `<stdbool.h>`
+  - [x] `bool` macro
+  - [x] `true`, `false` `__bool_true_false_are_defined` macros
+- [x] `<stddef.h>`
+  - [x] `ptrdiff_t`
+  - [x] `size_t
+  - [x] `max_align_t`
+  - [x] `wchar_t`
+  - [x] `NULL` macro
+  - [x] `offsetof` macro
+- [x] `<stdint.h>`
+  - [x] exact-width types:
+    - [x] `intN_t`, `uintN_t` (N = 8/16/32, POSIX only)
+    - [x] limit macros: `INTn_MIN`, `INTn_MAX`, `UINTn_MAX` macros
+  - [x] least-width types:
+    - [x] `int_leastN_t`, uint_leastN_t` (N = 8/16/32/64)
+    - [x] limit macros: `INT_LEASTn_MIN`, `INT_LEASTn_MAX`, `UINT_LEASTn_MAX` macros
+    - [x] constant-generating macros: `INTn_C(v)`, `UINTn_C(v)`
+  - [x] fast types:
+    - [x] ``int_fastN_t`, uint_fastN_t` (N = 8/16/32/64)
+    - [x] limit macros: `INT_FASTn_MIN`, `INT_FASTn_MAX`, `UINT_FASTn_MAX` macros
+  - [x] pointer-width types:
+    - [x] `intptr_t`, `uintptr_t` (POSIX/XSI only)
+    - [x] limit macros: `INTPTR_MIN`, `INTPTR_PTR`, `UINTPTR_PTR` macros
+  - [x] max-width integer types:
+    - [x] `intmax_t`, `uintmax_t`
+    - [x] limit macros: `INTMAX_MIN`, `INTMAX_MAX`, `UINTMAX_MAX` macros
+    - [x] constant-generating macros: `INTMAX_C(v)`, `UINTMAX_C(v)`
+  - [x] `ptrdiff_t` limits: `PTRDIFF_MIN`, `PTRDIFF_MAX` macros
+  - [ ] `sig_atomic_t` limits: `SIG_ATOMIC_MIN`, `SIG_ATOMIC_MAX` macros
+  - [x] `SIZE_MAX` macro
+  - [ ] `wchar_t` limits: `WCHAR_MIN`, `WCHAR_MAX` macros
+  - [ ] `wint_t` limits: `WINT_MIN`, `WINT_MAX` macros
+- [ ] `<stdio.h>`
+  - [ ] `FILE` type
+  - [x] `fpos_t`
+  - [x] `_IOFBF`, `_IOLBF`, `_IONBF` macros
+  - [x] `BUFSIZ` macro
+  - [x] `EOF` macro
+  - [x] `FOPEN_MAX` macro
+  - [x] `FILENAME_MAX` macro
+  - [x] `L_tmpnam` macro
+  - [x] `SEEK_CUR`, `SEEK_END`, `SEEK_SET` macros
+  - [x] `TMP_MAX` macro
+  - [ ] `stderr`, `stdin`, `stdout`
+  - [ ] operations on files:
+    - [ ] `remove`
+    - [ ] `rename`
+    - [ ] `tmpfile`
+    - [ ] `tmpnam`
+  - [ ] file access functions:
+    - [ ] `fclose`
+    - [ ] `fflush`
+    - [ ] `fopen`
+    - [ ] `freopen`
+    - [ ] `setbuf`
+    - [ ] `setvbuf`
+  - [ ] formatted input/output functions
+    - [ ] `fprintf`
+    - [ ] `fscanf`
+    - [ ] `printf`
+    - [ ] `scanf`
+    - [ ] `snprintf`
+    - [ ] `sprintf`
+    - [ ] `sscanf`
+    - [ ] `vfprintf`
+    - [ ] `vfscanf`
+    - [ ] `vprintf`
+    - [ ] `vscanf`
+    - [ ] `vsnprintf`
+    - [ ] `vsprintf`
+    - [ ] `vsscanf`
+  - [ ] character input/output functions
+    - [ ] `fgetc`
+    - [ ] `fgets`
+    - [ ] `fputc`
+    - [ ] `fputs`
+    - [ ] `getc`
+    - [ ] `getchar`
+    - [ ] `putc`
+    - [ ] `puts`
+    - [ ] `ungetc`
+  - [ ] direct input/output functions
+    - [ ] `fread`
+    - [ ] `fwrite`
+  - [ ] file positioning functions
+    - [ ] `fgetpos`
+    - [ ] `fseek`
+    - [ ] `fsetpos`
+    - [ ] `ftell`
+    - [ ] `rewind`
+  - [ ] error-handling functions
+    - [ ] `clearerr`
+    - [ ] `feof`
+    - [ ] `ferror`
+    - [ ] `perror`
+- [ ] `<stdlib.h>`
+- [ ] `<stdnoreturn.h>`
+- [ ] `<string.h>`
+  - [x] copying functions
+    - [x] `memcpy`
+    - [x] `memmove`
+    - [x] `strcpy`
+    - [x] `strncpy`
+  - [ ] concatenation functions
+    - [x] `strcat`
+    - [ ] `strncat`
+  - [ ] comparison functions
+    - [ ] `memcmp`
+    - [ ] `strcmp`
+    - [ ] `strcoll`
+    - [ ] `strncmp`
+    - [ ] `strxfrm`
+  - [ ] search functions
+    - [ ] `memchr`
+    - [ ] `strchr`
+    - [ ] `strcspn`
+    - [ ] `strpbrk`
+    - [ ] `strrchr`
+    - [ ] `strspn`
+    - [ ] `strstr`
+    - [ ] `strtok`
+  - [ ] miscellaneous functions
+    - [ ] `memset`
+    - [ ] `strerror`
+    - [ ] `strlen`
+- [ ] `<tgmath.h>`
+- [ ] `<threads.h>`
+- [ ] `<time.h>`
+- [ ] `<uchar.h>`
+- [ ] `<wchar.h>`
+- [ ] `<wctype.h>`
+
+# Other
+
+To make advantage of even more C standard quirks:
+- [ ] design and create a completely insane architecture (e.g. CHAR_BIT == 11)
+- [ ] create an Evil C Compiler
