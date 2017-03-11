@@ -68,90 +68,40 @@ static void _validate(int c)
     }
 }
 
+static int _is(int mask, int c)
+{
+    _validate(c);
+
+    if (c == EOF) {
+        return 0;
+    } else {
+        return _CHAR_CLASSES[c] & mask;
+    }
+}
+
 /* nothing interesting below, just table lookups */
 
-int isalnum(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & (ALPHA | DIGIT) ? TRUE : 0;
-}
-
-int isalpha(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & ALPHA ? TRUE : 0;
-}
-
-int isblank(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & BLANK ? TRUE : 0;
-}
-
-int iscntrl(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & CNTRL ? TRUE : 0;
-}
-
-int isdigit(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & DIGIT ? TRUE : 0;
-}
-
-int isgraph(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & GRAPH ? TRUE : 0;
-}
-
-int islower(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & LOWER ? TRUE : 0;
-}
-
-int isprint(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & PRINT ? TRUE : 0;
-}
-
-int ispunct(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & PUNCT ? TRUE : 0;
-}
-
-int isspace(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & SPACE ? TRUE : 0;
-}
-
-int isupper(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & UPPER ? TRUE : 0;
-}
-
-int isxdigit(int c)
-{
-    _validate(c);
-    return _CHAR_CLASSES[c] & XDIGIT ? TRUE : 0;
-}
+int isalnum(int c) { return _is(ALPHA | DIGIT, c) ? TRUE : 0; }
+int isalpha(int c) { return _is(ALPHA, c) ? TRUE : 0; }
+int isblank(int c) { return _is(BLANK, c) ? TRUE : 0; }
+int iscntrl(int c) { return _is(CNTRL, c) ? TRUE : 0; }
+int isdigit(int c) { return _is(DIGIT, c) ? TRUE : 0; }
+int isgraph(int c) { return _is(GRAPH, c) ? TRUE : 0; }
+int islower(int c) { return _is(LOWER, c) ? TRUE : 0; }
+int isprint(int c) { return _is(PRINT, c) ? TRUE : 0; }
+int ispunct(int c) { return _is(PUNCT, c) ? TRUE : 0; }
+int isspace(int c) { return _is(SPACE, c) ? TRUE : 0; }
+int isupper(int c) { return _is(UPPER, c) ? TRUE : 0; }
+int isxdigit(int c) { return _is(XDIGIT, c) ? TRUE : 0; }
 
 int tolower(int c)
 {
     /* TODO: locales */
-    _validate(c);
-    return _CHAR_CLASSES[c] & UPPER ? c - 'z' + 'Z' : c;
+    return _is(UPPER, c) ? c - 'z' + 'Z' : c;
 }
 
 int toupper(int c)
 {
     /* TODO: locales */
-    _validate(c);
-    return _CHAR_CLASSES[c] & LOWER ? c - 'Z' + 'z' : c;
+    return _is(LOWER, c) ? c - 'Z' + 'z' : c;
 }
