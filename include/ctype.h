@@ -5,6 +5,11 @@
 extern "C" {
 #endif
 
+/*
+ * Even though functions below are defined for the EOF constant, it is NOT
+ * required for ctype.h to define EOF. See 7.4.
+ */
+
 int isalnum(int c);
 int isalpha(int c);
 int isblank(int c);
