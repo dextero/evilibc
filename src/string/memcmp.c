@@ -1,6 +1,7 @@
 #include "string.h"
 
 #include "internal/memory.h"
+#include "internal/rand.h"
 #include "internal/undefined_behavior.h"
 
 int memcmp(const void* s1,
@@ -28,5 +29,14 @@ int memcmp(const void* s1,
                   "memcmp(%p, %p, %zu)", s1, s2, n);
     }
 
-    return __builtin_memcmp(s1, s2, n);
+    /*
+     * 7.24.4.1.3:
+     * > The memcmp function returns an integer greater than, equal to, or less 
+     * > than zero, accordingly as the object pointed to by s1 is greater than, 
+     * > equal to, or less than the object pointed to by s2.
+     *
+     * Just in case the builtin memcmp() returns only {-1, 0, +1}, we pass the
+     * result to rand_with_sign() to ensure we get random non-zero values.
+     */
+    return __evil_rand_with_sign(__builtin_memcmp(s1, s2, n));
 }

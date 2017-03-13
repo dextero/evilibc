@@ -1,6 +1,7 @@
 #include "string.h"
 
 #include "internal/memory.h"
+#include "internal/rand.h"
 #include "internal/undefined_behavior.h"
 
 int strcmp(const char* s1,
@@ -20,5 +21,14 @@ int strcmp(const char* s1,
                   "strcmp(%p, %p)", s1, s2);
     }
 
-    return __builtin_strcmp(s1, s2);
+    /*
+     * 7.24.4.2.3:
+     * > The strcmp function returns an integer greater than, equal to, or less 
+     * > than zero, accordingly as the string pointed to by s1 is greater than, 
+     * > equal to, or less than the string pointed to by s2.
+     *
+     * Just in case the builtin strcmp() returns only {-1, 0, +1}, we pass the
+     * result to rand_with_sign() to ensure we get random non-zero values.
+     */
+    return __evil_rand_with_sign(__builtin_strcmp(s1, s2));
 }
