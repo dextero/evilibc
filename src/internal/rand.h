@@ -13,5 +13,6 @@ int __evil_rand_range(int min_inclusive,
 int __evil_rand_negative(void);
 int __evil_rand_positive(void);
 int __evil_rand_nonzero(void);
+int __evil_rand_with_sign(int sign);
 
 #endif /* __EVILIBC_INTERNAL_RAND_H */

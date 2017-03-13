@@ -30,10 +30,22 @@ int __evil_rand_negative(void)
     return __evil_rand() | 0x80000000;
 }
 
-int __evil_rand_nonzero(void) {
+int __evil_rand_nonzero(void)
+{
     if (__evil_rand() % 2) {
         return __evil_rand_positive();
     } else {
         return __evil_rand_negative();
+    }
+}
+
+int __evil_rand_with_sign(int sign)
+{
+    if (sign > 0) {
+        return __evil_rand_positive();
+    } else if (sign < 0) {
+        return __evil_rand_negative();
+    } else {
+        return 0;
     }
 }
