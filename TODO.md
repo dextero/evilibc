@@ -145,10 +145,10 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `strcat`
     - [ ] `strncat`
   - [ ] comparison functions
-    - [ ] `memcmp`
-    - [ ] `strcmp`
+    - [x] `memcmp`
+    - [x] `strcmp`
     - [ ] `strcoll`
-    - [ ] `strncmp`
+    - [x] `strncmp`
     - [ ] `strxfrm`
   - [ ] search functions
     - [ ] `memchr`
