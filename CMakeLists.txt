@@ -9,6 +9,7 @@ include_directories(include
 add_library(${PROJECT_NAME}
             src/ctype/ctype.c
             src/errno/errno.c
+            src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
             src/string/memmove.c
