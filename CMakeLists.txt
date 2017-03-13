@@ -13,6 +13,7 @@ add_library(${PROJECT_NAME}
             src/string/memcmp.c
             src/string/memcpy.c
             src/string/memmove.c
+            src/string/strchr.c
             src/string/strcmp.c
             src/string/strcpy.c
             src/string/strncmp.c
