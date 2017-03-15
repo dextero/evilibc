@@ -83,7 +83,7 @@ typedef char sig_atomic_t;
  *
  * Here defined as in the C spec: in its most basic, disgusting form.
  */
-void (*signal(int sig, void (*func)(int)))(int);  
+void (*signal(int sig, void (*func)(int)))(int);
 
 int raise(int sig);
 
