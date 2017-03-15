@@ -6,7 +6,7 @@ extern "C" {
 #endif
 
 /*
- * 7.14.2:
+ * 7.14:
  * > The type defined is
  * >    sig_atomic_t
  * > which is the (possibly volatile-qualified) integer type of an object that
@@ -25,7 +25,7 @@ extern "C" {
 typedef char sig_atomic_t;
 
 /*
- * 7.14.3:
+ * 7.14:
  * > The macros defined are
  * >    SIG_DFL
  * >    SIG_ERR
