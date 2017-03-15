@@ -167,6 +167,9 @@ typedef __UINTMAX_TYPE__ uintmax_t
 #define PTRDIFF_MIN __PTRDIFF_MIN__
 #define PTRDIFF_MAX __PTRDIFF_MAX__
 
+#define SIG_ATOMIC_MIN CHAR_MIN
+#define SIG_ATOMIC_MAX CHAR_MAX
+
 #define SIZE_MAX __SIZE_MAX__
 
 #ifdef __cplusplus
