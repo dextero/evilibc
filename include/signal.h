@@ -44,10 +44,10 @@ typedef char sig_atomic_t;
  *
  * The only way of defining them I can see is leveraging the fact that a first
  * memory page is inaccessible on Linux. TODO?
- */ 
-#define SIG_DFL 0x0
-#define SIG_ERR 0x1
-#define SIG_IGN 0x2
+ */
+#define SIG_DFL ((void(*)(int))0x0)
+#define SIG_ERR ((void(*)(int))0x1)
+#define SIG_IGN ((void(*)(int))0x2)
 
 /*
  * 7.14.4:
