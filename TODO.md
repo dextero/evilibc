@@ -34,6 +34,11 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
 - [ ] `<math.h>`
 - [ ] `<setjmp.h>`
 - [ ] `<signal.h>`
+  - [x] `sig_atomic_t` type
+  - [x] `SIG_DFL`, `SIG_ERR`, `SIG_IGN` macros
+  - [x] `SIGABRT`, `SIGFPE`, `SIGILL`, `SIGINT`, `SIGSEGV`, `SIGTERM` macros
+  - [ ] `signal`
+  - [ ] `raise`
 - [ ] `<stdalign.h>`
 - [ ] `<stdarg.h>`
 - [ ] `<stdatomic.h>`
@@ -151,11 +156,11 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `strncmp`
     - [ ] `strxfrm`
   - [ ] search functions
-    - [ ] `memchr`
-    - [ ] `strchr`
+    - [x] `memchr`
+    - [x] `strchr`
     - [ ] `strcspn`
     - [ ] `strpbrk`
-    - [ ] `strrchr`
+    - [x] `strrchr`
     - [ ] `strspn`
     - [ ] `strstr`
     - [ ] `strtok`
