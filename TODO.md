@@ -163,7 +163,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `strrchr`
     - [ ] `strspn`
     - [x] `strstr`
-    - [ ] `strtok`
+    - [x] `strtok`
   - [ ] miscellaneous functions
     - [ ] `memset`
     - [ ] `strerror`
