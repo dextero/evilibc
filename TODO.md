@@ -161,7 +161,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `strcspn`
     - [ ] `strpbrk`
     - [x] `strrchr`
-    - [ ] `strspn`
+    - [x] `strspn`
     - [x] `strstr`
     - [x] `strtok`
   - [ ] miscellaneous functions
