@@ -21,6 +21,7 @@ add_library(${PROJECT_NAME}
             src/string/strchr.c
             src/string/strcmp.c
             src/string/strcpy.c
+            src/string/strerror.c
             src/string/strlen.c
             src/string/strncat.c
             src/string/strncmp.c

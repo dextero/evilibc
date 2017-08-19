@@ -164,9 +164,9 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `strspn`
     - [x] `strstr`
     - [x] `strtok`
-  - [ ] miscellaneous functions
+  - [x] miscellaneous functions
     - [x] `memset`
-    - [ ] `strerror`
+    - [x] `strerror`
     - [x] `strlen`
 - [ ] `<tgmath.h>`
 - [ ] `<threads.h>`
