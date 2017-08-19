@@ -34,6 +34,11 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
 - [ ] `<math.h>`
 - [ ] `<setjmp.h>`
 - [ ] `<signal.h>`
+  - [x] `sig_atomic_t` type
+  - [x] `SIG_DFL`, `SIG_ERR`, `SIG_IGN` macros
+  - [x] `SIGABRT`, `SIGFPE`, `SIGILL`, `SIGINT`, `SIGSEGV`, `SIGTERM` macros
+  - [ ] `signal`
+  - [ ] `raise`
 - [ ] `<stdalign.h>`
 - [ ] `<stdarg.h>`
 - [ ] `<stdatomic.h>`
@@ -66,7 +71,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] limit macros: `INTMAX_MIN`, `INTMAX_MAX`, `UINTMAX_MAX` macros
     - [x] constant-generating macros: `INTMAX_C(v)`, `UINTMAX_C(v)`
   - [x] `ptrdiff_t` limits: `PTRDIFF_MIN`, `PTRDIFF_MAX` macros
-  - [ ] `sig_atomic_t` limits: `SIG_ATOMIC_MIN`, `SIG_ATOMIC_MAX` macros
+  - [x] `sig_atomic_t` limits: `SIG_ATOMIC_MIN`, `SIG_ATOMIC_MAX` macros
   - [x] `SIZE_MAX` macro
   - [ ] `wchar_t` limits: `WCHAR_MIN`, `WCHAR_MAX` macros
   - [ ] `wint_t` limits: `WINT_MIN`, `WINT_MAX` macros
@@ -151,11 +156,11 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `strncmp`
     - [ ] `strxfrm`
   - [ ] search functions
-    - [ ] `memchr`
-    - [ ] `strchr`
+    - [x] `memchr`
+    - [x] `strchr`
     - [ ] `strcspn`
     - [ ] `strpbrk`
-    - [ ] `strrchr`
+    - [x] `strrchr`
     - [ ] `strspn`
     - [ ] `strstr`
     - [ ] `strtok`
