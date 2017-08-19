@@ -24,7 +24,7 @@ char* strncat(char* restrict s1,
      * > number of arguments, the behavior is undefined.
      */
     if (s1 == NULL || s2 == NULL) {
-        __evil_ub("passing NULL to strncpy is UB: strncpy(%p, %p)", s1, s2);
+        __evil_ub("passing NULL to strncat is UB: strncat(%p, %p)", s1, s2);
     }
 
     /*
