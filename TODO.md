@@ -167,7 +167,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
   - [ ] miscellaneous functions
     - [x] `memset`
     - [ ] `strerror`
-    - [ ] `strlen`
+    - [x] `strlen`
 - [ ] `<tgmath.h>`
 - [ ] `<threads.h>`
 - [ ] `<time.h>`
