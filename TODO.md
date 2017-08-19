@@ -155,11 +155,11 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `strcoll`
     - [x] `strncmp`
     - [ ] `strxfrm`
-  - [ ] search functions
+  - [x] search functions
     - [x] `memchr`
     - [x] `strchr`
     - [x] `strcspn`
-    - [ ] `strpbrk`
+    - [x] `strpbrk`
     - [x] `strrchr`
     - [x] `strspn`
     - [x] `strstr`
