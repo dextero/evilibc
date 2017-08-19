@@ -162,7 +162,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `strpbrk`
     - [x] `strrchr`
     - [ ] `strspn`
-    - [ ] `strstr`
+    - [x] `strstr`
     - [ ] `strtok`
   - [ ] miscellaneous functions
     - [ ] `memset`
