@@ -19,6 +19,7 @@ add_library(${PROJECT_NAME}
             src/string/strncmp.c
             src/string/strncpy.c
             src/string/strcat.c
+            src/string/strncat.c
             src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)

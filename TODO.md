@@ -146,9 +146,9 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `memmove`
     - [x] `strcpy`
     - [x] `strncpy`
-  - [ ] concatenation functions
+  - [x] concatenation functions
     - [x] `strcat`
-    - [ ] `strncat`
+    - [x] `strncat`
   - [ ] comparison functions
     - [x] `memcmp`
     - [x] `strcmp`
