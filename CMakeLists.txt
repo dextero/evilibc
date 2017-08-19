@@ -24,6 +24,7 @@ add_library(${PROJECT_NAME}
             src/string/strncmp.c
             src/string/strncpy.c
             src/string/strrchr.c
+            src/string/strcspn.c
             src/string/strstr.c
             src/string/strspn.c
             src/string/strtok.c

@@ -158,7 +158,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
   - [ ] search functions
     - [x] `memchr`
     - [x] `strchr`
-    - [ ] `strcspn`
+    - [x] `strcspn`
     - [ ] `strpbrk`
     - [x] `strrchr`
     - [x] `strspn`
