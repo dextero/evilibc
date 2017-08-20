@@ -94,10 +94,10 @@ typedef __uint128_t     uint_least64_t;
 #define UINT32_C(v) v ## U
 #define UINT64_C(v) v ## ULL
 
-typedef int_least8_type  int_fast8_t;
-typedef int_least16_type int_fast16_t;
-typedef int_least32_type int_fast32_t;
-typedef int_least64_type int_fast64_t;
+typedef int_least8_t  int_fast8_t;
+typedef int_least16_t int_fast16_t;
+typedef int_least32_t int_fast32_t;
+typedef int_least64_t int_fast64_t;
 
 #define INT_FAST8_MIN  INT_LEAST8_MIN
 #define INT_FAST8_MAX  INT_LEAST8_MAX
@@ -108,10 +108,10 @@ typedef int_least64_type int_fast64_t;
 #define INT_FAST64_MIN INT_LEAST64_MIN
 #define INT_FAST64_MAX INT_LEAST64_MAX
 
-typedef uint_least8_type  uint_fast8_t;
-typedef uint_least16_type uint_fast16_t;
-typedef uint_least32_type uint_fast32_t;
-typedef uint_least64_type uint_fast64_t;
+typedef uint_least8_t  uint_fast8_t;
+typedef uint_least16_t uint_fast16_t;
+typedef uint_least32_t uint_fast32_t;
+typedef uint_least64_t uint_fast64_t;
 
 #define UINT_FAST8_MAX  UINT_LEAST8_MAX
 #define UINT_FAST16_MAX UINT_LEAST16_MAX
@@ -142,8 +142,8 @@ typedef uint_least64_type uint_fast64_t;
  */
 #if _XOPEN_SOURCE == 600
 
-typedef __INTPTR_TYPE__  intptr_t
-typedef __UINTPTR_TYPE__ uintptr_t
+typedef __INTPTR_TYPE__  intptr_t;
+typedef __UINTPTR_TYPE__ uintptr_t;
 
 /*
  * TODO: according to 7.20.2.4, these values are allowed to be 16-bit.
@@ -155,8 +155,8 @@ typedef __UINTPTR_TYPE__ uintptr_t
 
 #endif /* _XOPEN_SOURCE */
 
-typedef __INTMAX_TYPE__  intmax_t
-typedef __UINTMAX_TYPE__ uintmax_t
+typedef __INTMAX_TYPE__  intmax_t;
+typedef __UINTMAX_TYPE__ uintmax_t;
 
 #define INTMAX_C(v) v ## LL
 #define UINTMAX_C(v) v ## ULL
