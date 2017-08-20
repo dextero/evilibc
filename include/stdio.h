@@ -2,6 +2,7 @@
 #define __EVILIBC_STDIO_H
 
 #include "stddef.h"
+#include "stdarg.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -191,8 +192,6 @@ int sscanf(const char* restrict s,
            const char* restrict format,
            ...);
 
-#warning TODO: these declarations require stdarg.h
-#if 0
 int vfprintf(FILE* restrict stream,
              const char* restrict format,
              va_list arg);
@@ -213,7 +212,6 @@ int vsprintf(char* restrict s,
 int vsscanf(const char* restrict s,
             const char* restrict format,
             va_list arg);
-#endif
 
 int fgetc(FILE* stream);
 int fgets(char* restrict s,
