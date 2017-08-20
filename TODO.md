@@ -146,28 +146,28 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [x] `memmove`
     - [x] `strcpy`
     - [x] `strncpy`
-  - [ ] concatenation functions
+  - [x] concatenation functions
     - [x] `strcat`
-    - [ ] `strncat`
+    - [x] `strncat`
   - [ ] comparison functions
     - [x] `memcmp`
     - [x] `strcmp`
     - [ ] `strcoll`
     - [x] `strncmp`
     - [ ] `strxfrm`
-  - [ ] search functions
+  - [x] search functions
     - [x] `memchr`
     - [x] `strchr`
-    - [ ] `strcspn`
-    - [ ] `strpbrk`
+    - [x] `strcspn`
+    - [x] `strpbrk`
     - [x] `strrchr`
-    - [ ] `strspn`
-    - [ ] `strstr`
-    - [ ] `strtok`
-  - [ ] miscellaneous functions
-    - [ ] `memset`
-    - [ ] `strerror`
-    - [ ] `strlen`
+    - [x] `strspn`
+    - [x] `strstr`
+    - [x] `strtok`
+  - [x] miscellaneous functions
+    - [x] `memset`
+    - [x] `strerror`
+    - [x] `strlen`
 - [ ] `<tgmath.h>`
 - [ ] `<threads.h>`
 - [ ] `<time.h>`
