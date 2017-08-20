@@ -225,6 +225,7 @@ int getc(FILE* stream);
 int getchar(void);
 int putc(int c,
          FILE* stream);
+int putchar(int c);
 int puts(const char* restrict s);
 int ungetc(int c, FILE* stream);
 

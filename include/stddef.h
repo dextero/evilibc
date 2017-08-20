@@ -80,7 +80,7 @@ typedef int wchar_t;
  *
  * TODO: find a way to check if a member is a bit-field and trigger UB
  */
-#define offsetof(Type, Member) ((size_t)&(((Type*)NULL)->Member))
+#define offsetof __builtin_offsetof
 
 #ifdef __cplusplus
 } /* extern "C" */

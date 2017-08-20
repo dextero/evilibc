@@ -7,6 +7,20 @@
 extern "C" {
 #endif
 
+#define __INT8_MIN__ (-128)
+#define __INT8_MAX__ 127
+#define __INT16_MIN__ (-32768)
+#define __INT16_MAX__ 32767
+#define __INT32_MIN__ (-2147483648)
+#define __INT32_MAX__ 2147483647
+#define __INT64_MIN__ (-9223372036854775808LL)
+#define __INT64_MAX__ 9223372036854775807LL
+
+#define __UINT8_MAX__ 255
+#define __UINT16_MAX__ 65535
+#define __UINT32_MAX__ 4294967295
+#define __UINT64_MAX__ 18446744073709551615ULL
+
 /*
  * 7.20.1.1 Exact-width integer types:
  * > These types are optional. However, if an implementation provides integer
