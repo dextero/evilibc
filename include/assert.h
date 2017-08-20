@@ -54,8 +54,8 @@ extern "C" {
 #define assert(expression) \
     do { \
         if ((expression) == 0) { \
-            fputs("Assertion failed: " #expression ", function " __func__ " (" \
-                    __FILE__ ":" __EVILIBC_QUOTE(__LINE__) ")", stderr); \
+            fprintf(stderr, "Assertion failed: " #expression ", function %s (" \
+                    __FILE__ ":" __EVILIBC_QUOTE(__LINE__) ")\n", __func__); \
             abort(); \
         } \
     } while (0)
