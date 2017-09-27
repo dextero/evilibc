@@ -5,13 +5,9 @@
 
 #include "stdio/file.h"
 
-#include "internal/syscall.h"
 #include "internal/undefined_behavior.h"
 
-#include <sys/types.h>
-#include <sys/ioctl.h>
-#include <sys/fcntl.h>
-#include <sys/termios.h>
+#include "os/syscalls.h"
 
 FILE __evil_open_files[FOPEN_MAX];
 
@@ -117,12 +113,6 @@ static int open_flags_from_fopen_mode(int mode) {
     return open_flags;
 }
 
-static bool isatty(int fd) {
-    // TODO: ??? glibc seems to do this
-    struct termios termios;
-    return ioctl(fd, TCGETS, &termios) == 0;
-}
-
 static int file_open(FILE *f,
                      const char *filename,
                      const char *mode) {
@@ -137,11 +127,11 @@ static int file_open(FILE *f,
      * > mode argument) fails if the file does not exist or cannot be read.
      */
     if ((f->file_flags & READ)
-            && sys_access(filename, R_OK) != 0) {
+            && _access(filename, R_OK) != 0) {
         return -1;
     }
 
-    f->fd = sys_open(filename, open_flags_from_fopen_mode(f->file_flags));
+    f->fd = _open(filename, open_flags_from_fopen_mode(f->file_flags));
     if (f->fd < 0) {
         return -1;
     }
@@ -152,7 +142,7 @@ static int file_open(FILE *f,
      * > determined not to refer to an interactive device. The error and
      * > end-of-file indicators for the stream are cleared.
      */
-    f->bufmode = isatty(f->fd) ? _IONBF : _IOFBF;
+    f->bufmode = _isatty(f->fd) ? _IONBF : _IOFBF;
     f->error = false;
     f->eof = false;
 
