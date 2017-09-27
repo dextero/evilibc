@@ -7,7 +7,8 @@ set(CMAKE_C_FLAGS "-Wall -Wextra -nostdlib -nostdinc")
 # GCC complains about that a lot
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-nonnull-compare")
 
-include_directories(os/include)
+include_directories(os/include
+                    include)
 add_subdirectory(os/linux-x86_64)
 include_directories(SYSTEM
                     os/linux-x86_64/include
