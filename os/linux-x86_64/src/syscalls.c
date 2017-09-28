@@ -58,12 +58,13 @@
 #define _NARGS(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, N, ...) N
 #define NARGS(...) EXPAND(_NARGS(__VA_ARGS__, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
 
-#define RETURN_void(Name)
-#define RETURN_long(Name) return Name;
+#define RETURN_void(Name) (void)Name
+#define RETURN_long(Name) return Name
+#define RETURN_int(Name) return (int)Name
 #define RETURN(Type, Name) EXPAND(CONCAT(RETURN_, Type)(Name))
 
 #define SYSCALL(Num, RetT, Name, ...)                   \
-    static RetT Name(ARGS(__VA_ARGS__) ) {              \
+    RetT Name(ARGS(__VA_ARGS__)) {                      \
         long result;                                    \
         asm("movq %[syscall], %%rax\n"                  \
             SETUP(__VA_ARGS__)                          \
@@ -72,20 +73,11 @@
             : [result]"=r"(result)                      \
             : [syscall]"i"(Num), INPUTS(__VA_ARGS__)    \
             : "rax", CLOBBERS(__VA_ARGS__));            \
-        RETURN(RetT, result)                            \
+        RETURN(RetT, result);                           \
     }
 
-SYSCALL(__NR_open, long, sys_open, const char *, path, int, flags, int, mode)
-
-int _open(const char *path, int flags, int mode) {
-    return sys_open(path, flags, mode);
-}
-
-SYSCALL(__NR_access, long, sys_access, const char *, path, int, flags)
-
-int _access(const char *path, int flags) {
-    return sys_access(path, flags);
-}
+SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
+SYSCALL(__NR_access, int, _access, const char *, path, int, flags)
 
 int _isatty(int fd) {
     // TODO: ??? glibc seems to do this
@@ -93,14 +85,15 @@ int _isatty(int fd) {
     return ioctl(fd, TCGETS, &termios) == 0;
 }
 
-SYSCALL(__NR_exit, void, sys_exit, int, exit_code)
+static SYSCALL(__NR_exit, void, sys_exit, int, exit_code)
 
 void _exit(int exit_code) {
     sys_exit(exit_code);
     __builtin_unreachable();
 }
 
-SYSCALL(__NR_ioctl, long, sys_ioctl, int, fd, unsigned long, command, void *, arg)
+static SYSCALL(__NR_ioctl, long, sys_ioctl,
+               int, fd, unsigned long, command, void *, arg)
 
 int ioctl(int fd, unsigned long command, ...) {
     va_list list;
