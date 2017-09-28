@@ -23,28 +23,36 @@
 #define ARGS_12(Type, Name, ...) Type Name, ARGS_10(__VA_ARGS__)
 #define ARGS(...) EXPAND_N(ARGS_, __VA_ARGS__)
 
-#define SETUP_2(Type, Name) "movq %2, %%rdi\n"
-#define SETUP_4(Type, Name, ...) "movq %3, %%rsi\n" SETUP_2(__VA_ARGS__)
-#define SETUP_6(Type, Name, ...) "movq %4, %%rdx\n" SETUP_4(__VA_ARGS__)
-#define SETUP_8(Type, Name, ...) "movq %5, %%r10\n" SETUP_6(__VA_ARGS__)
-#define SETUP_10(Type, Name, ...) "movq %6, %%r8\n" SETUP_8(__VA_ARGS__)
-#define SETUP_12(Type, Name, ...) "movq %7, %%r9\n" SETUP_10(__VA_ARGS__)
+#define SETUP_2(Type, Name) "movq %[arg0], %%rdi\n"
+#define SETUP_4(Type, Name, ...) SETUP_2(__VA_ARGS__) "movq %[arg1], %%rsi\n"
+#define SETUP_6(Type, Name, ...) SETUP_4(__VA_ARGS__) "movq %[arg2], %%rdx\n"
+#define SETUP_8(Type, Name, ...) SETUP_6(__VA_ARGS__) "movq %[arg3], %%r10\n"
+#define SETUP_10(Type, Name, ...) SETUP_8(__VA_ARGS__) "movq %[arg4], %%r8\n"
+#define SETUP_12(Type, Name, ...) SETUP_10(__VA_ARGS__) "movq %[arg5], %%r9\n"
 #define SETUP(...) EXPAND_N(SETUP_, __VA_ARGS__)
 
-#define INPUTS_2(Type, Name) "imr"(Name)
-#define INPUTS_4(Type, Name, ...) "imr"(Name), INPUTS_2(__VA_ARGS__)
-#define INPUTS_6(Type, Name, ...) "imr"(Name), INPUTS_4(__VA_ARGS__)
-#define INPUTS_8(Type, Name, ...) "imr"(Name), INPUTS_6(__VA_ARGS__)
-#define INPUTS_10(Type, Name, ...) "imr"(Name), INPUTS_8(__VA_ARGS__)
-#define INPUTS_12(Type, Name, ...) "imr"(Name), INPUTS_10(__VA_ARGS__)
-#define INPUTS(...) EXPAND_N(INPUTS_, __VA_ARGS__)
+#define REVERSE_NAMES_2(Type, Name, ...) Name
+#define REVERSE_NAMES_4(Type, Name, ...) REVERSE_NAMES_2(__VA_ARGS__), Name
+#define REVERSE_NAMES_6(Type, Name, ...) REVERSE_NAMES_4(__VA_ARGS__), Name
+#define REVERSE_NAMES_8(Type, Name, ...) REVERSE_NAMES_6(__VA_ARGS__), Name
+#define REVERSE_NAMES_10(Type, Name, ...) REVERSE_NAMES_8(__VA_ARGS__), Name
+#define REVERSE_NAMES_12(Type, Name, ...) REVERSE_NAMES_10(__VA_ARGS__), Name
+#define REVERSE_NAMES(...) EXPAND_N(REVERSE_NAMES_, __VA_ARGS__)
+
+#define INPUTS_1(Name) [arg0]"imr"((unsigned long)Name)
+#define INPUTS_2(Name, ...) INPUTS_1(__VA_ARGS__), [arg1]"imr"((unsigned long)Name)
+#define INPUTS_3(Name, ...) INPUTS_2(__VA_ARGS__), [arg2]"imr"((unsigned long)Name)
+#define INPUTS_4(Name, ...) INPUTS_3(__VA_ARGS__), [arg3]"imr"((unsigned long)Name)
+#define INPUTS_5(Name, ...) INPUTS_4(__VA_ARGS__), [arg4]"imr"((unsigned long)Name)
+#define INPUTS_6(Name, ...) INPUTS_5(__VA_ARGS__), [arg5]"imr"((unsigned long)Name)
+#define INPUTS(...) EXPAND_N(INPUTS_, REVERSE_NAMES(__VA_ARGS__))
 
 #define CLOBBERS_2(Type, Name) "rdi"
-#define CLOBBERS_4(Type, Name, ...) "rsi", CLOBBERS_2(__VA_ARGS__)
-#define CLOBBERS_6(Type, Name, ...) "rdx", CLOBBERS_4(__VA_ARGS__)
-#define CLOBBERS_8(Type, Name, ...) "r10", CLOBBERS_6(__VA_ARGS__)
-#define CLOBBERS_10(Type, Name, ...) "r8", CLOBBERS_8(__VA_ARGS__)
-#define CLOBBERS_12(Type, Name, ...) "r9", CLOBBERS_10(__VA_ARGS__)
+#define CLOBBERS_4(Type, Name, ...) CLOBBERS_2(__VA_ARGS__), "rsi"
+#define CLOBBERS_6(Type, Name, ...) CLOBBERS_4(__VA_ARGS__), "rdx"
+#define CLOBBERS_8(Type, Name, ...) CLOBBERS_6(__VA_ARGS__), "r10"
+#define CLOBBERS_10(Type, Name, ...) CLOBBERS_8(__VA_ARGS__), "r8"
+#define CLOBBERS_12(Type, Name, ...) CLOBBERS_10(__VA_ARGS__), "r9"
 #define CLOBBERS(...) EXPAND_N(CLOBBERS_, __VA_ARGS__)
 
 #define _NARGS(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, N, ...) N
@@ -65,20 +73,20 @@
 #define SYSCALL(Num, RetT, Name, ...) \
     static RetT Name(ARGS(__VA_ARGS__) ) {      \
         long result;                            \
-        asm("movq %1, %%rax\n"                  \
+        asm("movq %[syscall], %%rax\n"                  \
             SETUP(__VA_ARGS__)                  \
             "syscall\n"                         \
-            "movq %%rax, %0\n"                  \
-            : "=r"(result)                      \
-            : "i"(Num), INPUTS(__VA_ARGS__)     \
+            "movq %%rax, %[result]\n"                  \
+            : [result]"=r"(result)                      \
+            : [syscall]"i"(Num), INPUTS(__VA_ARGS__)     \
             : "rax", CLOBBERS(__VA_ARGS__));    \
             RETURN(RetT, result)                \
     }
 
-SYSCALL(__NR_open, long, sys_open, const char *, path, int, flags)
+SYSCALL(__NR_open, long, sys_open, const char *, path, int, flags, int, mode)
 
-int _open(const char *path, int flags, ...) {
-    return sys_open(path, flags);
+int _open(const char *path, int flags, int mode) {
+    return sys_open(path, flags, mode);
 }
 
 SYSCALL(__NR_access, long, sys_access, const char *, path, int, flags)
