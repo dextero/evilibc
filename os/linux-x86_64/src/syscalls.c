@@ -58,29 +58,21 @@
 #define _NARGS(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, N, ...) N
 #define NARGS(...) EXPAND(_NARGS(__VA_ARGS__, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0))
 
-#define DECLARE_void(Name)
-#define DECLARE_long(Name) long Name;
-#define DECLARE(Type, Name) EXPAND(CONCAT(DECLARE_, Type)(Name))
-
-#define ASSIGN_void(Name)
-#define ASSIGN_long(Name) "=r"(Name)
-#define ASSIGN(Type, Name) EXPAND(CONCAT(ASSIGN_, Type)(Name))
-
 #define RETURN_void(Name)
 #define RETURN_long(Name) return Name;
 #define RETURN(Type, Name) EXPAND(CONCAT(RETURN_, Type)(Name))
 
-#define SYSCALL(Num, RetT, Name, ...) \
-    static RetT Name(ARGS(__VA_ARGS__) ) {      \
-        long result;                            \
+#define SYSCALL(Num, RetT, Name, ...)                   \
+    static RetT Name(ARGS(__VA_ARGS__) ) {              \
+        long result;                                    \
         asm("movq %[syscall], %%rax\n"                  \
-            SETUP(__VA_ARGS__)                  \
-            "syscall\n"                         \
-            "movq %%rax, %[result]\n"                  \
+            SETUP(__VA_ARGS__)                          \
+            "syscall\n"                                 \
+            "movq %%rax, %[result]\n"                   \
             : [result]"=r"(result)                      \
-            : [syscall]"i"(Num), INPUTS(__VA_ARGS__)     \
-            : "rax", CLOBBERS(__VA_ARGS__));    \
-            RETURN(RetT, result)                \
+            : [syscall]"i"(Num), INPUTS(__VA_ARGS__)    \
+            : "rax", CLOBBERS(__VA_ARGS__));            \
+        RETURN(RetT, result)                            \
     }
 
 SYSCALL(__NR_open, long, sys_open, const char *, path, int, flags, int, mode)
