@@ -60,6 +60,7 @@
 
 #define RETURN_void(Name) (void)Name
 #define RETURN_long(Name) return Name
+#define RETURN_ssize_t(Name) RETURN_long(Name)
 #define RETURN_int(Name) return (int)Name
 #define RETURN(Type, Name) EXPAND(CONCAT(RETURN_, Type)(Name))
 
@@ -78,6 +79,7 @@
 
 SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
 SYSCALL(__NR_access, int, _access, const char *, path, int, flags)
+SYSCALL(__NR_write, ssize_t, _write, int, fd, const void *, buf, size_t, count)
 
 int _isatty(int fd) {
     // TODO: ??? glibc seems to do this
