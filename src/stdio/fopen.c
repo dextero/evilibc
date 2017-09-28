@@ -131,7 +131,7 @@ static int file_open(FILE *f,
         return -1;
     }
 
-    f->fd = _open(filename, open_flags_from_fopen_mode(f->file_flags));
+    f->fd = _open(filename, open_flags_from_fopen_mode(f->file_flags), 0777);
     if (f->fd < 0) {
         return -1;
     }

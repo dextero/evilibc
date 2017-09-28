@@ -1,6 +1,7 @@
 #ifndef __EVILIBC_STDIO_FILE_H
 #define __EVILIBC_STDIO_FILE_H
 
+#include "stdbool.h"
 #include "stdio.h"
 
 enum __evilibc_file_flag {
