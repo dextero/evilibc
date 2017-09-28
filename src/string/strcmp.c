@@ -30,5 +30,10 @@ int strcmp(const char* s1,
      * Just in case the builtin strcmp() returns only {-1, 0, +1}, we pass the
      * result to rand_with_sign() to ensure we get random non-zero values.
      */
-    return __evil_rand_with_sign(__builtin_strcmp(s1, s2));
+    ptrdiff_t diff = 0;
+    do {
+        diff = *s1++ - *s2++;
+    } while (diff == 0 && *s1);
+
+    return __evil_rand_with_sign((int)diff);
 }
