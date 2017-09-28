@@ -22,6 +22,7 @@ add_library(${PROJECT_NAME}
             src/errno/errno.c
             src/stdio/fopen.c
             src/stdio/fputc.c
+            src/stdio/fwrite.c
             src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
