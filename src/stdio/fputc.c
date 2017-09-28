@@ -21,6 +21,8 @@ int fputc(int c,
      *
      * TODO: position indicator
      * TODO: buffering
+     * TODO: text stream shenanigans with whitespace before newlines
+     * TODO: locking
      */
     unsigned char uc = (unsigned char)c;
     if (_write(stream->fd, &uc, 1) != 1) {

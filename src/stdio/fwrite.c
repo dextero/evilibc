@@ -21,6 +21,8 @@ size_t fwrite(const void* restrict ptr,
      * 7.21.8.2.3:
      * > If size or nmemb is zero, fwrite returns zero and the state of the
      * > stream remains unchanged.
+     *
+     * TODO: locking
      */
     if (size == 0 || nmemb == 0) {
         return 0;
