@@ -11,6 +11,11 @@
 
 FILE __evil_open_files[FOPEN_MAX];
 
+FILE* __evilibc_stdin;
+FILE* __evilibc_stdout;
+FILE* __evilibc_stderr;
+
+
 static bool is_valid_open_mode(const char *mode) {
     /**
      * 7.21.5.3.3:
