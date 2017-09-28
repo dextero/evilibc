@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME}
             src/string/strstr.c
             src/string/strspn.c
             src/string/strtok.c
+            src/internal/init.c
             src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)
