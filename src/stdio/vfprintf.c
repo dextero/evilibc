@@ -453,7 +453,13 @@ int vfprintf(FILE* restrict stream,
             struct fmt fmt;
             const char *fmt_end = parse_fmt(++format, &fmt);
 
-            int result = print_formatted(stream, chars_written, &fmt, (va_list*)&args);
+            // Argh, passing a pointer to va_list parameter does not work
+            // https://stackoverflow.com/a/8048892/2339636
+            va_list args_copy;
+            va_copy(args_copy, args);
+            int result = print_formatted(stream, chars_written, &fmt, &args_copy);
+            va_end(args_copy);
+
             if (result < 0) {
                 return result; // TODO: can we proceed anyway?
             } else {
