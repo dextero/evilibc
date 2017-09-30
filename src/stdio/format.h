@@ -54,8 +54,7 @@ enum length {
 };
 
 #define MISSING (-1)
-#define DEFAULT (-2)
-#define FROM_ARGUMENT (-3)
+#define FROM_ARGUMENT (-2)
 
 struct fmt {
     const char *start;

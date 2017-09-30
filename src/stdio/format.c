@@ -3,11 +3,12 @@
 #include "stdbool.h"
 #include "string.h"
 
+#define DEFAULT INT_MIN
+
 static const char *parse_flags(const char *fmt,
                                int *out_flags)
 {
-    bool flags_done = false;
-    while (!flags_done) {
+    while (true) {
         switch (*fmt) {
         case '-':
             *out_flags |= FLAG_LEFT_JUSTIFY;
@@ -25,14 +26,11 @@ static const char *parse_flags(const char *fmt,
             *out_flags |= FLAG_ZERO_PAD;
             break;
         default:
-            flags_done = true;
-            break;
+            return fmt;
         }
 
         ++fmt;
     }
-
-    return fmt - 1;
 }
 
 static const char *parse_width(const char *fmt,
@@ -41,7 +39,7 @@ static const char *parse_width(const char *fmt,
     if (*fmt == '*') {
         *out_size = FROM_ARGUMENT;
         return fmt + 1;
-    } else if (*fmt < '0' || '0' < *fmt) {
+    } else if (*fmt < '0' || '9' < *fmt) {
         *out_size = MISSING;
         return fmt;
     }
@@ -51,6 +49,7 @@ static const char *parse_width(const char *fmt,
 
         *out_size *= 10;
         *out_size += *fmt - '0';
+        ++fmt;
     }
 
     return fmt;
