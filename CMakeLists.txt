@@ -29,6 +29,7 @@ add_library(${PROJECT_NAME}
             src/stdio/sprintf.c
             src/stdio/snprintf.c
             src/stdio/vfprintf.c
+            src/stdio/vsprintf.c
             src/stdio/vsnprintf.c
             src/string/memchr.c
             src/string/memcmp.c
