@@ -10,9 +10,10 @@ int main() {
            "4294967296, long, octal: %lo\n"
            "4294967296, long, hex: %lx\n"
            "4294967296, long, HEX: %lX\n"
+           "'x', char: %c\n"
            "string: %s\n"
            "percent: %%\n",
            0, 1, 2, 0, 4294967296L,
            4294967296UL, 4294967296UL, 4294967296UL, 4294967296UL,
-           "Hello evilibc!");
+           'x', "Hello evilibc!");
 }
