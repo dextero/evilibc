@@ -21,11 +21,13 @@ add_library(${PROJECT_NAME}
             src/ctype/ctype.c
             src/errno/errno.c
             src/stdio/fopen.c
+            src/stdio/format.c
             src/stdio/fprintf.c
             src/stdio/fputc.c
             src/stdio/fwrite.c
             src/stdio/printf.c
             src/stdio/vfprintf.c
+            src/stdio/vsnprintf.c
             src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
