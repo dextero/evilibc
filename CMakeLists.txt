@@ -23,6 +23,7 @@ add_library(${PROJECT_NAME}
             src/stdio/fopen.c
             src/stdio/fputc.c
             src/stdio/fwrite.c
+            src/stdio/fprintf.c
             src/stdio/vfprintf.c
             src/string/memchr.c
             src/string/memcmp.c
