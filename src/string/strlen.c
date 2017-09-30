@@ -13,7 +13,7 @@ size_t strlen(const char* s)
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s) {
+    if (!s) {
         __evil_ub("passing NULL to strlen is UB: strlen(%p)", s);
     }
 
