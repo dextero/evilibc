@@ -30,5 +30,8 @@ void* memset(void* s,
      * invoking UB on values outside CHAR_MIN and CHAR_MAX, due to signed ->
      * unsigned conversion rules in 6.3.1.3.
      */
-    return __builtin_memset(s, c, n);
+    for (size_t i = 0; i < n; ++i) {
+        ((unsigned char *)s)[i] = (unsigned char)c;
+    }
+    return s;
 }
