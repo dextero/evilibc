@@ -179,6 +179,37 @@ static int write_s(char *restrict *pbuf,
     return write_padded(pbuf, pbuf_size, str, str_size, min_width, fmt.flags);
 }
 
+static char *ull_to_str(char *buf,
+                        size_t bufsize,
+                        unsigned long long value,
+                        long precision) {
+    char *p = &buf[bufsize];
+
+    while (value) {
+        assert(p > buf);
+        *--p = '0' + value % 10;
+        value /= 10;
+    }
+
+    size_t int_str_size = &buf[bufsize] - p;
+
+    if (precision > 0) {
+        /*
+         * > The precision specifies the minimum number of digits to appear;
+         * > if the value being converted can be represented in fewer digits,
+         * > it is expanded with leading zeros.
+         */
+        while (int_str_size < (size_t)precision) {
+            assert(p > buf);
+            *--p = '0';
+            ++int_str_size;
+        }
+    }
+
+    // NOTE: this is NOT null-terminated
+    return p;
+}
+
 static size_t write_signed(char *restrict *pbuf,
                            size_t *pbuf_size,
                            const struct fmt *fmt_const,
@@ -218,41 +249,70 @@ static size_t write_signed(char *restrict *pbuf,
     // TODO: OMFG, reuquired precision can make this length completely
     // arbitrary
     char tmp[sizeof(STR(LLONG_MIN))] = "";
-    char *p = &tmp[sizeof(tmp) - 1];
     bool is_negative = value < 0;
-
-    while (value) {
-        *p-- = '0' + value % 10;
-        value /= 10;
-
-        assert(p >= tmp);
-    }
-
-    size_t int_str_size = &tmp[sizeof(tmp)] - p - 1;
-
-    if (precision > 0) {
-        /*
-         * > The precision specifies the minimum number of digits to appear;
-         * > if the value being converted can be represented in fewer digits,
-         * > it is expanded with leading zeros.
-         */
-        while (int_str_size < (size_t)precision) {
-            *p-- = '0';
-            ++int_str_size;
-
-            assert(p >= tmp);
-        }
-    }
+    // TODO: this is technically UB for LLONG_MIN on U2
+    // is there any portable & safe way to do this?
+    unsigned long long u_value = (unsigned long long)-value;
+    char *p = ull_to_str(tmp, sizeof(tmp), u_value, precision);
 
     if (is_negative) {
-        *p = '-';
+        *--p = '-';
     } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
-        *p = '+';
+        *--p = '+';
     } else if (fmt.flags & FLAG_SPACE_PREFIX) {
-        *p = ' ';
-    } else {
-        ++p;
+        *--p = ' ';
     }
+
+    size_t int_str_size = &tmp[sizeof(tmp)] - p;
+
+    assert(min_width == MISSING || min_width >= 0);
+    size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
+
+    return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
+}
+
+static size_t write_unsigned(char *restrict *pbuf,
+                             size_t *pbuf_size,
+                             const struct fmt *fmt_const,
+                             va_list *args)
+{
+    struct fmt fmt = *fmt_const;
+    long min_width = fetch_width(&fmt, args);
+
+    /*
+     * > o, u, x, X   [...] The default precision is 1.
+     */
+    long precision = fetch_precision(&fmt, args, 1);
+
+    unsigned long long value;
+    switch (fmt.length) {
+    case LENGTH_CHAR:
+        value = (signed char)va_arg(*args, int);
+        break;
+    case LENGTH_SHORT:
+        value = (short)va_arg(*args, int);
+        break;
+    case LENGTH_DEFAULT:
+        value = va_arg(*args, unsigned);
+        break;
+    case LENGTH_LONG:
+        value = va_arg(*args, unsigned long);
+        break;
+    case LENGTH_LONG_LONG:
+        value = va_arg(*args, unsigned long long);
+        break;
+    default:
+        __evil_ub("unexpected length specifier in %%u: %.*s",
+                  fmt_size(&fmt), fmt.start);
+        return 0;
+    }
+
+    // TODO: OMFG, reuquired precision can make this length completely
+    // arbitrary
+    char tmp[sizeof(STR(ULLONG_MAX))] = "";
+    const char *p = ull_to_str(tmp, sizeof(tmp), value, precision);
+    // TODO: are FLAG_SIGN_REQUIRED/FLAG_SPACE_PREFIX UB on %u?
+    size_t int_str_size = &tmp[sizeof(tmp)] - p;
 
     assert(min_width == MISSING || min_width >= 0);
     size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
@@ -271,9 +331,9 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         __evil_ub("invalid format specifier: %.*s", fmt_size(fmt), fmt->start);
         return 0;
     case TYPE_SIGNED_INT:
-        // TODO: other validation?
         return write_signed(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT:
+        return write_unsigned(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT_OCTAL:
     case TYPE_UNSIGNED_INT_HEX_LOWER:
     case TYPE_UNSIGNED_INT_HEX_UPPER:
