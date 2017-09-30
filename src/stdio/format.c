@@ -4,7 +4,8 @@
 #include "string.h"
 
 static const char *parse_flags(const char *fmt,
-                               int *out_flags) {
+                               int *out_flags)
+{
     bool flags_done = false;
     while (!flags_done) {
         switch (*fmt) {
@@ -35,7 +36,8 @@ static const char *parse_flags(const char *fmt,
 }
 
 static const char *parse_width(const char *fmt,
-                               int *out_size) {
+                               int *out_size)
+{
     if (*fmt == '*') {
         *out_size = FROM_ARGUMENT;
         return fmt + 1;
@@ -55,7 +57,8 @@ static const char *parse_width(const char *fmt,
 }
 
 static const char *parse_precision(const char *fmt,
-                                   int *out_precision) {
+                                   int *out_precision)
+{
     if (*fmt != '.') {
         *out_precision = MISSING;
         return fmt;
@@ -76,7 +79,8 @@ static const char *parse_precision(const char *fmt,
 }
                                        
 static const char *parse_length(const char *fmt,
-                                enum length *out_length) {
+                                enum length *out_length)
+{
     switch (fmt[0]) {
     case 'h':
         if (fmt[1] == 'h') {
@@ -113,7 +117,8 @@ static const char *parse_length(const char *fmt,
 }
 
 static const char *parse_type(const char *fmt,
-                              enum type *out_type) {
+                              enum type *out_type)
+{
     switch (*fmt) {
     case 'd':
     case 'i':
@@ -179,7 +184,8 @@ static const char *parse_type(const char *fmt,
 }
 
 const char *__evil_parse_fmt(const char *format,
-                             struct fmt *out) {
+                             struct fmt *out)
+{
     if (*format != '%') {
         return format;
     }
