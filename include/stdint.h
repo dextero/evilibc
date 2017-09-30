@@ -1,25 +1,50 @@
 #ifndef __EVILIBC_STDINT_H
 #define __EVILIBC_STDINT_H
 
-#include <unistd.h>
+#warning "TODO: figure out way to enable/disable POSIX"
+//#include <unistd.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifndef __INT8_MIN__
 #define __INT8_MIN__ (-128)
+#endif
+#ifndef __INT8_MAX__
 #define __INT8_MAX__ 127
+#endif
+#ifndef __INT16_MIN__
 #define __INT16_MIN__ (-32768)
+#endif
+#ifndef __INT16_MAX__
 #define __INT16_MAX__ 32767
+#endif
+#ifndef __INT32_MIN__
 #define __INT32_MIN__ (-2147483648)
+#endif
+#ifndef __INT32_MAX__
 #define __INT32_MAX__ 2147483647
+#endif
+#ifndef __INT64_MIN__
 #define __INT64_MIN__ (-9223372036854775808LL)
+#endif
+#ifndef __INT64_MAX__
 #define __INT64_MAX__ 9223372036854775807LL
+#endif
 
+#ifndef __UINT8_MAX__
 #define __UINT8_MAX__ 255
+#endif
+#ifndef __UINT16_MAX__
 #define __UINT16_MAX__ 65535
+#endif
+#ifndef __UINT32_MAX__
 #define __UINT32_MAX__ 4294967295
+#endif
+#ifndef __UINT64_MAX__
 #define __UINT64_MAX__ 18446744073709551615ULL
+#endif
 
 /*
  * 7.20.1.1 Exact-width integer types:
