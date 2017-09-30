@@ -26,6 +26,7 @@ add_library(${PROJECT_NAME}
             src/stdio/fputc.c
             src/stdio/fwrite.c
             src/stdio/printf.c
+            src/stdio/sprintf.c
             src/stdio/snprintf.c
             src/stdio/vfprintf.c
             src/stdio/vsnprintf.c
