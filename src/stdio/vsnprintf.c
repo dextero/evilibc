@@ -422,6 +422,8 @@ size_t __evil_write_formatted(char *restrict *pbuf,
     case TYPE_DOUBLE_ANY_UPPER:
     case TYPE_DOUBLE_HEX_EXPONENTIAL_LOWER:
     case TYPE_DOUBLE_HEX_EXPONENTIAL_UPPER:
+        // TODO UNIMPLEMENTED
+        return 0;
     case TYPE_INT_AS_UNSIGNED_CHAR:
         switch (fmt->length) {
         case LENGTH_DEFAULT:
