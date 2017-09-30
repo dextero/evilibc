@@ -179,16 +179,29 @@ static int write_s(char *restrict *pbuf,
     return write_padded(pbuf, pbuf_size, str, str_size, min_width, fmt.flags);
 }
 
+enum letter_case {
+    CASE_LOWER,
+    CASE_UPPER,
+};
+
 static char *ull_to_str(char *buf,
                         size_t bufsize,
                         unsigned long long value,
-                        long precision) {
+                        long precision,
+                        int base,
+                        enum letter_case letter_case) {
+    assert(base == 8 || base == 10 || base == 16);
+
+    static const char DIGITS_LOWER[] = "0123456789abcdef";
+    static const char DIGITS_UPPER[] = "0123456789ABCDEF";
+    const char *digits = letter_case == CASE_LOWER ? DIGITS_LOWER
+                                                   : DIGITS_UPPER;
     char *p = &buf[bufsize];
 
     while (value) {
         assert(p > buf);
-        *--p = '0' + value % 10;
-        value /= 10;
+        *--p = digits[value % base];
+        value /= base;
     }
 
     size_t int_str_size = &buf[bufsize] - p;
@@ -248,18 +261,22 @@ static size_t write_signed(char *restrict *pbuf,
 
     // TODO: OMFG, reuquired precision can make this length completely
     // arbitrary
-    char tmp[sizeof(STR(LLONG_MIN))] = "";
+    char tmp[sizeof(STR(LLONG_MIN)) * 2] = "";
     bool is_negative = value < 0;
     // TODO: this is technically UB for LLONG_MIN on U2
     // is there any portable & safe way to do this?
-    unsigned long long u_value = (unsigned long long)-value;
-    char *p = ull_to_str(tmp, sizeof(tmp), u_value, precision);
+    unsigned long long u_value = value > 0 ? (unsigned long long)value
+                                           : (unsigned long long)-value;
+    char *p = ull_to_str(tmp, sizeof(tmp), u_value, precision, 10, CASE_LOWER);
 
     if (is_negative) {
         *--p = '-';
     } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
         *--p = '+';
     } else if (fmt.flags & FLAG_SPACE_PREFIX) {
+        /*
+         * > If the space and + flags both appear, the space flag is ignored.
+         */
         *--p = ' ';
     }
 
@@ -307,10 +324,50 @@ static size_t write_unsigned(char *restrict *pbuf,
         return 0;
     }
 
+    int base;
+    enum letter_case letter_case = CASE_LOWER;
+    switch (fmt.type) {
+    case TYPE_UNSIGNED_INT:
+        base = 10;
+        break;
+    case TYPE_UNSIGNED_INT_OCTAL:
+        base = 8;
+        break;
+    case TYPE_UNSIGNED_INT_HEX_UPPER:
+        letter_case = CASE_UPPER;
+        // fall-through
+    case TYPE_UNSIGNED_INT_HEX_LOWER:
+        base = 16;
+        break;
+    default:
+        __builtin_unreachable();
+    }
+
     // TODO: OMFG, reuquired precision can make this length completely
     // arbitrary
-    char tmp[sizeof(STR(ULLONG_MAX))] = "";
-    const char *p = ull_to_str(tmp, sizeof(tmp), value, precision);
+    char tmp[sizeof(STR(ULLONG_MAX)) * 2] = "";
+    char *p = ull_to_str(tmp, sizeof(tmp), value, precision, base, letter_case);
+
+    if (fmt.flags & FLAG_ALTERNATIVE_FORM) {
+        switch (base) {
+        case 8:
+            if (value != 0) {
+                *--p = '0';
+            }
+            break;
+        case 16:
+            if (value != 0) {
+                *--p = letter_case == CASE_LOWER ? 'x' : 'X';
+                *--p = '0';
+            }
+            break;
+        default:
+            __evil_ub("'alternative form' modifier (#) behavior is undefined "
+                      "for conversion %.*s", (int)(fmt.end - fmt.start),
+                      fmt.start);
+        }
+    }
+
     // TODO: are FLAG_SIGN_REQUIRED/FLAG_SPACE_PREFIX UB on %u?
     size_t int_str_size = &tmp[sizeof(tmp)] - p;
 
@@ -331,12 +388,17 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         __evil_ub("invalid format specifier: %.*s", fmt_size(fmt), fmt->start);
         return 0;
     case TYPE_SIGNED_INT:
+        if (fmt->flags & FLAG_ALTERNATIVE_FORM) {
+            __evil_ub("'alternative form' modifier (#) behavior is undefined "
+                      "for %%d conversion (%.*s)", (int)(fmt->end - fmt->start),
+                      fmt->start);
+        }
         return write_signed(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT:
-        return write_unsigned(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT_OCTAL:
     case TYPE_UNSIGNED_INT_HEX_LOWER:
     case TYPE_UNSIGNED_INT_HEX_UPPER:
+        return write_unsigned(pbuf, pbuf_size, fmt, args);
     case TYPE_DOUBLE_DECIMAL_LOWER:
     case TYPE_DOUBLE_DECIMAL_UPPER:
     case TYPE_DOUBLE_EXPONENTIAL_LOWER:
