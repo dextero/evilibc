@@ -147,13 +147,28 @@ static size_t write_padded(char *restrict *pbuf,
     }
 }
 
-static int write_s(char *restrict *pbuf,
-                   size_t *pbuf_size,
-                   const struct fmt *fmt_const,
-                   va_list *args)
+static int write_char(char *restrict *pbuf,
+                      size_t *pbuf_size,
+                      const struct fmt *fmt_const,
+                      va_list *args)
 {
     struct fmt fmt = *fmt_const;
     long min_width = fetch_width(&fmt, args);
+    // TODO: precision is UB
+    // TODO: some flags are UB
+
+    unsigned char c = (unsigned char)va_arg(*args, int);
+    return write_padded(pbuf, pbuf_size, (char*)&c, 1, min_width, fmt.flags);
+}
+
+static int write_string(char *restrict *pbuf,
+                        size_t *pbuf_size,
+                        const struct fmt *fmt_const,
+                        va_list *args)
+{
+    struct fmt fmt = *fmt_const;
+    long min_width = fetch_width(&fmt, args);
+    // TODO: precision
 
     const char *str = va_arg(*args, const char *);
     if (!str) {
@@ -408,12 +423,23 @@ size_t __evil_write_formatted(char *restrict *pbuf,
     case TYPE_DOUBLE_HEX_EXPONENTIAL_LOWER:
     case TYPE_DOUBLE_HEX_EXPONENTIAL_UPPER:
     case TYPE_INT_AS_UNSIGNED_CHAR:
-        // TODO UNIMPLEMENTED
+        switch (fmt->length) {
+        case LENGTH_DEFAULT:
+            return write_char(pbuf, pbuf_size, fmt, args);
+        case LENGTH_LONG:
+            // TODO UNIMPLEMENTED: print wchar_t *
+            return 0;
+        default:
+            __evil_ub("unexpected length specifier in %%s: %.*s",
+                      fmt_size(fmt), fmt->start);
+            // TODO: print fmt->start as literal
+            return 0;
+        }
         return 0;
     case TYPE_STRING:
         switch (fmt->length) {
         case LENGTH_DEFAULT:
-            return write_s(pbuf, pbuf_size, fmt, args);
+            return write_string(pbuf, pbuf_size, fmt, args);
         case LENGTH_LONG:
             // TODO UNIMPLEMENTED: print wchar_t *
             return 0;
