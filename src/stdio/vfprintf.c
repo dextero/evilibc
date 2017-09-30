@@ -439,38 +439,42 @@ int vfprintf(FILE* restrict stream,
              const char* restrict format,
              va_list args) {
     const char *segment_start = format;
-    const char *segment_end = segment_start;
     int chars_written = 0;
+
+    // Argh, passing a pointer to va_list parameter does not work
+    // https://stackoverflow.com/a/8048892/2339636
+    va_list args_copy;
+    va_copy(args_copy, args);
 
     while (*format) {
         if (*format != '%') {
             ++format;
         } else {
             if (format != segment_start) {
-                chars_written += fwrite(segment_start, segment_end - segment_start, 1, stream);
+                chars_written += fwrite(segment_start, format - segment_start, 1, stream);
             }
 
             struct fmt fmt;
             const char *fmt_end = parse_fmt(++format, &fmt);
 
-            // Argh, passing a pointer to va_list parameter does not work
-            // https://stackoverflow.com/a/8048892/2339636
-            va_list args_copy;
-            va_copy(args_copy, args);
             int result = print_formatted(stream, chars_written, &fmt, &args_copy);
-            va_end(args_copy);
 
             if (result < 0) {
-                return result; // TODO: can we proceed anyway?
+                /*return result; // TODO: can we proceed anyway?*/
             } else {
                 chars_written += result;
             }
 
             segment_start = fmt_end;
-            break;
+            format = fmt_end;
         }
     }
 
+    if (format != segment_start) {
+        chars_written += fwrite(segment_start, format - segment_start, 1, stream);
+    }
+
+    va_end(args_copy);
     return chars_written;
 }
 
