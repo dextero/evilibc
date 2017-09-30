@@ -17,5 +17,10 @@ size_t strlen(const char* s)
         __evil_ub("passing NULL to strlen is UB: strlen(%p)", s);
     }
 
-    return __builtin_strlen(s);
+    const char *end = s;
+    while (*end) {
+        ++end;
+    }
+
+    return (size_t)(end - s);
 }
