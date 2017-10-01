@@ -100,19 +100,19 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `setbuf`
     - [ ] `setvbuf`
   - [ ] formatted input/output functions
-    - [ ] `fprintf`
+    - [x] `fprintf`
     - [ ] `fscanf`
-    - [ ] `printf`
+    - [x] `printf`
     - [ ] `scanf`
-    - [ ] `snprintf`
-    - [ ] `sprintf`
+    - [x] `snprintf`
+    - [x] `sprintf`
     - [ ] `sscanf`
-    - [ ] `vfprintf`
+    - [x] `vfprintf`
     - [ ] `vfscanf`
-    - [ ] `vprintf`
+    - [x] `vprintf`
     - [ ] `vscanf`
-    - [ ] `vsnprintf`
-    - [ ] `vsprintf`
+    - [~] `vsnprintf`
+    - [x] `vsprintf`
     - [ ] `vsscanf`
   - [ ] character input/output functions
     - [ ] `fgetc`
