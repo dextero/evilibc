@@ -158,6 +158,57 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `ferror`
     - [ ] `perror`
 - [ ] `<stdlib.h>`
+  - [x] types
+    - [x] `size_t`
+    - [x] `wchar_t`
+    - [x] `div_t`
+    - [x] `ldiv_t`
+    - [x] `lldiv_t`
+  - [x] macros
+    - [x] `EXIT_FAILURE`
+    - [x] `EXIT_SUCCESS`
+    - [x] `RAND_MAX`
+    - [ ] `MB_CUR_MAX`
+  - [ ] functions
+    - [ ] `atof`
+    - [ ] `atoi`
+    - [ ] `atol`
+    - [ ] `atoll`
+    - [ ] `strtod`
+    - [ ] `strtof`
+    - [ ] `strtold`
+    - [ ] `strtol`
+    - [ ] `strtoll`
+    - [ ] `strtoul`
+    - [ ] `strtoull`
+    - [ ] `rand`
+    - [ ] `srand`
+    - [ ] `aligned_alloc`
+    - [ ] `calloc`
+    - [ ] `free`
+    - [ ] `malloc`
+    - [ ] `realloc`
+    - [ ] `abort`
+    - [ ] `atexit`
+    - [ ] `at_quick_exit`
+    - [ ] `exit`
+    - [ ] `_Exit`
+    - [ ] `quick_exit`
+    - [ ] `getenv`
+    - [ ] `system`
+    - [ ] `bsearch`
+    - [ ] `qsort`
+    - [ ] `abs`
+    - [ ] `labs`
+    - [ ] `llabs`
+    - [ ] `div`
+    - [ ] `ldiv`
+    - [ ] `lldiv`
+    - [ ] `mblen`
+    - [ ] `mbtowc`
+    - [ ] `wctomb`
+    - [ ] `mbstowcs`
+    - [ ] `wcstombs`
 - [ ] `<stdnoreturn.h>`
 - [ ] `<string.h>`
   - [x] copying functions
