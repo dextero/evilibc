@@ -2,6 +2,7 @@
 #define __EVILIBC_ASSERT_H
 
 #include "stdio.h"
+#include "stdlib.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,9 +51,6 @@ extern "C" {
 
 #define __EVILIBC_QUOTE_(x) #x
 #define __EVILIBC_QUOTE(x) __EVILIBC_QUOTE_(x)
-
-#warning "TODO: define this in stdlib.h instead"
-#define abort() do {} while(1)
 
 #define assert(expression) \
     do { \
