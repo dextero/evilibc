@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}
             $<TARGET_OBJECTS:syscalls>
             src/ctype/ctype.c
             src/errno/errno.c
+            src/signal/raise.c
             src/stdio/internal/utils.c
             src/stdio/fopen.c
             src/stdio/format.c
