@@ -38,7 +38,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
   - [x] `SIG_DFL`, `SIG_ERR`, `SIG_IGN` macros
   - [x] `SIGABRT`, `SIGFPE`, `SIGILL`, `SIGINT`, `SIGSEGV`, `SIGTERM` macros
   - [ ] `signal`
-  - [ ] `raise`
+  - [x] `raise`
 - [ ] `<stdalign.h>`
 - [ ] `<stdarg.h>`
 - [ ] `<stdatomic.h>`
@@ -188,7 +188,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `free`
     - [ ] `malloc`
     - [ ] `realloc`
-    - [ ] `abort`
+    - [x] `abort`
     - [ ] `atexit`
     - [ ] `at_quick_exit`
     - [ ] `exit`
