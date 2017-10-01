@@ -32,6 +32,7 @@ add_library(${PROJECT_NAME}
             $<TARGET_OBJECTS:syscalls>
             src/ctype/ctype.c
             src/errno/errno.c
+            src/signal/raise.c
             src/stdio/internal/utils.c
             src/stdio/fopen.c
             src/stdio/format.c
@@ -44,6 +45,7 @@ add_library(${PROJECT_NAME}
             src/stdio/vfprintf.c
             src/stdio/vsprintf.c
             src/stdio/vsnprintf.c
+            src/stdlib/abort.c
             src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
