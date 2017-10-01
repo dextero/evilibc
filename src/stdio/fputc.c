@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "errno.h"
 
-#include "stdio/file.h"
+#include "internal/file.h"
 
 #include "os/syscalls.h"
 

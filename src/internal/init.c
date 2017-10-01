@@ -1,6 +1,6 @@
 #include "stdio.h"
 
-#include "stdio/file.h"
+#include "stdio/internal/file.h"
 
 void __evil_init(void) {
     for (size_t i = 0;

@@ -12,18 +12,6 @@
 #define _STR(x) #x
 #define STR(x) _STR(x)
 
-static size_t write_literal(char *restrict *pbuf,
-                            size_t *pbuf_size,
-                            const char *str,
-                            size_t str_size)
-{
-    size_t bytes_to_copy = str_size < *pbuf_size ? str_size : *pbuf_size;
-    memcpy(*pbuf, str, bytes_to_copy);
-    *pbuf += bytes_to_copy;
-    *pbuf_size -= bytes_to_copy;
-    return str_size;
-}
-
 static size_t fill_literal(char *restrict *pbuf,
                            size_t *pbuf_size,
                            unsigned char c,
@@ -139,11 +127,11 @@ static size_t write_padded(char *restrict *pbuf,
     unsigned pad_char = (flags & FLAG_ZERO_PAD) ? '0' : ' ';
 
     if (flags & FLAG_LEFT_JUSTIFY) {
-        return (write_literal(pbuf, pbuf_size, str, str_size)
+        return (__evil_write_literal(pbuf, pbuf_size, str, str_size)
                 + fill_literal(pbuf, pbuf_size, pad_char, pad_size));
     } else {
         return (fill_literal(pbuf, pbuf_size, pad_char, pad_size)
-                + write_literal(pbuf, pbuf_size, str, str_size));
+                + __evil_write_literal(pbuf, pbuf_size, str, str_size));
     }
 }
 
@@ -392,6 +380,15 @@ static size_t write_unsigned(char *restrict *pbuf,
     return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
 }
 
+static int write_pointer(char *restrict *pbuf,
+                         size_t *pbuf_size,
+                         const struct fmt *fmt_const,
+                         va_list *args)
+{
+    // TODO UNIMPLEMENTED
+    return 0;
+}
+
 size_t __evil_write_formatted(char *restrict *pbuf,
                               size_t *pbuf_size,
                               int chars_written_so_far,
@@ -452,8 +449,12 @@ size_t __evil_write_formatted(char *restrict *pbuf,
             return 0;
         }
     case TYPE_POINTER:
-        // TODO UNIMPLEMENTED
-        return 0;
+        if (fmt->length != LENGTH_DEFAULT) {
+            __evil_ub("unexpected length specifier in %%s: %.*s",
+                      fmt_size(fmt), fmt->start);
+            return 0;
+        }
+        return write_pointer(pbuf, pbuf_size, fmt, args);
     case TYPE_NUM_CHARS_WRITTEN:
         if (fmt->flags != 0
                 || fmt->min_width != MISSING
@@ -503,8 +504,9 @@ int vsnprintf(char* restrict s,
             ++format;
         } else {
             if (format != segment_start) {
-                chars_written += write_literal(&s, &n, segment_start,
-                                               (size_t)(format - segment_start));
+                chars_written +=
+                    __evil_write_literal(&s, &n, segment_start,
+                                         (size_t)(format - segment_start));
             }
 
             struct fmt fmt;
@@ -521,8 +523,8 @@ int vsnprintf(char* restrict s,
     va_end(args_copy);
 
     if (format != segment_start) {
-        chars_written += write_literal(&s, &n, segment_start,
-                                       (size_t)(format - segment_start));
+        chars_written += __evil_write_literal(&s, &n, segment_start,
+                                              (size_t)(format - segment_start));
     }
 
     return chars_written;

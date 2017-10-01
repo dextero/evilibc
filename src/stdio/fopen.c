@@ -3,8 +3,7 @@
 #include "stdbool.h"
 #include "errno.h"
 
-#include "stdio/file.h"
-
+#include "internal/file.h"
 #include "internal/undefined_behavior.h"
 
 #include "os/syscalls.h"

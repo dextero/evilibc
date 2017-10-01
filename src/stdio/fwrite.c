@@ -1,6 +1,6 @@
 #include "stdio.h"
 
-#include "stdio/file.h"
+#include "internal/file.h"
 
 size_t fwrite(const void* restrict ptr,
               size_t size,
