@@ -12,8 +12,9 @@ int main() {
            "4294967296, long, HEX: %lX\n"
            "'x', char: %c\n"
            "string: %s\n"
+           "pointer: %p\n"
            "percent: %%\n",
            0, 1, 2, 0, 4294967296L,
            4294967296UL, 4294967296UL, 4294967296UL, 4294967296UL,
-           'x', "Hello evilibc!");
+           'x', "Hello evilibc!", &(int){0});
 }
