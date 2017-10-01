@@ -111,7 +111,26 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `vfscanf`
     - [x] `vprintf`
     - [ ] `vscanf`
-    - [~] `vsnprintf`
+    - [ ] `vsnprintf`
+      - [x] `%d`, `%i`
+      - [x] `%u`
+      - [x] `%o`
+      - [x] `%x`
+      - [x] `%X`
+      - [ ] `%f`
+      - [ ] `%F`
+      - [ ] `%e`
+      - [ ] `%E`
+      - [ ] `%g`
+      - [ ] `%G`
+      - [ ] `%a`
+      - [ ] `%A`
+      - [x] `%c`
+      - [x] `%s`
+      - [ ] `%ls`
+      - [x] `%p`
+      - [x] `%n`
+      - [x] `%%`
     - [x] `vsprintf`
     - [ ] `vsscanf`
   - [ ] character input/output functions
