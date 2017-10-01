@@ -1,0 +1,16 @@
+#ifndef __EVIL_CONFIG_H
+#define __EVIL_CONFIG_H
+
+#ifndef WITH_POSIX
+#cmakedefine WITH_POSIX 1
+#endif
+
+#ifndef WITH_XSI
+#cmakedefine WITH_XSI 1
+#endif
+
+#cmakedefine WITH_FIXED_WIDTH_TYPES 1
+#cmakedefine WITH_64BIT_FIXED_WIDTH_TYPES 1
+#cmakedefine WITH_INTPTR_TYPES 1
+
+#endif // __EVIL_CONFIG_H

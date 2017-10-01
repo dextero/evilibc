@@ -14,6 +14,18 @@ include_directories(SYSTEM
                     os/linux-x86_64/include
                     /usr/include/x86_64-linux-gnu)
 
+option(WITH_POSIX "Enable POSIX features" OFF)
+option(WITH_XSI "Enable XSI features" OFF)
+
+option(WITH_FIXED_WIDTH_TYPES "Support optional intN_t/uintN_t types" OFF)
+option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OFF)
+option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
+
+configure_file(config/evil-config.h.in
+               "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
+               @ONLY)
+include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
+
 include_directories(include
                     src)
 add_library(${PROJECT_NAME}
@@ -57,6 +69,7 @@ add_library(${PROJECT_NAME}
             src/internal/undefined_behavior.c)
 
 install(DIRECTORY include DESTINATION include/evilibc)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
 install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
 
 add_executable(hello hello.c)
