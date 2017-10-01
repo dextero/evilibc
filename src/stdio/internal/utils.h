@@ -8,7 +8,7 @@ size_t __evil_write_literal(char *restrict *pbuf,
                             const char *str,
                             size_t str_size);
 
-size_t __evil_write_haiku_for_ptr(char **pbuf,
+size_t __evil_write_haiku_for_ptr(char *restrict *pbuf,
                                   size_t *pbuf_size,
                                   const void *ptr);
 
