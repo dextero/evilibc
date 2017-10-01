@@ -7,6 +7,7 @@
 
 #include "format.h"
 
+#include "internal/utils.h"
 #include "internal/undefined_behavior.h"
 
 #define _STR(x) #x
@@ -382,11 +383,25 @@ static size_t write_unsigned(char *restrict *pbuf,
 
 static int write_pointer(char *restrict *pbuf,
                          size_t *pbuf_size,
-                         const struct fmt *fmt_const,
+                         const struct fmt *fmt,
                          va_list *args)
 {
-    // TODO UNIMPLEMENTED
-    return 0;
+    if (fmt->length != LENGTH_DEFAULT) {
+        __evil_ub("unexpected length specifier in %%s: %.*s",
+                  fmt_size(fmt), fmt->start);
+        return 0;
+    }
+
+    /*
+     * > The value of the pointer is converted to a sequence of printing
+     * > characters, in an implementation-defined manner.
+     *
+     * That means *any* encoding of a pointer is fine, as long as it can
+     * uniquely identify an address. Therefore, mapping the whole address space
+     * to haiku poems is technically correct.
+     */
+    const void *ptr = va_arg(*args, void *);
+    return __evil_write_haiku_for_ptr(pbuf, pbuf_size, ptr);
 }
 
 size_t __evil_write_formatted(char *restrict *pbuf,
@@ -449,11 +464,6 @@ size_t __evil_write_formatted(char *restrict *pbuf,
             return 0;
         }
     case TYPE_POINTER:
-        if (fmt->length != LENGTH_DEFAULT) {
-            __evil_ub("unexpected length specifier in %%s: %.*s",
-                      fmt_size(fmt), fmt->start);
-            return 0;
-        }
         return write_pointer(pbuf, pbuf_size, fmt, args);
     case TYPE_NUM_CHARS_WRITTEN:
         if (fmt->flags != 0
