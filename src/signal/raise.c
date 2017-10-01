@@ -1,5 +1,7 @@
 #include "signal.h"
 
+#include "os/syscalls.h"
+
 #include "internal/rand.h"
 
 int raise(int sig)
