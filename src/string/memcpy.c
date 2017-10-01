@@ -40,5 +40,8 @@ void* memcpy(void* restrict s1,
     }
 
     /* TODO: verify that s1 is indeed writable */
-    return __builtin_memcpy(s1, s2, n);
+    for (size_t i = 0; i < n; ++i) {
+        ((unsigned char *)s1)[i] = ((const unsigned char *)s2)[i];
+    }
+    return s1;
 }

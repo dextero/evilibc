@@ -159,7 +159,7 @@ char* tmpnam(char* s);
 
 int fclose(FILE* stream);
 int fflush(FILE* stream);
-FILE* fopen(const char* restrict filenme,
+FILE* fopen(const char* restrict filename,
             const char* restrict mode);
 FILE* freopen(const char* restrict filename,
               const char* restrict mode,
@@ -223,8 +223,16 @@ int fputs(const char* restrict s,
           FILE* restrict stream);
 int getc(FILE* stream);
 int getchar(void);
-int putc(int c,
-         FILE* stream);
+
+/*
+ * 7.21.7.7.2:
+ * > The putc function is equivalent to fputc, except that if it is
+ * > implemented as a macro, it may evaluate stream more than once, so that
+ * > argument should never be an expression with side effects.
+ */
+#define putc(c, stream) \
+    fputc((c), (((stream), (stream), (stream), (stream), (stream), (stream))))
+
 int putchar(int c);
 int puts(const char* restrict s);
 int ungetc(int c, FILE* stream);

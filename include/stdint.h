@@ -1,25 +1,57 @@
 #ifndef __EVILIBC_STDINT_H
 #define __EVILIBC_STDINT_H
 
-#include <unistd.h>
+#include <evil-config.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define __INT8_MIN__ (-128)
-#define __INT8_MAX__ 127
-#define __INT16_MIN__ (-32768)
-#define __INT16_MAX__ 32767
-#define __INT32_MIN__ (-2147483648)
-#define __INT32_MAX__ 2147483647
-#define __INT64_MIN__ (-9223372036854775808LL)
-#define __INT64_MAX__ 9223372036854775807LL
+#if WITH_POSIX || WITH_FIXED_WIDTH_TYPES
 
-#define __UINT8_MAX__ 255
-#define __UINT16_MAX__ 65535
-#define __UINT32_MAX__ 4294967295
-#define __UINT64_MAX__ 18446744073709551615ULL
+# ifndef __INT8_MIN__
+#  define __INT8_MIN__ (-128)
+# endif
+# ifndef __INT8_MAX__
+#  define __INT8_MAX__ 127
+# endif
+# ifndef __INT16_MIN__
+#  define __INT16_MIN__ (-32768)
+# endif
+# ifndef __INT16_MAX__
+#  define __INT16_MAX__ 32767
+# endif
+# ifndef __INT32_MIN__
+#  define __INT32_MIN__ (-2147483648)
+# endif
+# ifndef __INT32_MAX__
+#  define __INT32_MAX__ 2147483647
+# endif
+
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+#  ifndef __INT64_MIN__
+#   define __INT64_MIN__ (-9223372036854775808LL)
+#  endif
+#  ifndef __INT64_MAX__
+#   define __INT64_MAX__ 9223372036854775807LL
+#  endif
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
+
+# ifndef __UINT8_MAX__
+#  define __UINT8_MAX__ 255
+# endif
+# ifndef __UINT16_MAX__
+#  define __UINT16_MAX__ 65535
+# endif
+# ifndef __UINT32_MAX__
+#  define __UINT32_MAX__ 4294967295
+# endif
+
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+#  ifndef __UINT64_MAX__
+#   define __UINT64_MAX__ 18446744073709551615ULL
+#  endif
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
 /*
  * 7.20.1.1 Exact-width integer types:
@@ -37,28 +69,39 @@ extern "C" {
  * have these.
  * NOTE: that would no longer be POSIX; it requires CHAR_BIT == 8
  */
-#ifdef _POSIX_VERSION
-
 typedef __INT8_TYPE__  int8_t;
 typedef __INT16_TYPE__ int16_t;
 typedef __INT32_TYPE__ int32_t;
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+typedef __INT64_TYPE__ int64_t;
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
-#define INT8_MIN __INT8_MIN__
-#define INT8_MAX __INT8_MAX__
-#define INT16_MIN __INT16_MIN__
-#define INT16_MAX __INT16_MAX__
-#define INT32_MIN __INT32_MIN__
-#define INT32_MAX __INT32_MAX__
+# define INT8_MIN __INT8_MIN__
+# define INT8_MAX __INT8_MAX__
+# define INT16_MIN __INT16_MIN__
+# define INT16_MAX __INT16_MAX__
+# define INT32_MIN __INT32_MIN__
+# define INT32_MAX __INT32_MAX__
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+#  define INT64_MIN __INT64_MIN__
+#  define INT64_MAX __INT64_MAX__
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
 typedef __UINT8_TYPE__  uint8_t;
 typedef __UINT16_TYPE__ uint16_t;
 typedef __UINT32_TYPE__ uint32_t;
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+typedef __UINT64_TYPE__ uint64_t;
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
-#define UINT8_MAX __UINT8_MAX__
-#define UINT16_MAX __UINT16_MAX__
-#define UINT32_MAX __UINT32_MAX__
+# define UINT8_MAX __UINT8_MAX__
+# define UINT16_MAX __UINT16_MAX__
+# define UINT32_MAX __UINT32_MAX__
+# if WITH_64BIT_FIXED_WIDTH_TYPES
+#  define UINT64_MAX __UINT64_MAX__
+# endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
-#endif /* _POSIX_VERSION */
+#endif // WITH_POSIX || WITH_FIXED_WIDTH_TYPES
 
 /*
  * These should be smallest possible types at least N bytes large, but
@@ -154,7 +197,7 @@ typedef uint_least64_t uint_fast64_t;
  * > An XSI-conforming application should ensure that the feature test macro
  * > _XOPEN_SOURCE is defined with the value 600 before inclusion of any header.
  */
-#if _XOPEN_SOURCE == 600
+#if WITH_INTPTR_TYPES || WITH_XSI
 
 typedef __INTPTR_TYPE__  intptr_t;
 typedef __UINTPTR_TYPE__ uintptr_t;
@@ -167,7 +210,7 @@ typedef __UINTPTR_TYPE__ uintptr_t;
 #define INTPTR_MAX  __INTPTR_MAX__
 #define UINTPTR_MAX __UINTPTR_MAX__
 
-#endif /* _XOPEN_SOURCE */
+#endif // WITH_INTPTR_TYPES || WITH_XSI
 
 typedef __INTMAX_TYPE__  intmax_t;
 typedef __UINTMAX_TYPE__ uintmax_t;
