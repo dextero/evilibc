@@ -46,7 +46,7 @@ static struct chunk *alloc_new_chunk(size_t min_size)
     }
 
     struct chunk *chunk = (struct chunk *)p;
-    chunk->size = alloc_size - sizeof(struct chunk);
+    chunk->size = alloc_size - offsetof(struct chunk, data);
     chunk->list.next = NULL;
     return chunk;
 }
@@ -64,19 +64,19 @@ static bool chunk_data_not_less(struct list *list,
 }
 
 static struct list **chunk_insert(struct list **plist,
-                                  struct chunk *chunk)
+                                  struct list *chunk)
 {
-    struct list **insert_ptr = list_find_ptr(plist,
-                                             chunk_data_not_less, chunk->data);
-    list_insert(insert_ptr, &chunk->list);
+    struct list **insert_ptr = list_find_ptr(plist, chunk_data_not_less,
+                                             chunk_from_list(chunk)->data);
+    list_insert(insert_ptr, chunk);
     return insert_ptr;
 }
 
-static struct list *get_free_chunk(size_t min_size)
+static struct list **get_free_chunk(size_t min_size)
 {
     struct list **p = list_find_ptr(&g_free_chunks, chunk_bigger, &min_size);
     if (*p) {
-        return *p;
+        return p;
     }
 
     struct chunk *chunk = alloc_new_chunk(min_size);
@@ -84,21 +84,20 @@ static struct list *get_free_chunk(size_t min_size)
         return NULL;
     }
 
-    chunk_insert(&g_free_chunks, chunk);
-    return &chunk->list;
+    return chunk_insert(&g_free_chunks, &chunk->list);
 }
 
 static struct chunk *chunk_split(struct chunk *chunk,
                                  size_t first_size)
 {
-    assert(chunk->size < sizeof(struct chunk));
+    assert(chunk->size > offsetof(struct chunk, data));
     assert(first_size % _Alignof(struct chunk) == 0);
 
     struct chunk *second = (struct chunk *)&chunk->data[first_size];
 
     *second = (struct chunk) {
         .list = { .next = chunk->list.next },
-        .size = chunk->size - sizeof(struct chunk) - first_size
+        .size = chunk->size - offsetof(struct chunk, data) - first_size
     };
     *chunk = (struct chunk) {
         .list = { .next = &second->list },
@@ -137,11 +136,12 @@ static struct list **chunk_find_used(void *p)
 
 static void chunk_merge_with_next(struct chunk *first)
 {
-    assert(&first->data[first->size] == (char*)&first->list.next);
+    assert(&first->data[first->size]
+            == (char*)chunk_from_list(first->list.next));
 
     struct chunk *second = chunk_from_list(first->list.next);
     first->list.next = second->list.next;
-    first->size += second->size;
+    first->size += offsetof(struct chunk, data) + second->size;
 }
 
 static void chunk_defragment(struct chunk *first)
@@ -149,19 +149,24 @@ static void chunk_defragment(struct chunk *first)
     assert(first);
 
     while ((uintptr_t)&first->data[first->size]
-               == (uintptr_t)first->list.next) {
+               == (uintptr_t)chunk_from_list(first->list.next)) {
         chunk_merge_with_next(first);
     }
 }
 
 void *malloc(size_t size)
 {
-    struct list *list = get_free_chunk(size);
+    if (size == 0) {
+        return NULL;
+    }
+
+    struct list **list = get_free_chunk(size);
     if (!list) {
         return NULL;
     }
 
-    struct chunk *chunk =  chunk_shrink_to_fit(chunk_from_list(list), size);
+    struct chunk *chunk =  chunk_shrink_to_fit(chunk_from_list(*list), size);
+    chunk_insert(&g_used_chunks, list_detach(list));
     return chunk->data;
 }
 
@@ -173,8 +178,7 @@ void free(void *p)
             __evil_ub("invalid pointer passed to free(): %p", p);
         } else {
             struct list *elem = list_detach(plist);
-            struct chunk *chunk = container_of(elem, struct chunk, list);
-            struct list **prev = chunk_insert(&g_free_chunks, chunk);
+            struct list **prev = chunk_insert(&g_free_chunks, elem);
             chunk_defragment(chunk_from_plist(prev));
         }
     }
