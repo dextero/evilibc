@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "stdio.h"
 
 #include "internal/file.h"

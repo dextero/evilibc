@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "signal.h"
 
 #include "os/syscalls.h"

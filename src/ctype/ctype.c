@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "ctype.h"
 
 #include "errno.h"

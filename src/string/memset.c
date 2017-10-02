@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "string.h"
 
 #include "internal/undefined_behavior.h"

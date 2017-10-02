@@ -21,6 +21,8 @@ option(WITH_FIXED_WIDTH_TYPES "Support optional intN_t/uintN_t types" OFF)
 option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OFF)
 option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 
+option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
+
 configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
                @ONLY)
@@ -29,7 +31,6 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 include_directories(include
                     src)
 add_library(${PROJECT_NAME}
-            $<TARGET_OBJECTS:syscalls>
             src/ctype/ctype.c
             src/errno/errno.c
             src/signal/raise.c
@@ -46,6 +47,7 @@ add_library(${PROJECT_NAME}
             src/stdio/vsprintf.c
             src/stdio/vsnprintf.c
             src/stdlib/abort.c
+            src/stdlib/malloc/simple_list_based.c
             src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
@@ -71,9 +73,12 @@ add_library(${PROJECT_NAME}
             src/internal/rand.c
             src/internal/undefined_behavior.c)
 
+add_subdirectory(test)
+
 install(DIRECTORY include DESTINATION include/evilibc)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
 install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
 
-add_executable(hello hello.c)
+add_executable(hello hello.c
+               $<TARGET_OBJECTS:syscalls>)
 target_link_libraries(hello ${PROJECT_NAME})

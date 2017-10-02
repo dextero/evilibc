@@ -1,6 +1,9 @@
+#include <evil-config.h>
+
 #include "stdio.h"
 
 #include "stdbool.h"
+#include "stdint.h"
 #include "string.h"
 #include "assert.h"
 #include "limits.h"
@@ -157,7 +160,7 @@ static int write_string(char *restrict *pbuf,
 {
     struct fmt fmt = *fmt_const;
     long min_width = fetch_width(&fmt, args);
-    // TODO: precision
+    long precision = fetch_precision(&fmt, args, 1);
 
     const char *str = va_arg(*args, const char *);
     if (!str) {
@@ -168,11 +171,18 @@ static int write_string(char *restrict *pbuf,
     size_t str_size;
     if (min_width == MISSING) {
         str_size = strlen(str);
+        if (precision != MISSING && (size_t)precision < str_size) {
+            str_size = (size_t)precision;
+        }
     } else {
         assert(min_width >= 0);
         // str may have a null-terminator early
         str_size = min_width;
-        for (long i = 0; i < min_width; ++i) {
+        if (precision != MISSING && (size_t)precision < str_size) {
+            str_size = (size_t)precision;
+        }
+
+        for (size_t i = 0; i < str_size; ++i) {
             if (str[i] == '\0') {
                 str_size = (size_t)i;
                 break;
@@ -252,10 +262,20 @@ static size_t write_signed(char *restrict *pbuf,
         value = va_arg(*args, int);
         break;
     case LENGTH_LONG:
-        value = va_arg(*args, long);
+    case LENGTH_SIZE:
+    case LENGTH_PTRDIFF:
+        {
+            static_assert(sizeof(long) == sizeof(size_t), "");
+            static_assert(sizeof(long) == sizeof(ptrdiff_t), "");
+            value = va_arg(*args, long);
+        }
         break;
     case LENGTH_LONG_LONG:
-        value = va_arg(*args, long long);
+    case LENGTH_INTMAX:
+        {
+            static_assert(sizeof(long long) == sizeof(intmax_t), "");
+            value = va_arg(*args, long long);
+        }
         break;
     default:
         __evil_ub("unexpected length specifier in %%d: %.*s",
@@ -317,10 +337,20 @@ static size_t write_unsigned(char *restrict *pbuf,
         value = va_arg(*args, unsigned);
         break;
     case LENGTH_LONG:
-        value = va_arg(*args, unsigned long);
+    case LENGTH_SIZE:
+    case LENGTH_PTRDIFF:
+        {
+            static_assert(sizeof(unsigned long) == sizeof(size_t), "");
+            static_assert(sizeof(unsigned long) == sizeof(ptrdiff_t), "");
+            value = va_arg(*args, unsigned long);
+        }
         break;
     case LENGTH_LONG_LONG:
-        value = va_arg(*args, unsigned long long);
+    case LENGTH_INTMAX:
+        {
+            static_assert(sizeof(unsigned long long) == sizeof(uintmax_t), "");
+            value = va_arg(*args, unsigned long long);
+        }
         break;
     default:
         __evil_ub("unexpected length specifier in %%u: %.*s",
@@ -352,17 +382,17 @@ static size_t write_unsigned(char *restrict *pbuf,
     char tmp[sizeof(STR(ULLONG_MAX)) * 2] = "";
     char *p = ull_to_str(tmp, sizeof(tmp), value, precision, base, letter_case);
 
+    char prefix[2] = "0x";
+    size_t prefix_size = 0;
     if (fmt.flags & FLAG_ALTERNATIVE_FORM) {
         switch (base) {
         case 8:
-            if (value != 0) {
-                *--p = '0';
-            }
+            prefix_size = 1;
             break;
         case 16:
             if (value != 0) {
-                *--p = letter_case == CASE_LOWER ? 'x' : 'X';
-                *--p = '0';
+                prefix[1] = letter_case == CASE_LOWER ? 'x' : 'X';
+                prefix_size = 2;
             }
             break;
         default:
@@ -378,7 +408,9 @@ static size_t write_unsigned(char *restrict *pbuf,
     assert(min_width == MISSING || min_width >= 0);
     size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
 
-    return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
+    return __evil_write_literal(pbuf, pbuf_size, prefix, prefix_size)
+        + write_padded(pbuf, pbuf_size, p, int_str_size, width - prefix_size,
+                       fmt.flags);
 }
 
 static int write_pointer(char *restrict *pbuf,

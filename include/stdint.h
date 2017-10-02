@@ -1,8 +1,6 @@
 #ifndef __EVILIBC_STDINT_H
 #define __EVILIBC_STDINT_H
 
-#include <evil-config.h>
-
 #ifdef __cplusplus
 extern "C" {
 #endif

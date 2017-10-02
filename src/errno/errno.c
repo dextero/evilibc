@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "errno.h"
 
 #include "internal/undefined_behavior.h"

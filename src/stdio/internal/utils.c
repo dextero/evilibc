@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "utils.h"
 
 #include "string.h"
