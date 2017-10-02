@@ -185,8 +185,8 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `srand`
     - [ ] `aligned_alloc`
     - [ ] `calloc`
-    - [ ] `free`
-    - [ ] `malloc`
+    - [x] `free`
+    - [x] `malloc`
     - [ ] `realloc`
     - [x] `abort`
     - [ ] `atexit`
