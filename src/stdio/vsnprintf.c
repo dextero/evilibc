@@ -262,10 +262,20 @@ static size_t write_signed(char *restrict *pbuf,
         value = va_arg(*args, int);
         break;
     case LENGTH_LONG:
-        value = va_arg(*args, long);
+    case LENGTH_SIZE:
+    case LENGTH_PTRDIFF:
+        {
+            static_assert(sizeof(long) == sizeof(size_t), "");
+            static_assert(sizeof(long) == sizeof(ptrdiff_t), "");
+            value = va_arg(*args, long);
+        }
         break;
     case LENGTH_LONG_LONG:
-        value = va_arg(*args, long long);
+    case LENGTH_INTMAX:
+        {
+            static_assert(sizeof(long long) == sizeof(intmax_t), "");
+            value = va_arg(*args, long long);
+        }
         break;
     default:
         __evil_ub("unexpected length specifier in %%d: %.*s",
@@ -327,10 +337,20 @@ static size_t write_unsigned(char *restrict *pbuf,
         value = va_arg(*args, unsigned);
         break;
     case LENGTH_LONG:
-        value = va_arg(*args, unsigned long);
+    case LENGTH_SIZE:
+    case LENGTH_PTRDIFF:
+        {
+            static_assert(sizeof(unsigned long) == sizeof(size_t), "");
+            static_assert(sizeof(unsigned long) == sizeof(ptrdiff_t), "");
+            value = va_arg(*args, unsigned long);
+        }
         break;
     case LENGTH_LONG_LONG:
-        value = va_arg(*args, unsigned long long);
+    case LENGTH_INTMAX:
+        {
+            static_assert(sizeof(unsigned long long) == sizeof(uintmax_t), "");
+            value = va_arg(*args, unsigned long long);
+        }
         break;
     default:
         __evil_ub("unexpected length specifier in %%u: %.*s",
