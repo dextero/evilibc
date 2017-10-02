@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "internal/undefined_behavior.h"
 
 #include "stdarg.h"

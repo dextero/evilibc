@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "internal/rand.h"
 
 static unsigned int _seed = 1;

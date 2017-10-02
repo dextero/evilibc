@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "format.h"
 
 #include "stdbool.h"

@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "internal/memory.h"
 
 bool __evil_regions_overlap(const void *a,

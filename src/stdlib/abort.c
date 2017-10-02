@@ -1,3 +1,5 @@
+#include <evil-config.h>
+
 #include "stdlib.h"
 
 #include "signal.h"
