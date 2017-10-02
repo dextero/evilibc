@@ -82,9 +82,9 @@
             "syscall\n"                                 \
             "movq %%rax, %[result]\n"                   \
             : [result]"=r"(result)                      \
-            : [syscall]"i"(Num) INPUTS(__VA_ARGS__)    \
-            : "rax" CLOBBERS(__VA_ARGS__));            \
-        RETURN(RetT, result);                           \
+            : [syscall]"i"(Num) INPUTS(__VA_ARGS__)     \
+            : "rax" CLOBBERS(__VA_ARGS__));             \
+        return (RetT)result;                            \
     }
 
 SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
@@ -115,4 +115,22 @@ int ioctl(int fd, unsigned long command, ...) {
     int result = sys_ioctl(fd, command, va_arg(list, void*));
     va_end(list);
     return result;
+}
+
+static SYSCALL(__NR_brk, void *, _brk, void *, newbrk)
+
+void *_sbrk(ptrdiff_t increment) {
+    static void *curr_brk = NULL;
+    if (!curr_brk) {
+        curr_brk = _brk(NULL);
+    }
+
+    void *result = curr_brk;
+    curr_brk = _brk((char *)curr_brk + increment);
+
+    if (curr_brk == result) {
+        return NULL;
+    } else {
+        return curr_brk;
+    }
 }
