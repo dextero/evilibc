@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME}
             src/stdio/vsprintf.c
             src/stdio/vsnprintf.c
             src/stdlib/abort.c
+            src/stdlib/malloc/simple_list_based.c
             src/string/memchr.c
             src/string/memcmp.c
             src/string/memcpy.c
