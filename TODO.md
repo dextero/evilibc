@@ -184,10 +184,10 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `rand`
     - [ ] `srand`
     - [ ] `aligned_alloc`
-    - [ ] `calloc`
+    - [x] `calloc`
     - [x] `free`
     - [x] `malloc`
-    - [ ] `realloc`
+    - [x] `realloc`
     - [x] `abort`
     - [ ] `atexit`
     - [ ] `at_quick_exit`
