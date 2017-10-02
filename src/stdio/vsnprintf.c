@@ -382,17 +382,17 @@ static size_t write_unsigned(char *restrict *pbuf,
     char tmp[sizeof(STR(ULLONG_MAX)) * 2] = "";
     char *p = ull_to_str(tmp, sizeof(tmp), value, precision, base, letter_case);
 
+    char prefix[2] = "0x";
+    size_t prefix_size = 0;
     if (fmt.flags & FLAG_ALTERNATIVE_FORM) {
         switch (base) {
         case 8:
-            if (value != 0) {
-                *--p = '0';
-            }
+            prefix_size = 1;
             break;
         case 16:
             if (value != 0) {
-                *--p = letter_case == CASE_LOWER ? 'x' : 'X';
-                *--p = '0';
+                prefix[1] = letter_case == CASE_LOWER ? 'x' : 'X';
+                prefix_size = 2;
             }
             break;
         default:
@@ -408,7 +408,9 @@ static size_t write_unsigned(char *restrict *pbuf,
     assert(min_width == MISSING || min_width >= 0);
     size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
 
-    return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
+    return __evil_write_literal(pbuf, pbuf_size, prefix, prefix_size)
+        + write_padded(pbuf, pbuf_size, p, int_str_size, width - prefix_size,
+                       fmt.flags);
 }
 
 static int write_pointer(char *restrict *pbuf,
