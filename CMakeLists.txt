@@ -21,6 +21,8 @@ option(WITH_FIXED_WIDTH_TYPES "Support optional intN_t/uintN_t types" OFF)
 option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OFF)
 option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 
+option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
+
 configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
                @ONLY)
