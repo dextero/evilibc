@@ -3,6 +3,7 @@
 #include "stdio.h"
 
 #include "stdbool.h"
+#include "stdint.h"
 #include "string.h"
 #include "assert.h"
 #include "limits.h"
@@ -159,7 +160,7 @@ static int write_string(char *restrict *pbuf,
 {
     struct fmt fmt = *fmt_const;
     long min_width = fetch_width(&fmt, args);
-    // TODO: precision
+    long precision = fetch_precision(&fmt, args, 1);
 
     const char *str = va_arg(*args, const char *);
     if (!str) {
@@ -170,11 +171,18 @@ static int write_string(char *restrict *pbuf,
     size_t str_size;
     if (min_width == MISSING) {
         str_size = strlen(str);
+        if (precision != MISSING && (size_t)precision < str_size) {
+            str_size = (size_t)precision;
+        }
     } else {
         assert(min_width >= 0);
         // str may have a null-terminator early
         str_size = min_width;
-        for (long i = 0; i < min_width; ++i) {
+        if (precision != MISSING && (size_t)precision < str_size) {
+            str_size = (size_t)precision;
+        }
+
+        for (size_t i = 0; i < str_size; ++i) {
             if (str[i] == '\0') {
                 str_size = (size_t)i;
                 break;
