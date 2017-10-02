@@ -179,7 +179,11 @@ void free(void *p)
         } else {
             struct list *elem = list_detach(plist);
             struct list **prev = chunk_insert(&g_free_chunks, elem);
-            chunk_defragment(chunk_from_plist(prev));
+            if (prev == &g_free_chunks) {
+                chunk_defragment(chunk_from_list(*prev));
+            } else {
+                chunk_defragment(chunk_from_plist(prev));
+            }
         }
     }
 }
