@@ -29,7 +29,6 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 include_directories(include
                     src)
 add_library(${PROJECT_NAME}
-            $<TARGET_OBJECTS:syscalls>
             src/ctype/ctype.c
             src/errno/errno.c
             src/signal/raise.c
@@ -76,5 +75,6 @@ install(DIRECTORY include DESTINATION include/evilibc)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
 install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
 
-add_executable(hello hello.c)
+add_executable(hello hello.c
+               $<TARGET_OBJECTS:syscalls>)
 target_link_libraries(hello ${PROJECT_NAME})
