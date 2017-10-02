@@ -71,6 +71,8 @@ add_library(${PROJECT_NAME}
             src/internal/rand.c
             src/internal/undefined_behavior.c)
 
+add_subdirectory(test)
+
 install(DIRECTORY include DESTINATION include/evilibc)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
 install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
