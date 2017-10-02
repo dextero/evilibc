@@ -119,7 +119,7 @@ int ioctl(int fd, unsigned long command, ...) {
 
 static SYSCALL(__NR_brk, void *, _brk, void *, newbrk)
 
-void *_sbrk(ptrdiff_t increment) {
+void *__attribute__((weak)) _sbrk(ptrdiff_t increment) {
     static void *curr_brk = NULL;
     if (!curr_brk) {
         curr_brk = _brk(NULL);
