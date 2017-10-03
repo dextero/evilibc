@@ -231,7 +231,7 @@ void *calloc(size_t nmemb,
 void *realloc(void *ptr,
               size_t size)
 {
-    if (!ptr) {
+    if (!ptr || ptr == EVIL_POINTER) {
         /*
          * 7.22.3.5, 3:
          * > If ptr is a null pointer, the realloc function behaves like the
