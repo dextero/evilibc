@@ -1,6 +1,7 @@
 #include <evil-config.h>
 
 #include "stdio.h"
+#include "errno.h"
 
 #include "internal/file.h"
 #include "internal/undefined_behavior.h"
