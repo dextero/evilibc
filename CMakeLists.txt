@@ -36,11 +36,15 @@ add_library(${PROJECT_NAME}
             src/errno/errno.c
             src/signal/raise.c
             src/stdio/internal/utils.c
+            src/stdio/fclose.c
+            src/stdio/fflush.c
             src/stdio/fopen.c
             src/stdio/format.c
             src/stdio/fprintf.c
             src/stdio/fputc.c
             src/stdio/fwrite.c
+            src/stdio/setbuf.c
+            src/stdio/setvbuf.c
             src/stdio/printf.c
             src/stdio/sprintf.c
             src/stdio/snprintf.c
