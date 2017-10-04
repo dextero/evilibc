@@ -4,17 +4,6 @@
 
 #include "internal/rand.h"
 
-static void set_buffer(FILE *restrict stream,
-                       char *buffer,
-                       bool buffer_needs_free) {
-    if (stream->buffer_needs_free) {
-        free(stream->buffer);
-    }
-
-    stream->buffer = buffer;
-    stream->buffer_needs_free = buffer_needs_free;
-}
-
 int setvbuf(FILE* restrict stream,
             char* restrict buf,
             int mode,
@@ -58,14 +47,14 @@ int setvbuf(FILE* restrict stream,
             && __evil_rand_bool()
 #endif
             ) {
-        set_buffer(stream, buf, false);
+        file_set_buffer(stream, buf, false);
     } else {
         void *buf = malloc(size);
         if (!buf) {
             goto fail;
         }
 
-        set_buffer(stream, (char *)buf, true);
+        file_set_buffer(stream, (char *)buf, true);
     }
 
     stream->bufmode = mode;

@@ -25,6 +25,18 @@ struct __evilibc_file {
 
 extern FILE __evil_open_files[FOPEN_MAX];
 
+static inline void file_set_buffer(FILE *restrict stream,
+                                   char *buffer,
+                                   bool buffer_needs_free) {
+    if (stream->buffer_needs_free) {
+        free(stream->buffer);
+    }
+
+    stream->buffer = buffer;
+    stream->buffer_needs_free = buffer_needs_free;
+}
+
+
 static inline FILE *file_alloc(void) {
     for (size_t i = 0; i < FOPEN_MAX; ++i) {
         if (__evil_open_files[i].fd < 0) {
@@ -35,6 +47,7 @@ static inline FILE *file_alloc(void) {
 }
 
 static inline void file_dealloc(FILE *f) {
+    file_set_buffer(f, NULL, false);
     f->fd = -1;
 }
 
