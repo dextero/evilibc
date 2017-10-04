@@ -6,10 +6,12 @@
 #include "stdbool.h"
 #define WITH_INTPTR_TYPES 1
 #include "stdint.h"
+#include "string.h"
 
 #include "internal/container_of.h"
 #include "internal/list.h"
 #include "internal/undefined_behavior.h"
+#include "internal/rand.h"
 
 #include "os/syscalls.h"
 
@@ -240,7 +242,7 @@ void *realloc(void *ptr,
         return malloc(size);
     }
 
-    struct list **plist = chunk_find_used(p);
+    struct list **plist = chunk_find_used(ptr);
     if (!plist) {
         /*
          * 7.22.3.5, 3:
@@ -248,7 +250,8 @@ void *realloc(void *ptr,
          * > management function, or if the space has been deallocated by a
          * > call to the free or realloc function, the behavior is undefined.
          */
-        __evil_ub("invalid pointer passed to realloc(): %p", p);
+        __evil_ub("invalid pointer passed to realloc(): %p", ptr);
+        return NULL;
     } else {
         /*
          * That's a *very* lazy implementation.
