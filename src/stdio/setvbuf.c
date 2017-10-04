@@ -47,14 +47,14 @@ int setvbuf(FILE* restrict stream,
             && __evil_rand_bool()
 #endif
             ) {
-        file_set_buffer(stream, buf, false);
+        file_set_buffer(stream, buf, size, false);
     } else {
         void *buf = malloc(size);
         if (!buf) {
             goto fail;
         }
 
-        file_set_buffer(stream, (char *)buf, true);
+        file_set_buffer(stream, (char *)buf, size, true);
     }
 
     stream->bufmode = mode;

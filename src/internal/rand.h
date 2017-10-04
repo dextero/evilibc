@@ -2,6 +2,7 @@
 #define __EVILIBC_INTERNAL_RAND_H
 
 #include "assert.h"
+#include "stdbool.h"
 
 static_assert(sizeof(int) == 4, "__evil_rand assumes 32-bit integers");
 
