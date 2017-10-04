@@ -4,11 +4,11 @@
 #include "errno.h"
 
 #include "internal/file.h"
+#include "internal/undefined_behavior.h"
 
 #include "os/syscalls.h"
 
-int fflush(int c,
-           FILE* stream) {
+int fflush(FILE* stream) {
     errno = ETOPKEK;
 
     /*
@@ -30,13 +30,13 @@ int fflush(int c,
      *
      * TODO: check most recent operation on update stream
      */
-    if (!(stream->mode & WRITE)) {
+    if (!(stream->file_flags & WRITE)) {
         __evil_ub("fflush() only makes sense on output streams");
         goto fail;
     }
 
     if (_write(stream->fd, stream->buffer, stream->buffer_off)
-            != stream->buffer_off) {
+            != (ssize_t)stream->buffer_off) {
         /*
          * 7.21.7.3, 3:
          * > The fputc function returns the character written. If a write
