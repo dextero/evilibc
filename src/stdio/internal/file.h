@@ -19,6 +19,8 @@ struct __evilibc_file {
     int bufmode;
     bool error;
     bool eof;
+    bool buffer_needs_free;
+    char *buffer;
 };
 
 extern FILE __evil_open_files[FOPEN_MAX];

@@ -22,6 +22,7 @@ option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OF
 option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 
 option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
+option(WITH_DETERMINISTIC_SETVBUF "Do not interpret MAY in setvbuf() spec literally" ON)
 
 configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
