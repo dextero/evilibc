@@ -1,7 +1,9 @@
 #include <evil-config.h>
 
 #include "stdio.h"
+#include "errno.h"
 
+#include "internal/file.h"
 #include "internal/rand.h"
 
 int setvbuf(FILE* restrict stream,
