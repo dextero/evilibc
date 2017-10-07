@@ -32,5 +32,12 @@ void* memchr(const void* s,
         __evil_ub("passing NULL to memchr is UB: memchr(%p, %d, %zu)", s, c, n);
     }
 
-    return __builtin_memchr(s, c, n);
+    unsigned char *p = (unsigned char *)s;
+    for (size_t i = 0; i < n; ++i) {
+        if ((unsigned char)c == p[i]) {
+            return &p[i];
+        }
+    }
+
+    return NULL;
 }
