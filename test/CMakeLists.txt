@@ -35,3 +35,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test)
+
+add_executable(all_tests string/memchr.cpp)
+
+add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)

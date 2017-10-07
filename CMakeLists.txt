@@ -82,4 +82,6 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION inc
 install(FILES "$<TARGET_FILE:evilibc>" DESTINATION lib)
 
 add_subdirectory(os/linux-x86_64)
+
+enable_testing()
 add_subdirectory(test)
