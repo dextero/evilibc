@@ -77,13 +77,13 @@
 #define SYSCALL(Num, RetT, Name, ...)                   \
     RetT Name(ARGS(__VA_ARGS__)) {                      \
         long result;                                    \
-        asm("movq %[syscall], %%rax\n"                  \
-            SETUP(__VA_ARGS__)                          \
-            "syscall\n"                                 \
-            "movq %%rax, %[result]\n"                   \
-            : [result]"=r"(result)                      \
-            : [syscall]"i"(Num) INPUTS(__VA_ARGS__)     \
-            : "rax" CLOBBERS(__VA_ARGS__));             \
+        __asm__("movq %[syscall], %%rax\n"              \
+                SETUP(__VA_ARGS__)                      \
+                "syscall\n"                             \
+                "movq %%rax, %[result]\n"               \
+                : [result]"=r"(result)                  \
+                : [syscall]"i"(Num) INPUTS(__VA_ARGS__) \
+                : "rax" CLOBBERS(__VA_ARGS__));         \
         return (RetT)result;                            \
     }
 

@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(evilibc C)
+project(evilibc C CXX)
 
-set(CMAKE_C_FLAGS "-Wall -Wextra -nostdlib -nostdinc")
-
-# GCC complains about that a lot
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-nonnull-compare")
-
-include_directories(os/include
-                    include)
-add_subdirectory(os/linux-x86_64)
-include_directories(SYSTEM
-                    os/linux-x86_64/include
-                    /usr/include/x86_64-linux-gnu)
+# GCC complains a lot about redundant != NULL checks
+set(CMAKE_C_FLAGS "-Wall -Wextra -std=c11 -Wno-nonnull-compare")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14")
 
 option(WITH_POSIX "Enable POSIX features" OFF)
 option(WITH_XSI "Enable XSI features" OFF)
@@ -29,9 +21,7 @@ configure_file(config/evil-config.h.in
                @ONLY)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 
-include_directories(include
-                    src)
-add_library(${PROJECT_NAME}
+add_library(evilibc
             src/ctype/ctype.c
             src/errno/errno.c
             src/signal/raise.c
@@ -77,13 +67,19 @@ add_library(${PROJECT_NAME}
             src/internal/memory.c
             src/internal/rand.c
             src/internal/undefined_behavior.c)
-
-add_subdirectory(test)
+set(EVILIBC_C_FLAGS
+    -nostdlib -nostdinc
+    -I${CMAKE_CURRENT_SOURCE_DIR}/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/os/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/os/linux-x86_64/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/src
+    -isystem /usr/include/x86_64-linux-gnu)
+set_target_properties(evilibc PROPERTIES
+                      COMPILE_OPTIONS "${EVILIBC_C_FLAGS}")
 
 install(DIRECTORY include DESTINATION include/evilibc)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
-install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
+install(FILES "$<TARGET_FILE:evilibc>" DESTINATION lib)
 
-add_executable(hello hello.c
-               $<TARGET_OBJECTS:syscalls>)
-target_link_libraries(hello ${PROJECT_NAME})
+add_subdirectory(os/linux-x86_64)
+add_subdirectory(test)

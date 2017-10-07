@@ -1,4 +1,37 @@
-add_executable(test_stdlib_malloc
-               stdlib/malloc.c
-               $<TARGET_OBJECTS:syscalls>)
-target_link_libraries(test_stdlib_malloc evilibc)
+set(GTEST_PREFIX "${CMAKE_BINARY_DIR}")
+set(GTEST_INSTALL_DIR "${GTEST_PREFIX}/install")
+
+include(ExternalProject)
+ExternalProject_Add(googletest
+                    GIT_REPOSITORY https://github.com/google/googletest
+                    CMAKE_ARGS
+                        "-DCMAKE_INSTALL_PREFIX=${GTEST_INSTALL_DIR}"
+                        "-DCMAKE_C_FLAGS=-std=c++11"
+                    PREFIX "${GTEST_PREFIX}")
+
+set(GTEST_INCLUDE_DIRS ${GTEST_INSTALL_DIR}/include)
+set(GTEST_LIBRARY_DIRS ${GTEST_INSTALL_DIR}/lib)
+set(GTEST_LIBRARIES gtest gtest_main gmock pthread)
+
+function(add_prefix_to_all_symbols TARGET_NAME PREFIX IN_LIBRARY_TARGET)
+    set(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/lib${TARGET_NAME}.a")
+
+    add_custom_target("generate_${TARGET_NAME}")
+    add_custom_command(TARGET "generate_${TARGET_NAME}" PRE_BUILD
+                       COMMAND cp "$<TARGET_FILE:${IN_LIBRARY_TARGET}>" "${OUTPUT}"
+                       COMMAND objcopy --prefix-symbols=test_ "${OUTPUT}"
+                       MAIN_DEPENDENCY "${IN_LIBRARY_TARGET}")
+
+    add_library("${TARGET_NAME}" STATIC IMPORTED)
+    set_target_properties("${TARGET_NAME}" PROPERTIES IMPORTED_LOCATION "${OUTPUT}")
+    add_dependencies("${TARGET_NAME}" "generate_${TARGET_NAME}")
+endfunction()
+
+add_prefix_to_all_symbols(runtime_test test_ runtime)
+add_prefix_to_all_symbols(evilibc_test test_ evilibc)
+add_dependencies(evilibc_test googletest)
+
+include_directories(${GTEST_INCLUDE_DIRS})
+link_directories(${GTEST_LIBRARY_DIRS})
+
+link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test)
