@@ -5,6 +5,7 @@
 #include "stdarg.h"
 
 #ifdef __cplusplus
+# define restrict
 extern "C" {
 #endif
 
@@ -262,6 +263,7 @@ void perror(const char* s);
 
 #ifdef __cplusplus
 } /* extern "C" */
+# undef restrict
 #endif
 
 #endif /* __EVILIBC_STDIO_H */
