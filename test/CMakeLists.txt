@@ -42,6 +42,8 @@ link_directories(${GTEST_LIBRARY_DIRS})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test evilibc_test_utils)
 
-add_executable(all_tests string/memchr.cpp)
+add_executable(all_tests
+               string/memchr.cpp
+               string/memmove.cpp)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)
