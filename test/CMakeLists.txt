@@ -31,10 +31,16 @@ add_prefix_to_all_symbols(runtime_test test_ runtime)
 add_prefix_to_all_symbols(evilibc_test test_ evilibc)
 add_dependencies(evilibc_test googletest)
 
+add_library(evilibc_test_utils
+            UBChecker.cpp
+            UBChecker.h
+            Test.h)
+
 include_directories(${GTEST_INCLUDE_DIRS})
 link_directories(${GTEST_LIBRARY_DIRS})
 
-link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test evilibc_test_utils)
 
 add_executable(all_tests string/memchr.cpp)
 
