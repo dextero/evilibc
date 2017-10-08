@@ -30,6 +30,7 @@ void* memchr(const void* s,
      */
     if (s == NULL) {
         __evil_ub("passing NULL to memchr is UB: memchr(%p, %d, %zu)", s, c, n);
+        return NULL;
     }
 
     unsigned char *p = (unsigned char *)s;
