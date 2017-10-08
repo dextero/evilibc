@@ -28,8 +28,39 @@ void* memmove(void* restrict s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to memmove is UB even if size == 0: "
                   "memmove(%p, %p, %zu)", s1, s2, n);
+        return NULL;
     }
 
     /* TODO: verify that s1 is indeed writable */
-    return __builtin_memmove(s1, s2, n);
+    unsigned char *dst = (unsigned char *)s1;
+    const unsigned char *src = (const unsigned char *)s2;
+
+    /*
+     * TODO: comparing pointers to objects that are not elements of the same
+     * array or struct is technically UB
+     */
+    if (src < dst && src + n > dst) {
+        /*
+         * SRCSRC
+         *    DSTDST
+         */
+
+        dst += n - 1;
+        src += n - 1;
+        while (n-- > 0) {
+            *dst-- = *src--;
+        }
+    } else {
+        /*
+         * DSTDST
+         *    SRCSRC
+         *
+         * or non-overlapping regions; in either case forward iteration is fine.
+         */
+        while (n-- > 0) {
+            *dst++ = *src++;
+        }
+    }
+
+    return s1;
 }
