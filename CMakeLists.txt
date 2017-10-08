@@ -99,6 +99,8 @@ install(FILES "$<TARGET_FILE:evilibc>" DESTINATION lib)
 add_subdirectory(os/linux-x86_64)
 
 enable_testing()
-add_custom_target(check COMMAND env GTEST_COLOR=1 ${CMAKE_CTEST_COMMAND} --verbose)
-
 add_subdirectory(test)
+
+add_custom_target(check COMMAND env GTEST_COLOR=1 ${CMAKE_CTEST_COMMAND} --verbose)
+add_dependencies(check all_tests)
+
