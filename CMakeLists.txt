@@ -22,6 +22,20 @@ configure_file(config/evil-config.h.in
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 
 add_library(evilibc
+            include/assert.h
+            include/ctype.h
+            include/errno.h
+            include/evilibc.h
+            include/limits.h
+            include/signal.h
+            include/stdarg.h
+            include/stdbool.h
+            include/stddef.h
+            include/stdint.h
+            include/stdio.h
+            include/stdlib.h
+            include/string.h
+            include/time.h
             src/ctype/ctype.c
             src/errno/errno.c
             src/signal/raise.c
