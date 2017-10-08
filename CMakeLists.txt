@@ -66,7 +66,8 @@ add_library(evilibc
             src/internal/init.c
             src/internal/memory.c
             src/internal/rand.c
-            src/internal/undefined_behavior.c)
+            src/internal/undefined_behavior.c
+            src/evilibc.c)
 set(EVILIBC_C_FLAGS
     -nostdlib -nostdinc
     -I${CMAKE_CURRENT_SOURCE_DIR}/include
