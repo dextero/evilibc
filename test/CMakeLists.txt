@@ -48,6 +48,7 @@ add_executable(all_tests
                string/memchr.cpp
                string/memmove.cpp
                string/strtok.cpp
-               string/strspn.cpp)
+               string/strspn.cpp
+               string/strchr.cpp)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)
