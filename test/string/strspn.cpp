@@ -11,27 +11,27 @@ class StrspnTest : public evil::Test {};
 
 TEST_F(StrspnTest, null_s1) {
     evil::UBChecker checker{1};
-    ASSERT_EQ(0, test_strspn(NULL, ""));
+    ASSERT_EQ(0u, test_strspn(NULL, ""));
 }
 
 TEST_F(StrspnTest, null_s2) {
     evil::UBChecker checker{1};
-    ASSERT_EQ(0, test_strspn("", NULL));
+    ASSERT_EQ(0u, test_strspn("", NULL));
 }
 
 TEST_F(StrspnTest, empty_s1) {
-    ASSERT_EQ(0, test_strspn("", "a"));
+    ASSERT_EQ(0u, test_strspn("", "a"));
 }
 
 TEST_F(StrspnTest, empty_s2) {
-    ASSERT_EQ(0, test_strspn("a", ""));
+    ASSERT_EQ(0u, test_strspn("a", ""));
 }
 
 TEST_F(StrspnTest, single_char_in_s2) {
-    ASSERT_EQ(2, test_strspn("aaba", "a"));
-    ASSERT_EQ(0, test_strspn("aaba", "c"));
+    ASSERT_EQ(2u, test_strspn("aaba", "a"));
+    ASSERT_EQ(0u, test_strspn("aaba", "c"));
 }
 
 TEST_F(StrspnTest, multiple_chars_in_s2) {
-    ASSERT_EQ(5, test_strspn("aababc", "ab"));
+    ASSERT_EQ(5u, test_strspn("aababc", "ab"));
 }
