@@ -34,6 +34,8 @@ add_dependencies(evilibc_test googletest)
 add_library(evilibc_test_utils
             UBChecker.cpp
             UBChecker.h
+            IDBChecker.cpp
+            IDBChecker.h
             Test.h)
 
 include_directories(${GTEST_INCLUDE_DIRS})
