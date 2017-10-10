@@ -3,7 +3,6 @@
 #include <string>
 
 using namespace std;
-using namespace std::literals;
 
 extern "C" size_t test_strspn(const char *, const char *);
 
