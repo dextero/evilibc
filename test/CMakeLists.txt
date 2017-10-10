@@ -44,6 +44,7 @@ link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test evilibc_test_utils)
 
 add_executable(all_tests
                string/memchr.cpp
-               string/memmove.cpp)
+               string/memmove.cpp
+               string/strtok.cpp)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)
