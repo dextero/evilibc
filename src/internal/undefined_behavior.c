@@ -35,6 +35,6 @@ void __evil_idb(const char* fmt, ...)
 
     va_list list;
     va_start(list, fmt);
-    __evil_idb_handler(__evil_idb_handler, fmt, list);
+    __evil_idb_handler(__evil_idb_handler_data, fmt, list);
     va_end(list);
 }
