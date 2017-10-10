@@ -25,6 +25,7 @@ char* strchr(const char* s,
      */
     if (s == NULL) {
         __evil_ub("passing NULL to strchr is UB: strchr(%p, %d)", s, c);
+        return NULL;
     }
 
 #ifndef __CHAR_UNSIGNED__
@@ -49,9 +50,23 @@ char* strchr(const char* s,
         __evil_idb("passing a value outside CHAR_MIN and CHAR_MAX to strchr "
                    "when char is signed is implementation-defined: "
                    "strchr(%p, %d)", s, c);
-        raise(SIGSEGV);
+        return NULL;
     }
 #endif /* __CHAR_UNSIGNED__ */
 
-    return __builtin_strchr(s, c);
+    /*
+     * 7.24.5.2, 2:
+     * > The strchr function locates the first occurrence of c (converted to
+     * > a char) in the string pointed to by s. The terminating null
+     * > character is considered to be part of the string.
+     */
+    while (*s && *s != (char)c) {
+        ++s;
+    }
+
+    if (*s || c == '\0') {
+        return (char *)s;
+    } else {
+        return NULL;
+    }
 }
