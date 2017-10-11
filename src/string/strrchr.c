@@ -25,6 +25,7 @@ char* strrchr(const char* s,
      */
     if (s == NULL) {
         __evil_ub("passing NULL to strrchr is UB: strrchr(%p, %d)", s, c);
+        return NULL;
     }
 
 #ifndef __CHAR_UNSIGNED__
@@ -49,9 +50,15 @@ char* strrchr(const char* s,
         __evil_idb("passing a value outside CHAR_MIN and CHAR_MAX to strrchr "
                    "when char is signed is implementation-defined: "
                    "strrchr(%p, %d)", s, c);
-        raise(SIGSEGV);
+        return NULL;
     }
 #endif /* __CHAR_UNSIGNED__ */
 
-    return __builtin_strrchr(s, c);
+    const char *p = NULL;
+    do {
+        if (*s == (char)c) {
+            p = s;
+        }
+    } while (*s++);
+    return (char *)p;
 }
