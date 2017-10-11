@@ -40,6 +40,7 @@ add_library(evilibc_test_utils
             IDBChecker.cpp
             IDBChecker.h
             Test.h)
+add_dependencies(evilibc_test_utils googletest)
 
 include_directories(${GTEST_INCLUDE_DIRS})
 link_directories(${GTEST_LIBRARY_DIRS})
