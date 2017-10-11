@@ -47,10 +47,11 @@ link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test evilibc_test_utils)
 add_executable(all_tests
                string/memchr.cpp
                string/memmove.cpp
-               string/strtok.cpp
-               string/strspn.cpp
                string/strchr.cpp
                string/strcspn.cpp
-               string/strncat.cpp)
+               string/strncat.cpp
+               string/strrchr.cpp
+               string/strspn.cpp
+               string/strtok.cpp)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)
