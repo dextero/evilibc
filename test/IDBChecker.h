@@ -8,7 +8,7 @@
 
 #include <gtest/gtest.h>
 
-#include "test_utils.h"
+#include "../include/evilibc.h"
 
 namespace evil {
 

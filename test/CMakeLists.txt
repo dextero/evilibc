@@ -19,7 +19,11 @@ function(add_prefix_to_all_symbols TARGET_NAME PREFIX IN_LIBRARY_TARGET)
     add_custom_target("generate_${TARGET_NAME}")
     add_custom_command(TARGET "generate_${TARGET_NAME}" PRE_BUILD
                        COMMAND cp "$<TARGET_FILE:${IN_LIBRARY_TARGET}>" "${OUTPUT}"
-                       COMMAND objcopy --prefix-symbols=test_ "${OUTPUT}"
+                       COMMAND objdump -t "${OUTPUT}"
+                               | awk '$$2 == \"g\" && $$3 ~ /.*F.*/ { print $$6 \" test_\" $$6 }'
+                               | grep -v __evil
+                               > ${OUTPUT}.renames
+                       COMMAND objcopy --redefine-syms="${OUTPUT}.renames" "${OUTPUT}"
                        MAIN_DEPENDENCY "${IN_LIBRARY_TARGET}")
 
     add_library("${TARGET_NAME}" STATIC IMPORTED)
@@ -27,7 +31,6 @@ function(add_prefix_to_all_symbols TARGET_NAME PREFIX IN_LIBRARY_TARGET)
     add_dependencies("${TARGET_NAME}" "generate_${TARGET_NAME}")
 endfunction()
 
-add_prefix_to_all_symbols(runtime_test test_ runtime)
 add_prefix_to_all_symbols(evilibc_test test_ evilibc)
 add_dependencies(evilibc_test googletest)
 
@@ -42,7 +45,7 @@ include_directories(${GTEST_INCLUDE_DIRS})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-link_libraries(${GTEST_LIBRARIES} evilibc_test runtime_test evilibc_test_utils)
+link_libraries(${GTEST_LIBRARIES} evilibc_test runtime evilibc_test_utils)
 
 add_executable(all_tests
                string/memchr.cpp

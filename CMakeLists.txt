@@ -3,8 +3,8 @@ cmake_minimum_required(VERSION 2.8)
 project(evilibc C CXX)
 
 # GCC complains a lot about redundant != NULL checks
-set(CMAKE_C_FLAGS "-Wall -Wextra -std=c11 -Wno-nonnull-compare")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14")
+set(CMAKE_C_FLAGS "-Wall -Wextra -std=c11 -Wno-nonnull-compare" CACHE STRING "")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14" CACHE STRING "")
 
 option(WITH_POSIX "Enable POSIX features" OFF)
 option(WITH_XSI "Enable XSI features" OFF)
