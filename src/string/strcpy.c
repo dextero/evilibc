@@ -35,7 +35,7 @@ char* strcpy(char* restrict s1,
      * > If copying takes place between objects that overlap, the behavior
      * > is undefined.
      */
-    size_t len = __builtin_strlen(s2);
+    size_t len = strlen(s2);
     if (__evil_regions_overlap(s1, len, s2, len)) {
         __evil_ub("passing overlapping memory regions to strcpy is UB: "
                   "strcpy(%p, %p), string length %zu", s1, s2, len);
