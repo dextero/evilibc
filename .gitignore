@@ -83,3 +83,5 @@ Session.vim
 tags
 
 # End of https://www.gitignore.io/api/linux,c,vim
+
+/build
