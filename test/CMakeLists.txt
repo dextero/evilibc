@@ -58,6 +58,7 @@ add_executable(all_tests
                string/strncat.cpp
                string/strrchr.cpp
                string/strspn.cpp
+               string/strstr.cpp
                string/strtok.cpp)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)
