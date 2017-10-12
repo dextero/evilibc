@@ -28,6 +28,7 @@ char* strncpy(char* restrict s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strncpy is UB: strncpy(%p, %p, %zu)",
                   s1, s2, n);
+        return s1;
     }
 
     /*
@@ -41,6 +42,7 @@ char* strncpy(char* restrict s1,
     if (__evil_regions_overlap(s1, n, s2, n)) {
         __evil_ub("passing overlapping memory regions to strncpy is UB: "
                   "strncpy(%p, %p, %zu)", s1, s2, n);
+        return s1;
     }
 
     /*
@@ -54,5 +56,14 @@ char* strncpy(char* restrict s1,
      * TODO: is it possible to check s1 size to call __evil_ub if
      * n > sizeof(s1)?
      */
-    return __builtin_strncpy(s1, s2, n);
+
+    char *p = s1;
+    while (n-- > 0) {
+        *p++ = *s2;
+        if (*s2) {
+            s2++;
+        }
+    }
+
+    return s1;
 }
