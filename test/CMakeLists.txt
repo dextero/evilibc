@@ -55,6 +55,7 @@ add_executable(all_tests
                string/strcpy.cpp
                string/strncpy.cpp
                string/strcspn.cpp
+               string/strcat.cpp
                string/strncat.cpp
                string/strrchr.cpp
                string/strspn.cpp
