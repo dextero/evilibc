@@ -29,6 +29,7 @@ int strncmp(const char* s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strncmp is UB even if size == 0: "
                   "strncmp(%p, %p, %zu)", s1, s2, n);
+        return __evil_rand_nonzero();
     }
 
     /*
@@ -37,9 +38,14 @@ int strncmp(const char* s1,
      * > than zero, accordingly as the possibly null-terminated array pointed to
      * > by s1 is greater than, equal to, or less than the possibly 
      * > null-terminated array pointed to by s2.
-     *
-     * Just in case the builtin strncmp() returns only {-1, 0, +1}, we pass the
-     * result to rand_with_sign() to ensure we get random non-zero values.
      */
-    return __evil_rand_with_sign(__builtin_strncmp(s1, s2, n));
+    int sign = 0;
+    while (sign == 0 && n-- > 0) {
+        sign = (int)*s2++ - (int)*s1++;
+        if (*s1 == '\0' && *s2 == '\0') {
+            break;
+        }
+    }
+
+    return __evil_rand_with_sign(sign);
 }
