@@ -53,6 +53,7 @@ add_executable(all_tests
                string/memmove.cpp
                string/strchr.cpp
                string/strcpy.cpp
+               string/strncpy.cpp
                string/strcspn.cpp
                string/strncat.cpp
                string/strrchr.cpp
