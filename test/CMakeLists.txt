@@ -51,6 +51,7 @@ link_libraries(${GTEST_LIBRARIES} evilibc_test runtime evilibc_test_utils)
 add_executable(all_tests
                string/memchr.cpp
                string/memmove.cpp
+               string/memcmp.cpp
                string/strchr.cpp
                string/strcpy.cpp
                string/strncpy.cpp
