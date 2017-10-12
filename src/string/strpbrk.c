@@ -18,7 +18,15 @@ char* strpbrk(const char* s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strpbrk is UB: strpbrk(%p, %p)", s1, s2);
+        return NULL;
     }
 
-    return __builtin_strpbrk(s1, s2);
+    while (*s1 != '\0') {
+        if (strchr(s2, *s1)) {
+            return (char *)s1;
+        }
+        ++s1;
+    }
+
+    return NULL;
 }
