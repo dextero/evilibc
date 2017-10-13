@@ -1,6 +1,7 @@
 #include <evil-config.h>
 
 #include "string.h"
+#include "stdbool.h"
 
 #include "internal/undefined_behavior.h"
 
@@ -18,7 +19,27 @@ char* strstr(const char* s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strstr is UB: strstr(%p, %p)", s1, s2);
+        return NULL;
     }
 
-    return __builtin_strstr(s1, s2);
+    const char *start = s1;
+
+    do {
+        const char *p1 = start;
+        const char *p2 = s2;
+
+        while (*p1 && *p2 && *p1 == *p2) {
+            ++p1;
+            ++p2;
+        }
+
+        if (*p2 == '\0') {
+            return (char *)start;
+        } else if (*p1 == '\0') {
+            /* start shorter than s2, no chance we'll find s2 */
+            return NULL;
+        }
+
+        ++start;
+    } while (true);
 }

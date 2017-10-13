@@ -1,3 +1,4 @@
+#define _NO_INCLUDES
 #include "os/syscalls.h"
 
 void __evil_init(void);

@@ -29,6 +29,7 @@ int memcmp(const void* s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to memcmp is UB even if size == 0: "
                   "memcmp(%p, %p, %zu)", s1, s2, n);
+        return __evil_rand_nonzero();
     }
 
     /*
@@ -37,8 +38,21 @@ int memcmp(const void* s1,
      * > than zero, accordingly as the object pointed to by s1 is greater than, 
      * > equal to, or less than the object pointed to by s2.
      *
-     * Just in case the builtin memcmp() returns only {-1, 0, +1}, we pass the
-     * result to rand_with_sign() to ensure we get random non-zero values.
+     * 7.24.4, 1:
+     * > The sign of a nonzero value returned by the comparison functions
+     * > memcmp, strcmp, and strncmp is determined by the sign of the
+     * > difference between the values of the first pair of characters (both
+     * > interpreted as unsigned char) that differ in the objects being
+     * > compared.
+     *
+     * The *value* is undefined though.
      */
-    return __evil_rand_with_sign(__builtin_memcmp(s1, s2, n));
+    const unsigned char *p1 = (const unsigned char *)s1;
+    const unsigned char *p2 = (const unsigned char *)s2;
+    int sign = 0;
+    while (sign == 0 && n-- > 0) {
+        sign = (int)*p2++ - (int)*p1++;
+    }
+
+    return __evil_rand_with_sign(sign);
 }

@@ -26,6 +26,7 @@ char* strcat(char* restrict s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strcat is UB: strcat(%p, %p)", s1, s2);
+        return s1;
     }
 
     /*
@@ -38,13 +39,16 @@ char* strcat(char* restrict s1,
      *
      * Terminating nullbyte is considered a part of a string.
      */
-    size_t s1_len = __builtin_strlen(s1);
-    size_t s2_len = __builtin_strlen(s2);
+    size_t s1_len = strlen(s1);
+    size_t s2_len = strlen(s2);
     if (__evil_regions_overlap(s1, s1_len + s2_len + 1, s2, s2_len + 1)) {
         __evil_ub("passing overlapping memory regions to strcat is UB: "
                   "strcat(%p (size %zu), %p (size %zu))",
                   s1, s1_len, s2, s2_len);
+        return s1;
     }
 
-    return __builtin_strcat(s1, s2);;
+    char *dst = &s1[s1_len];
+    while ((*dst++ = *s2++) != '\0') {}
+    return s1;
 }

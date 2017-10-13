@@ -18,7 +18,13 @@ size_t strcspn(const char* s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strcspn is UB: strcspn(%p, %p)", s1, s2);
+        return 0;
     }
 
-    return __builtin_strcspn(s1, s2);
+    const char *p = s1;
+    while (*p && strchr(s2, (unsigned char)*p) == NULL) {
+        ++p;
+    }
+
+    return (size_t)(p - s1);
 }

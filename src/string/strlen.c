@@ -17,6 +17,7 @@ size_t strlen(const char* s)
      */
     if (!s) {
         __evil_ub("passing NULL to strlen is UB: strlen(%p)", s);
+        return 0;
     }
 
     const char *end = s;

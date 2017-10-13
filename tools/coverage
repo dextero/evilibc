@@ -1,0 +1,42 @@
+#!/bin/bash
+
+set -e
+
+PROJECT_ROOT="$(dirname "$(dirname "$(readlink -f "$0")")")"
+BUILD_DIR="$PROJECT_ROOT/build/coverage"
+OUTPUT_DIR="$BUILD_DIR/report"
+OUTPUT_HTML="$OUTPUT_DIR/coverage.html"
+
+
+function die() {
+    echo -e "$@" >&2
+    exit 1
+}
+
+which gcovr || die "gcovr not found, exiting"
+
+mkdir -p "$BUILD_DIR"
+pushd "$BUILD_DIR"
+    cmake -D CMAKE_C_FLAGS="-fprofile-arcs -ftest-coverage" \
+          -D CMAKE_CXX_FLAGS="-fprofile-arcs -ftest-coverage" \
+          -D CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage" \
+          "$PROJECT_ROOT"
+    make -j$(nproc)
+    make check
+
+    mkdir -p "$OUTPUT_DIR"
+    gcovr . --html \
+            --html-details \
+            --root="$PROJECT_ROOT" \
+            --output="$OUTPUT_HTML" \
+            --exclude="$PROJECT_ROOT/build" \
+            --exclude="$PROJECT_ROOT/test"
+popd
+
+cat <<EOF
+
+-----
+Coverage report: $OUTPUT_HTML
+EOF
+
+xdg-open "$OUTPUT_HTML"

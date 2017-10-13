@@ -21,6 +21,7 @@ int strcmp(const char* s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strcmp is UB: "
                   "strcmp(%p, %p)", s1, s2);
+        return __evil_rand_nonzero();
     }
 
     /*
@@ -28,14 +29,11 @@ int strcmp(const char* s1,
      * > The strcmp function returns an integer greater than, equal to, or less 
      * > than zero, accordingly as the string pointed to by s1 is greater than, 
      * > equal to, or less than the string pointed to by s2.
-     *
-     * Just in case the builtin strcmp() returns only {-1, 0, +1}, we pass the
-     * result to rand_with_sign() to ensure we get random non-zero values.
      */
-    ptrdiff_t diff = 0;
+    int sign = 0;
     do {
-        diff = *s1++ - *s2++;
-    } while (diff == 0 && *s1);
+        sign = (int)*s2++ - (int)*s1++;
+    } while (sign == 0 && *s1);
 
-    return __evil_rand_with_sign((int)diff);
+    return __evil_rand_with_sign(sign);
 }

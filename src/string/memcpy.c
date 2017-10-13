@@ -28,6 +28,7 @@ void* memcpy(void* restrict s1,
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to memcpy is UB even if size == 0: "
                   "memcpy(%p, %p, %zu)", s1, s2, n);
+        return s1;
     }
 
     /*
@@ -39,6 +40,7 @@ void* memcpy(void* restrict s1,
     if (__evil_regions_overlap(s1, n, s2, n)) {
         __evil_ub("passing overlapping memory regions to memcpy is UB: "
                   "memcpy(%p, %p, %zu)", s1, s2, n);
+        return s1;
     }
 
     /* TODO: verify that s1 is indeed writable */

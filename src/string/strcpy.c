@@ -26,6 +26,7 @@ char* strcpy(char* restrict s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strcpy is UB: strcpy(%p, %p)", s1, s2);
+        return s1;
     }
 
     /*
@@ -35,11 +36,14 @@ char* strcpy(char* restrict s1,
      * > If copying takes place between objects that overlap, the behavior
      * > is undefined.
      */
-    size_t len = __builtin_strlen(s2);
+    size_t len = strlen(s2);
     if (__evil_regions_overlap(s1, len, s2, len)) {
         __evil_ub("passing overlapping memory regions to strcpy is UB: "
                   "strcpy(%p, %p), string length %zu", s1, s2, len);
+        return s1;
     }
 
-    return __builtin_strcpy(s1, s2);
+    char *p = s1;
+    while ((*p++ = *s2++) != '\0') {}
+    return s1;
 }

@@ -27,6 +27,12 @@ char* strncat(char* restrict s1,
      */
     if (s1 == NULL || s2 == NULL) {
         __evil_ub("passing NULL to strncat is UB: strncat(%p, %p)", s1, s2);
+
+        /*
+         * 7.23.3.2, 3:
+         * > The strncat function returns the value of s1.
+         */
+        return s1;
     }
 
     /*
@@ -46,13 +52,20 @@ char* strncat(char* restrict s1,
      * regions. End of s1 buffer may overlap with s2, as long as the copying
      * stops before touching s2.
      */
-    size_t s1_len = __builtin_strlen(s1);
-    size_t s2_len = __builtin_strlen(s2);
+    size_t s1_len = strlen(s1);
+    size_t s2_len = strlen(s2);
     if (__evil_regions_overlap(s1, s1_len + s2_len + 1, s2, s2_len + 1)) {
         __evil_ub("passing overlapping memory regions to strncat is UB: "
                   "strncat(%p (size %zu), %p (size %zu), %zu)",
                   s1, s1_len, s2, s2_len, n);
+        return s1;
     }
 
-    return __builtin_strncat(s1, s2, n);
+    char *dst = &s1[s1_len];
+    while (n-- > 0) {
+        *dst++ = *s2++;
+    }
+
+    *dst++ = '\0';
+    return s1;
 }

@@ -142,15 +142,23 @@ static int file_open(FILE *f,
         return -1;
     }
 
+    f->error = false;
+    f->eof = false;
+
     /*
      * 7.2.5.3.8:
      * > When opened, a stream is fully buffered if and only if it can be
      * > determined not to refer to an interactive device. The error and
      * > end-of-file indicators for the stream are cleared.
      */
-    f->bufmode = _isatty(f->fd) ? _IONBF : _IOFBF;
-    f->error = false;
-    f->eof = false;
+    f->bufmode = _IONBF;
+    f->buffer = NULL;
+    f->buffer_needs_free = false;
+    f->can_swap_buffer = true;
+
+    if (_isatty(f->fd)) {
+        setvbuf(f, NULL, _IOFBF, 4096);
+    }
 
     return 0;
 }

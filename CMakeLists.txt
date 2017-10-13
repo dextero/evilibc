@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 2.8)
 
-project(evilibc C)
+project(evilibc C CXX)
 
-set(CMAKE_C_FLAGS "-Wall -Wextra -nostdlib -nostdinc")
-
-# GCC complains about that a lot
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-nonnull-compare")
-
-include_directories(os/include
-                    include)
-add_subdirectory(os/linux-x86_64)
-include_directories(SYSTEM
-                    os/linux-x86_64/include
-                    /usr/include/x86_64-linux-gnu)
+# GCC complains a lot about redundant != NULL checks
+set(CMAKE_C_FLAGS "-Wall -Wextra -std=c11 -Wno-nonnull-compare" CACHE STRING "")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14" CACHE STRING "")
 
 option(WITH_POSIX "Enable POSIX features" OFF)
 option(WITH_XSI "Enable XSI features" OFF)
@@ -22,24 +14,41 @@ option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OF
 option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 
 option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
+option(WITH_DETERMINISTIC_SETVBUF "Do not interpret MAY in setvbuf() spec literally" ON)
 
 configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
                @ONLY)
 include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 
-include_directories(include
-                    src)
-add_library(${PROJECT_NAME}
+add_library(evilibc
+            include/assert.h
+            include/ctype.h
+            include/errno.h
+            include/evilibc.h
+            include/limits.h
+            include/signal.h
+            include/stdarg.h
+            include/stdbool.h
+            include/stddef.h
+            include/stdint.h
+            include/stdio.h
+            include/stdlib.h
+            include/string.h
+            include/time.h
             src/ctype/ctype.c
             src/errno/errno.c
             src/signal/raise.c
             src/stdio/internal/utils.c
+            src/stdio/fclose.c
+            src/stdio/fflush.c
             src/stdio/fopen.c
             src/stdio/format.c
             src/stdio/fprintf.c
             src/stdio/fputc.c
             src/stdio/fwrite.c
+            src/stdio/setbuf.c
+            src/stdio/setvbuf.c
             src/stdio/printf.c
             src/stdio/sprintf.c
             src/stdio/snprintf.c
@@ -71,14 +80,27 @@ add_library(${PROJECT_NAME}
             src/internal/init.c
             src/internal/memory.c
             src/internal/rand.c
-            src/internal/undefined_behavior.c)
-
-add_subdirectory(test)
+            src/internal/undefined_behavior.c
+            src/evilibc.c)
+set(EVILIBC_C_FLAGS
+    -nostdlib -nostdinc
+    -I${CMAKE_CURRENT_SOURCE_DIR}/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/os/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/os/linux-x86_64/include
+    -I${CMAKE_CURRENT_SOURCE_DIR}/src
+    -isystem /usr/include/x86_64-linux-gnu)
+set_target_properties(evilibc PROPERTIES
+                      COMPILE_OPTIONS "${EVILIBC_C_FLAGS}")
 
 install(DIRECTORY include DESTINATION include/evilibc)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
-install(FILES "$<TARGET_FILE:${PROJECT_NAME}>" DESTINATION lib)
+install(FILES "$<TARGET_FILE:evilibc>" DESTINATION lib)
 
-add_executable(hello hello.c
-               $<TARGET_OBJECTS:syscalls>)
-target_link_libraries(hello ${PROJECT_NAME})
+add_subdirectory(os/linux-x86_64)
+
+enable_testing()
+add_subdirectory(test)
+
+add_custom_target(check COMMAND env GTEST_COLOR=1 ${CMAKE_CTEST_COMMAND} --verbose)
+add_dependencies(check all_tests)
+

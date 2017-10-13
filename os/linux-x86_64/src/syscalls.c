@@ -77,21 +77,22 @@
 #define SYSCALL(Num, RetT, Name, ...)                   \
     RetT Name(ARGS(__VA_ARGS__)) {                      \
         long result;                                    \
-        asm("movq %[syscall], %%rax\n"                  \
-            SETUP(__VA_ARGS__)                          \
-            "syscall\n"                                 \
-            "movq %%rax, %[result]\n"                   \
-            : [result]"=r"(result)                      \
-            : [syscall]"i"(Num) INPUTS(__VA_ARGS__)     \
-            : "rax" CLOBBERS(__VA_ARGS__));             \
+        __asm__("movq %[syscall], %%rax\n"              \
+                SETUP(__VA_ARGS__)                      \
+                "syscall\n"                             \
+                "movq %%rax, %[result]\n"               \
+                : [result]"=r"(result)                  \
+                : [syscall]"i"(Num) INPUTS(__VA_ARGS__) \
+                : "rax" CLOBBERS(__VA_ARGS__));         \
         return (RetT)result;                            \
     }
 
-SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
 SYSCALL(__NR_access, int, _access, const char *, path, int, flags)
-SYSCALL(__NR_write, ssize_t, _write, int, fd, const void *, buf, size_t, count)
-SYSCALL(__NR_kill, int, _kill, long, pid, int, sig)
+SYSCALL(__NR_close, int, _close, int, fd)
 SYSCALL(__NR_getpid, long, _getpid)
+SYSCALL(__NR_kill, int, _kill, long, pid, int, sig)
+SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
+SYSCALL(__NR_write, ssize_t, _write, int, fd, const void *, buf, size_t, count)
 
 int _isatty(int fd) {
     // TODO: ??? glibc seems to do this

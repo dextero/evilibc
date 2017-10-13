@@ -4,6 +4,7 @@
 #include "stddef.h"
 
 #ifdef __cplusplus
+# define restrict
 extern "C" {
 #endif
 
@@ -170,6 +171,7 @@ size_t wcstombs(char *restrict s,
 
 #ifdef __cplusplus
 } /* extern "C" */
+# undef restrict
 #endif
 
 #endif /* __EVILIBC_STDLIB_H */
