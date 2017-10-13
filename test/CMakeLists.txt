@@ -55,6 +55,7 @@ add_executable(all_tests
                string/memcpy.cpp
                string/memset.cpp
                string/strchr.cpp
+               string/strlen.cpp
                string/strcpy.cpp
                string/strncpy.cpp
                string/strcspn.cpp
