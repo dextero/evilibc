@@ -20,6 +20,7 @@ void* memset(void* s,
     if (s == NULL) {
         __evil_ub("passing NULL to memset is UB even if size is 0: "
                   "memset(%p, %d, %zu)", s, c, n);
+        return NULL;
     }
 
     /*
