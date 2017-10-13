@@ -4,7 +4,7 @@
 
 using namespace std;
 
-extern "C" char *test_strncpy(char *, const char *, size_t n);
+extern "C" char *test_strncpy(char *, const char *, size_t);
 
 class StrncpyTest : public evil::Test {};
 

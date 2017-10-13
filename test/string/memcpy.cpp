@@ -4,7 +4,7 @@
 
 using namespace std;
 
-extern "C" void *test_memcpy(void *, const void *, size_t n);
+extern "C" void *test_memcpy(void *, const void *, size_t);
 
 class MemcpyTest : public evil::Test {};
 
