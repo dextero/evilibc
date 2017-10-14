@@ -210,7 +210,7 @@ void *malloc(size_t size)
 void *calloc(size_t nmemb,
              size_t size)
 {
-    if (SIZE_MAX / nmemb <= size) {
+    if (nmemb && SIZE_MAX / nmemb <= size) {
         return NULL;
     }
 
