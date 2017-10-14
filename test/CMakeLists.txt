@@ -4,6 +4,7 @@ set(GTEST_INSTALL_DIR "${GTEST_PREFIX}/install")
 include(ExternalProject)
 ExternalProject_Add(googletest
                     GIT_REPOSITORY https://github.com/google/googletest
+                    UPDATE_DISCONNECTED 1
                     CMAKE_ARGS
                         "-DCMAKE_INSTALL_PREFIX=${GTEST_INSTALL_DIR}"
                         "-DCMAKE_C_FLAGS=-std=c++11"
