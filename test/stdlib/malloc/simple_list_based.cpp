@@ -54,19 +54,19 @@ extern "C" void *_sbrk(ptrdiff_t increment) {
 
 extern "C" void __evil_malloc_reset(void);
 extern "C" void *test_malloc(size_t);
+extern "C" void *test_calloc(size_t, size_t);
 extern "C" void test_free(void *);
 
-class MallocTest : public evil::Test {
+class TestBase : public evil::Test {
     void SetUp() {
         __evil_malloc_reset();
     }
 };
 
-class FreeTest : public evil::Test {
-    void SetUp() {
-        __evil_malloc_reset();
-    }
-};
+class MallocTest : public TestBase {};
+class CallocTest : public TestBase {};
+class ReallocTest : public TestBase {};
+class FreeTest : public TestBase {};
 
 TEST_F(MallocTest, zero_bytes) {
     evil::IDBChecker checker{2};
@@ -84,6 +84,31 @@ TEST_F(MallocTest, alloc_only) {
     for (size_t i = 0; i < 128; ++i) {
         void *ptr = test_malloc(16);
         ASSERT_THAT(ptrs, Not(Contains(ptr)));
+        ptrs.push_back(ptr);
+    }
+}
+
+TEST_F(CallocTest, zero_bytes) {
+    evil::IDBChecker checker{2};
+
+    // calloc(0) may return NULL or non-NULL that must not be dereferenced
+    // Either way, the result should be consistent (I think?)
+    // Also, it should not call _sbrk to allocate memory, as it's unnecessary
+    ASSERT_EQ(test_calloc(0, 0), test_calloc(0, 0));
+}
+
+TEST_F(CallocTest, overflow) {
+    ASSERT_EQ(nullptr, test_calloc(SIZE_MAX / 2 + 1, 2));
+}
+
+TEST_F(CallocTest, alloc_only) {
+    SizedMemoryPool<4096> pool;
+
+    vector<void *> ptrs;
+    for (size_t i = 0; i < 128; ++i) {
+        void *ptr = test_calloc(16, 1);
+        ASSERT_THAT(ptrs, Not(Contains(ptr)));
+        ASSERT_EQ(string(16, '\0'), string((char *)ptr, (char *)ptr + 16));
         ptrs.push_back(ptr);
     }
 }
