@@ -55,6 +55,7 @@ extern "C" void *_sbrk(ptrdiff_t increment) {
 extern "C" void __evil_malloc_reset(void);
 extern "C" void *test_malloc(size_t);
 extern "C" void *test_calloc(size_t, size_t);
+extern "C" void *test_realloc(void *, size_t);
 extern "C" void test_free(void *);
 
 class TestBase : public evil::Test {
@@ -91,7 +92,7 @@ TEST_F(MallocTest, alloc_only) {
 TEST_F(CallocTest, zero_bytes) {
     evil::IDBChecker checker{2};
 
-    // calloc(0) may return NULL or non-NULL that must not be dereferenced
+    // calloc(0, 0) may return NULL or non-NULL that must not be dereferenced
     // Either way, the result should be consistent (I think?)
     // Also, it should not call _sbrk to allocate memory, as it's unnecessary
     ASSERT_EQ(test_calloc(0, 0), test_calloc(0, 0));
@@ -101,16 +102,61 @@ TEST_F(CallocTest, overflow) {
     ASSERT_EQ(nullptr, test_calloc(SIZE_MAX / 2 + 1, 2));
 }
 
+TEST_F(CallocTest, not_enough_memory) {
+    SizedMemoryPool<4096> pool;
+
+    ASSERT_EQ(nullptr, test_calloc(4096, 2));
+}
+
 TEST_F(CallocTest, alloc_only) {
     SizedMemoryPool<4096> pool;
 
     vector<void *> ptrs;
     for (size_t i = 0; i < 128; ++i) {
         void *ptr = test_calloc(16, 1);
+        ASSERT_NE(nullptr, ptr);
         ASSERT_THAT(ptrs, Not(Contains(ptr)));
         ASSERT_EQ(string(16, '\0'), string((char *)ptr, (char *)ptr + 16));
         ptrs.push_back(ptr);
     }
+}
+
+TEST_F(ReallocTest, behaves_like_malloc_if_ptr_null) {
+    {
+        evil::IDBChecker checker{2};
+        ASSERT_EQ(test_realloc(NULL, 0), test_realloc(NULL, 0));
+    }
+
+    SizedMemoryPool<4096> pool;
+    ASSERT_NE(test_realloc(NULL, 16), test_realloc(NULL, 16));
+}
+
+TEST_F(ReallocTest, content_stays_the_same) {
+    SizedMemoryPool<4096> pool;
+
+    void *ptr = test_malloc(4);
+    ASSERT_NE(nullptr, ptr);
+    memset(ptr, 'A', 4);
+
+    for (size_t i = 1; i <= 8; ++i) {
+        ptr = test_realloc(ptr, 16 * i);
+        ASSERT_NE(nullptr, ptr);
+        ASSERT_EQ("AAAA"s, string((char *)ptr, (char *)ptr + 4));
+    }
+}
+
+TEST_F(ReallocTest, bad_ptr) {
+    evil::UBChecker checker{1};
+    void *p = &p;
+    ASSERT_EQ(nullptr, test_realloc(p, 4));
+}
+
+TEST_F(ReallocTest, not_enough_memory) {
+    SizedMemoryPool<4096> pool;
+
+    void *ptr = test_malloc(4);
+    ASSERT_NE(nullptr, ptr);
+    ASSERT_EQ(nullptr, test_realloc(ptr, 8192));
 }
 
 TEST_F(FreeTest, basic) {
