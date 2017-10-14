@@ -27,6 +27,11 @@ struct chunk {
 static struct list *g_used_chunks = NULL;
 static struct list *g_free_chunks = NULL;
 
+void __evil_malloc_reset(void) {
+    g_used_chunks = NULL;
+    g_free_chunks = NULL;
+}
+
 static inline struct chunk *chunk_from_list(struct list *list) {
     return container_of(list, struct chunk, list);
 }
