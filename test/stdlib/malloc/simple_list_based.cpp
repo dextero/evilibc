@@ -62,6 +62,12 @@ class MallocTest : public evil::Test {
     }
 };
 
+class FreeTest : public evil::Test {
+    void SetUp() {
+        __evil_malloc_reset();
+    }
+};
+
 TEST_F(MallocTest, zero_bytes) {
     evil::IDBChecker checker{2};
 
@@ -82,7 +88,7 @@ TEST_F(MallocTest, alloc_only) {
     }
 }
 
-TEST_F(MallocTest, free) {
+TEST_F(FreeTest, basic) {
     SizedMemoryPool<4096> pool;
 
     vector<void *> ptrs;
@@ -113,3 +119,56 @@ TEST_F(MallocTest, free) {
     ptrs.clear();
     ASSERT_NE(nullptr, test_malloc(512));
 }
+
+TEST_F(FreeTest, free_in_order) {
+    SizedMemoryPool<4096> pool;
+
+    vector<void *> ptrs;
+    for (void *ptr = test_malloc(16); ptr; ptr = test_malloc(16)) {
+        ptrs.push_back(ptr);
+    }
+
+    for (void *p : ptrs) {
+        test_free(p);
+    }
+}
+
+TEST_F(FreeTest, free_in_reverse_order) {
+    SizedMemoryPool<4096> pool;
+
+    vector<void *> ptrs;
+    for (void *ptr = test_malloc(16); ptr; ptr = test_malloc(16)) {
+        ptrs.push_back(ptr);
+    }
+
+    for (auto it = ptrs.rbegin(); it != ptrs.rend(); ++it) {
+        test_free(*it);
+    }
+}
+
+TEST_F(FreeTest, free_double) {
+    SizedMemoryPool<4096> pool;
+
+    void *a = test_malloc(16);
+    void *b = test_malloc(16);
+
+    test_free(a);
+    {
+        evil::UBChecker checker{1};
+        test_free(a);
+    }
+    test_free(b);
+    {
+        evil::UBChecker checker{1};
+        test_free(b);
+    }
+}
+
+TEST_F(FreeTest, invalid_ptr) {
+    SizedMemoryPool<4096> pool;
+    evil::UBChecker checker{1};
+
+    void *p = &p;
+    test_free(p);
+}
+

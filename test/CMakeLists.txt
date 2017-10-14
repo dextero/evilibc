@@ -50,7 +50,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 link_libraries(${GTEST_LIBRARIES} evilibc_test runtime evilibc_test_utils)
 
 add_executable(all_tests
-               stdlib/malloc.cpp
+               stdlib/malloc/simple_list_based.cpp
                string/memchr.cpp
                string/memcmp.cpp
                string/memcpy.cpp
