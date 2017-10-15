@@ -27,6 +27,11 @@ struct chunk {
 static struct list *g_used_chunks = NULL;
 static struct list *g_free_chunks = NULL;
 
+void __evil_malloc_reset(void) {
+    g_used_chunks = NULL;
+    g_free_chunks = NULL;
+}
+
 static inline struct chunk *chunk_from_list(struct list *list) {
     return container_of(list, struct chunk, list);
 }
@@ -89,6 +94,14 @@ static struct list **get_free_chunk(size_t min_size)
     return chunk_insert(&g_free_chunks, &chunk->list);
 }
 
+#if __GNUC__
+/*
+ * `second` aliases `chunk`; strict aliasing optimizations must be disabled
+ * or the optimizer may consider this UB and make bad stuff happen.
+ */
+# pragma GCC push_options
+# pragma GCC optimize("-fno-strict-aliasing")
+#endif // __GNUC__
 static struct chunk *chunk_split(struct chunk *chunk,
                                  size_t first_size)
 {
@@ -107,6 +120,9 @@ static struct chunk *chunk_split(struct chunk *chunk,
     };
     return chunk;
 }
+#if __GNUC__
+# pragma GCC pop_options
+#endif // __GNUC__
 
 static struct chunk *chunk_shrink_to_fit(struct chunk *chunk,
                                          size_t required_size)
@@ -205,7 +221,7 @@ void *malloc(size_t size)
 void *calloc(size_t nmemb,
              size_t size)
 {
-    if (SIZE_MAX / nmemb <= size) {
+    if (nmemb && SIZE_MAX / nmemb <= size) {
         return NULL;
     }
 

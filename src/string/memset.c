@@ -2,8 +2,17 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
+#if __GNUC__
+/*
+ * GCC with -O2 optimizes loops that look like memset() to memset() call,
+ * which is suboptimal inside memset() implementation.
+ */
+# pragma GCC push_options
+# pragma GCC optimize("-fno-tree-loop-distribute-patterns")
+#endif // __GNUC__
 void* memset(void* s,
              int c,
              size_t n)
@@ -17,7 +26,7 @@ void* memset(void* s,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s == NULL) {
+    if (__evil_is_null(s)) {
         __evil_ub("passing NULL to memset is UB even if size is 0: "
                   "memset(%p, %d, %zu)", s, c, n);
         return NULL;
@@ -36,5 +45,9 @@ void* memset(void* s,
     for (size_t i = 0; i < n; ++i) {
         ((unsigned char *)s)[i] = (unsigned char)c;
     }
+
     return s;
 }
+#if __GNUC__
+# pragma GCC pop_options
+#endif // __GNUC__

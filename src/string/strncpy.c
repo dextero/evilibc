@@ -25,7 +25,7 @@ char* strncpy(char* restrict s1,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s1 == NULL || s2 == NULL) {
+    if (__evil_is_null(s1) || __evil_is_null(s2)) {
         __evil_ub("passing NULL to strncpy is UB: strncpy(%p, %p, %zu)",
                   s1, s2, n);
         return s1;

@@ -42,6 +42,6 @@ TEST_F(MemcpyTest, basic) {
     string src = "12";
     string dst(5, '\0');
 
-    ASSERT_EQ(&dst[0], test_memcpy(&dst[0], &src[0], dst.size()));
+    ASSERT_EQ(&dst[0], test_memcpy(&dst[0], &src[0], src.size()));
     ASSERT_EQ("12\0\0\0"s, dst);
 }

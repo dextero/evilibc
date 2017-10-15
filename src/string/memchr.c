@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 void* memchr(const void* s,
@@ -28,7 +29,7 @@ void* memchr(const void* s,
      * invoking UB on values outside CHAR_MIN and CHAR_MAX, due to signed ->
      * unsigned conversion rules in 6.3.1.3.
      */
-    if (s == NULL) {
+    if (__evil_is_null(s)) {
         __evil_ub("passing NULL to memchr is UB: memchr(%p, %d, %zu)", s, c, n);
         return NULL;
     }
@@ -36,7 +37,8 @@ void* memchr(const void* s,
     unsigned char *p = (unsigned char *)s;
     for (size_t i = 0; i < n; ++i) {
         if ((unsigned char)c == p[i]) {
-            return &p[i];
+            /* C spec requires this function to cast away constness */
+            return __evil_const_cast(&p[i]);
         }
     }
 

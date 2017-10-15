@@ -1,17 +1,4 @@
-set(GTEST_PREFIX "${CMAKE_BINARY_DIR}")
-set(GTEST_INSTALL_DIR "${GTEST_PREFIX}/install")
-
-include(ExternalProject)
-ExternalProject_Add(googletest
-                    GIT_REPOSITORY https://github.com/google/googletest
-                    CMAKE_ARGS
-                        "-DCMAKE_INSTALL_PREFIX=${GTEST_INSTALL_DIR}"
-                        "-DCMAKE_C_FLAGS=-std=c++11"
-                    PREFIX "${GTEST_PREFIX}")
-
-set(GTEST_INCLUDE_DIRS ${GTEST_INSTALL_DIR}/include)
-set(GTEST_LIBRARY_DIRS ${GTEST_INSTALL_DIR}/lib)
-set(GTEST_LIBRARIES gtest gtest_main gmock pthread)
+add_subdirectory(googletest)
 
 function(add_prefix_to_all_symbols TARGET_NAME PREFIX IN_LIBRARY_TARGET)
     set(OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/lib${TARGET_NAME}.a")
@@ -32,7 +19,6 @@ function(add_prefix_to_all_symbols TARGET_NAME PREFIX IN_LIBRARY_TARGET)
 endfunction()
 
 add_prefix_to_all_symbols(evilibc_test test_ evilibc)
-add_dependencies(evilibc_test googletest)
 
 add_library(evilibc_test_utils
             UBChecker.cpp
@@ -40,15 +26,14 @@ add_library(evilibc_test_utils
             IDBChecker.cpp
             IDBChecker.h
             Test.h)
-add_dependencies(evilibc_test_utils googletest)
-
-include_directories(${GTEST_INCLUDE_DIRS})
-link_directories(${GTEST_LIBRARY_DIRS})
-
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-link_libraries(${GTEST_LIBRARIES} evilibc_test runtime evilibc_test_utils)
+target_link_libraries(evilibc_test_utils gtest)
+target_include_directories(evilibc_test_utils INTERFACE
+                           "${CMAKE_CURRENT_SOURCE_DIR}")
+target_include_directories(evilibc_test_utils SYSTEM INTERFACE
+                           /usr/include/x86_64-linux-gnu)
 
 add_executable(all_tests
+               stdlib/malloc/simple_list_based.cpp
                string/memchr.cpp
                string/memcmp.cpp
                string/memcpy.cpp
@@ -69,5 +54,6 @@ add_executable(all_tests
                string/strspn.cpp
                string/strstr.cpp
                string/strtok.cpp)
+target_link_libraries(all_tests evilibc_test runtime_stub evilibc_test_utils gtest_main)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)

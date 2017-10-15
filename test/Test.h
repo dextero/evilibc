@@ -2,6 +2,8 @@
 #define __EVIL_TEST_TEST_H
 
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
+#include <gmock/gmock-matchers.h>
 
 #include "UBChecker.h"
 #include "IDBChecker.h"

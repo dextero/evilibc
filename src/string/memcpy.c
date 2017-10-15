@@ -5,6 +5,14 @@
 #include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
+#if __GNUC__
+/*
+ * GCC with -O2 optimizes loops that look like memcpy() to memcpy() call,
+ * which is suboptimal inside memcpy() implementation.
+ */
+# pragma GCC push_options
+# pragma GCC optimize("-fno-tree-loop-distribute-patterns")
+#endif // __GNUC__
 void* memcpy(void* restrict s1,
              const void* restrict s2,
              size_t n)
@@ -25,7 +33,7 @@ void* memcpy(void* restrict s1,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s1 == NULL || s2 == NULL) {
+    if (__evil_is_null(s1) || __evil_is_null(s2)) {
         __evil_ub("passing NULL to memcpy is UB even if size == 0: "
                   "memcpy(%p, %p, %zu)", s1, s2, n);
         return s1;
@@ -49,3 +57,6 @@ void* memcpy(void* restrict s1,
     }
     return s1;
 }
+#if __GNUC__
+# pragma GCC pop_options
+#endif // __GNUC__

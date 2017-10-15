@@ -26,7 +26,7 @@ int strncmp(const char* s1,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s1 == NULL || s2 == NULL) {
+    if (__evil_is_null(s1) || __evil_is_null(s2)) {
         __evil_ub("passing NULL to strncmp is UB even if size == 0: "
                   "strncmp(%p, %p, %zu)", s1, s2, n);
         return __evil_rand_nonzero();
