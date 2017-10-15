@@ -50,6 +50,8 @@ set(WARNING_FLAGS
     -Wsync-nand
     -Wtrampolines
     -Wuninitialized
+
+    -Wno-nonnull-compare
     CACHE LIST "Warning flags to use if available")
 
 option(WITH_POSIX "Enable POSIX features" OFF)
