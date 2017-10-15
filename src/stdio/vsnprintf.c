@@ -16,6 +16,14 @@
 #define _STR(x) #x
 #define STR(x) _STR(x)
 
+static size_t write_literal_fmt(char *restrict *pbuf,
+                                size_t *pbuf_size,
+                                const struct fmt *fmt)
+{
+    return __evil_write_literal(pbuf, pbuf_size, fmt->start,
+                                (size_t)(fmt->end - fmt->start));
+}
+
 static size_t fill_literal(char *restrict *pbuf,
                            size_t *pbuf_size,
                            unsigned char c,
@@ -271,7 +279,7 @@ static size_t write_signed(char *restrict *pbuf,
     default:
         __evil_ub("unexpected length specifier in %%d: %.*s",
                   fmt_size(&fmt), fmt.start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt_const);
     }
 
     // TODO: OMFG, required precision can make this length completely
@@ -350,7 +358,7 @@ static size_t write_unsigned(char *restrict *pbuf,
     default:
         __evil_ub("unexpected length specifier in %%u: %.*s",
                   fmt_size(&fmt), fmt.start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt_const);
     }
 
     int base;
@@ -394,6 +402,7 @@ static size_t write_unsigned(char *restrict *pbuf,
             __evil_ub("'alternative form' modifier (#) behavior is undefined "
                       "for conversion %.*s", (int)(fmt.end - fmt.start),
                       fmt.start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt_const);
         }
     }
 
@@ -414,9 +423,9 @@ static int write_pointer(char *restrict *pbuf,
                          va_list *args)
 {
     if (fmt->length != LENGTH_DEFAULT) {
-        __evil_ub("unexpected length specifier in %%s: %.*s",
+        __evil_ub("unexpected length specifier in %%p: %.*s",
                   fmt_size(fmt), fmt->start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt);
     }
 
     /*
@@ -429,14 +438,6 @@ static int write_pointer(char *restrict *pbuf,
      */
     const void *ptr = va_arg(*args, void *);
     return __evil_write_haiku_for_ptr(pbuf, pbuf_size, ptr);
-}
-
-static size_t write_literal_fmt(char *restrict *pbuf,
-                                size_t *pbuf_size,
-                                const struct fmt *fmt)
-{
-    return __evil_write_literal(pbuf, pbuf_size, fmt->start,
-                                (size_t)(fmt->end - fmt->start));
 }
 
 size_t __evil_write_formatted(char *restrict *pbuf,
