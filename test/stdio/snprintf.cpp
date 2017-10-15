@@ -3,6 +3,7 @@
 #include <string>
 
 using namespace std;
+using namespace ::testing;
 
 extern "C" int test_snprintf(char *, size_t, const char *, ...);
 
@@ -242,4 +243,69 @@ TEST_F(SnprintfTest, format_unsigned_hex_alternative_zero_pad) {
 
     EXPECT_EQ(8, test_snprintf(dst, sizeof(dst), "%#08X", 0x1AF));
     EXPECT_EQ("0X0001AF"s, string(dst));
+}
+
+TEST_F(SnprintfTest, pointer) {
+    char dst[64];
+
+    EXPECT_LT(0, test_snprintf(dst, sizeof(dst), "%p", (void *)dst));
+    EXPECT_THAT(string(dst), MatchesRegex("^[A-Za-z]+$"));
+}
+
+TEST_F(SnprintfTest, bytes_written) {
+    char dst[64];
+    int written;
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%s%nc", "ab", &written));
+    EXPECT_EQ("abc"s, string(dst));
+    EXPECT_EQ(2, written);
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s% nc", "ab"));
+        EXPECT_EQ("ab% nc"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s%8nc", "ab"));
+        EXPECT_EQ("ab%8nc"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(7, test_snprintf(dst, sizeof(dst), "%s%.8nc", "ab"));
+        EXPECT_EQ("ab%.8nc"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s%hnc", "ab"));
+        EXPECT_EQ("ab%hnc"s, string(dst));
+    }
+}
+
+TEST_F(SnprintfTest, literal_percent) {
+    char dst[64];
+
+    EXPECT_EQ(1, test_snprintf(dst, sizeof(dst), "%%"));
+    EXPECT_EQ("%"s, string(dst));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "% %"));
+        EXPECT_EQ("% %"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s%8%c", "ab"));
+        EXPECT_EQ("ab%8%c"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(7, test_snprintf(dst, sizeof(dst), "%s%.8%c", "ab"));
+        EXPECT_EQ("ab%.8%c"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s%h%c", "ab"));
+        EXPECT_EQ("ab%h%c"s, string(dst));
+    }
 }
