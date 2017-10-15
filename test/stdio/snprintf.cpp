@@ -38,9 +38,13 @@ TEST_F(SnprintfTest, format_string) {
 
     {
         evil::UBChecker checker{1};
-
         EXPECT_EQ(6, test_snprintf(dst, sizeof(dst), "%s", NULL));
         EXPECT_EQ("(null)"s, string(dst));
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hs", "abc"));
+        EXPECT_EQ("%hs"s, string(dst));
     }
 }
 
@@ -100,6 +104,12 @@ TEST_F(SnprintfTest, format_char) {
 
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%cAB", 'a'));
     EXPECT_EQ("aAB"s, string(dst));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hc", 'a'));
+        EXPECT_EQ("%hc"s, string(dst));
+    }
 }
 
 TEST_F(SnprintfTest, format_char_outside_range) {
@@ -144,6 +154,18 @@ TEST_F(SnprintfTest, format_int_decimal) {
 
     EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%lld", -123LL));
     EXPECT_EQ("-123"s, string(dst));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%Ld", 123));
+        EXPECT_EQ("%Ld"s, dst);
+    }
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%#d", 123));
+        EXPECT_EQ("%#d"s, dst);
+    }
 }
 
 TEST_F(SnprintfTest, format_int_decimal_prefixes) {
@@ -185,13 +207,13 @@ TEST_F(SnprintfTest, format_int_precision) {
 TEST_F(SnprintfTest, format_unsigned_decimal) {
     char dst[16];
 
-    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hhu", 123 + UINT8_MAX + 1));
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hhu", 123U + UINT8_MAX + 1U));
     EXPECT_EQ("123"s, string(dst));
 
-    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hu", 123 + UINT16_MAX + 1));
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hu", 123U + UINT16_MAX + 1U));
     EXPECT_EQ("123"s, string(dst));
 
-    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%u", 123));
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%u", 123U));
     EXPECT_EQ("123"s, string(dst));
 
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%lu", 123L));
@@ -199,6 +221,17 @@ TEST_F(SnprintfTest, format_unsigned_decimal) {
 
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%llu", 123LL));
     EXPECT_EQ("123"s, string(dst));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%Lu", 123U));
+        EXPECT_EQ("%Lu"s, dst);
+    }
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%#u", 123U));
+        EXPECT_EQ("%#u"s, dst);
+    }
 }
 
 TEST_F(SnprintfTest, format_unsigned_octal) {
@@ -250,6 +283,12 @@ TEST_F(SnprintfTest, pointer) {
 
     EXPECT_LT(0, test_snprintf(dst, sizeof(dst), "%p", (void *)dst));
     EXPECT_THAT(string(dst), MatchesRegex("^[A-Za-z]+$"));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%lp", (void *)dst));
+        EXPECT_EQ("%lp"s, string(dst));
+    }
 }
 
 TEST_F(SnprintfTest, bytes_written) {
