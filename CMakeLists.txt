@@ -2,9 +2,54 @@ cmake_minimum_required(VERSION 3.5)
 
 project(evilibc C CXX)
 
-# GCC complains a lot about redundant != NULL checks
-set(CMAKE_C_FLAGS "-Wall -Wextra -std=c11 -Wno-nonnull-compare" CACHE STRING "")
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -std=c++14" CACHE STRING "")
+set(WARNING_FLAGS
+    -W
+    -Wall
+    -Wextra
+    -Wcast-align
+    -Wcast-qual
+    -Wdouble-promotion
+    -Wduplicated-cond
+    -Werror=address
+    -Werror=aggressive-loop-optimizations
+    -Werror=array-bounds
+    -Werror=char-subscripts
+    -Werror=empty-body
+    -Werror=enum-compare
+    -Werror=float-equal
+    -Werror=ignored-qualifiers
+    -Werror=implicit-int
+    -Werror=init-self
+    -Werror=logical-op
+    -Werror=main
+    -Werror=missing-braces
+    -Werror=missing-parameter-type
+    -Werror=nonnull
+    -Werror=old-style-declaration
+    -Werror=parentheses
+    -Werror=pointer-sign
+    -Werror=return-type
+    -Werror=sequence-point
+    -Werror=uninitialized
+    -Werror=volatile-register-var
+    -Werror=write-strings
+    -Wformat=2
+    -Wformat-signedness
+    -Wframe-larger-than=32768
+    -Wjump-misses-init
+    -Wlogical-op
+    -Wnull-dereference
+    -Wodr
+    -Wshadow
+    -Wshift-overflow=2
+    -Wsign-compare
+    -Wstrict-aliasing=2
+    -Wsuggest-final-methods
+    -Wsuggest-final-types
+    -Wsync-nand
+    -Wtrampolines
+    -Wuninitialized
+    CACHE LIST "Warning flags to use if available")
 
 option(WITH_POSIX "Enable POSIX features" OFF)
 option(WITH_XSI "Enable XSI features" OFF)
@@ -102,7 +147,7 @@ target_include_directories(evilibc PUBLIC
                            $<INSTALL_INTERFACE:include>)
 
 target_compile_options(evilibc PRIVATE
-                       -nostdlib -nostdinc)
+                       -nostdlib -nostdinc ${WARNING_FLAGS})
 
 target_compile_features(evilibc PUBLIC
                           c_function_prototypes

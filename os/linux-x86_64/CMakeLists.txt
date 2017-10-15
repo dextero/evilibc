@@ -2,7 +2,8 @@ add_library(runtime STATIC
             src/syscalls.c
             src/startup.c)
 
-target_compile_options(runtime PRIVATE -std=gnu11)
+target_compile_options(runtime PRIVATE
+                       -std=gnu11 ${WARNING_FLAGS})
 
 target_compile_features(runtime PUBLIC
                           c_function_prototypes
