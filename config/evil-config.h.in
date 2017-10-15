@@ -13,4 +13,7 @@
 #cmakedefine WITH_64BIT_FIXED_WIDTH_TYPES 1
 #cmakedefine WITH_INTPTR_TYPES 1
 
+#cmakedefine WITH_USABLE_MALLOC 1
+#cmakedefine WITH_DETERMINISTIC_SETVBUF 1
+
 #endif // __EVIL_CONFIG_H
