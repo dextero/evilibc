@@ -35,6 +35,7 @@ target_include_directories(evilibc_test_utils SYSTEM INTERFACE
 
 add_executable(all_tests
                internal/rand.cpp
+               stdio/snprintf.cpp
                stdlib/malloc/simple_list_based.cpp
                string/memchr.cpp
                string/memcmp.cpp
