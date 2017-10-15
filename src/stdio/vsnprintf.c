@@ -283,24 +283,28 @@ static size_t write_signed(char *restrict *pbuf,
     unsigned long long u_value = value > 0 ? (unsigned long long)value
                                            : (unsigned long long)-value;
     char *p = ull_to_str(tmp, sizeof(tmp), u_value, precision, 10, CASE_LOWER);
-
-    if (is_negative) {
-        *--p = '-';
-    } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
-        *--p = '+';
-    } else if (fmt.flags & FLAG_SPACE_PREFIX) {
-        /*
-         * > If the space and + flags both appear, the space flag is ignored.
-         */
-        *--p = ' ';
-    }
-
     size_t int_str_size = &tmp[sizeof(tmp)] - p;
 
     assert(min_width == MISSING || min_width >= 0);
     size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
 
-    return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
+    size_t bytes_written = 0;
+    if (is_negative) {
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, "-", 1);
+        --width;
+    } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, "+", 1);
+        --width;
+    } else if (fmt.flags & FLAG_SPACE_PREFIX) {
+        /*
+         * > If the space and + flags both appear, the space flag is ignored.
+         */
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, " ", 1);
+        --width;
+    }
+
+    return bytes_written
+        + write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
 }
 
 static size_t write_unsigned(char *restrict *pbuf,
