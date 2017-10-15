@@ -16,6 +16,7 @@ option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
 option(WITH_DETERMINISTIC_SETVBUF "Do not interpret MAY in setvbuf() spec literally" ON)
 
+add_subdirectory(os/stub)
 add_subdirectory(os/linux-x86_64)
 
 configure_file(config/evil-config.h.in
