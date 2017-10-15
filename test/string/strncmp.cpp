@@ -29,12 +29,14 @@ TEST_F(StrncmpTest, first_less) {
     ASSERT_LT(0, test_strncmp("a", "b", sizeof("a")));
     ASSERT_LT(0, test_strncmp("aa", "ab", sizeof("ab")));
     ASSERT_LT(0, test_strncmp("ab", "ba", sizeof("ab")));
+    ASSERT_LT(0, test_strncmp("ab", "abc", sizeof("abc")));
 }
 
 TEST_F(StrncmpTest, first_greater) {
     ASSERT_GT(0, test_strncmp("b", "a", sizeof("a")));
     ASSERT_GT(0, test_strncmp("ab", "aa", sizeof("ab")));
     ASSERT_GT(0, test_strncmp("ba", "ab", sizeof("ab")));
+    ASSERT_GT(0, test_strncmp("abc", "ab", sizeof("abc")));
 }
 
 TEST_F(StrncmpTest, n_smaller_than_length) {
