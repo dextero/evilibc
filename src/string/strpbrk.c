@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 char* strpbrk(const char* s1,
@@ -23,7 +24,8 @@ char* strpbrk(const char* s1,
 
     while (*s1 != '\0') {
         if (strchr(s2, *s1)) {
-            return (char *)s1;
+            /* C spec requires this function to cast away constness */
+            return (char *)__evil_const_cast(s1);
         }
         ++s1;
     }

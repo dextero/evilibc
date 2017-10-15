@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 void* memchr(const void* s,
@@ -36,7 +37,8 @@ void* memchr(const void* s,
     unsigned char *p = (unsigned char *)s;
     for (size_t i = 0; i < n; ++i) {
         if ((unsigned char)c == p[i]) {
-            return &p[i];
+            /* C spec requires this function to cast away constness */
+            return __evil_const_cast(&p[i]);
         }
     }
 

@@ -4,6 +4,7 @@
 #include "limits.h"
 #include "signal.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 char* strrchr(const char* s,
@@ -60,5 +61,7 @@ char* strrchr(const char* s,
             p = s;
         }
     } while (*s++);
-    return (char *)p;
+
+    /* C spec requires this function to cast away constness */
+    return (char *)__evil_const_cast(p);
 }

@@ -4,6 +4,7 @@
 #include "limits.h"
 #include "signal.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 char* strchr(const char* s,
@@ -65,7 +66,8 @@ char* strchr(const char* s,
     }
 
     if (*s || c == '\0') {
-        return (char *)s;
+        /* C spec requires this function to cast away constness */
+        return (char *)__evil_const_cast(s);
     } else {
         return NULL;
     }
