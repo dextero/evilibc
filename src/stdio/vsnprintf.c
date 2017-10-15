@@ -108,7 +108,6 @@ static size_t write_padded(char *restrict *pbuf,
     }
 
     size_t pad_size = 0;
-    size_t bytes_to_write = str_size;
 
     if (min_width != MISSING) {
         assert(min_width >= 0);
@@ -120,12 +119,11 @@ static size_t write_padded(char *restrict *pbuf,
          * > right, if the left adjustment flag, described later, has been
          * > given) to the field width.
          */
-        bytes_to_write = (size_t)min_width;
-        if (str_size > bytes_to_write) {
-            bytes_to_write = str_size;
+        if ((size_t)min_width < str_size) {
+            pad_size = 0;
+        } else {
+            pad_size = (size_t)min_width - str_size;
         }
-
-        pad_size = (size_t)min_width - str_size;
     }
 
     unsigned pad_char = (flags & FLAG_ZERO_PAD) ? '0' : ' ';
@@ -169,20 +167,13 @@ static int write_string(char *restrict *pbuf,
     }
 
     size_t str_size;
-    if (min_width == MISSING) {
+    if (precision == MISSING) {
         str_size = strlen(str);
-        if (precision != MISSING && (size_t)precision < str_size) {
-            str_size = (size_t)precision;
-        }
     } else {
-        assert(min_width >= 0);
         // str may have a null-terminator early
-        str_size = min_width;
-        if (precision != MISSING && (size_t)precision < str_size) {
-            str_size = (size_t)precision;
-        }
+        str_size = (size_t)precision;
 
-        for (size_t i = 0; i < str_size; ++i) {
+        for (size_t i = 0; i < (size_t)precision; ++i) {
             if (str[i] == '\0') {
                 str_size = (size_t)i;
                 break;
