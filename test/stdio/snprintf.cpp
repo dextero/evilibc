@@ -403,3 +403,10 @@ TEST_F(SnprintfTest, conversion_limit) {
         EXPECT_EQ(string(4095, 'A'), string(dst));
     }
 }
+
+TEST_F(SnprintfTest, buffer_too_short) {
+    char dst[2];
+
+    EXPECT_EQ(8, test_snprintf(dst, sizeof(dst), "%d", 12345678));
+    EXPECT_EQ("1"s, string(dst));
+}
