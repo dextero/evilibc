@@ -431,6 +431,14 @@ static int write_pointer(char *restrict *pbuf,
     return __evil_write_haiku_for_ptr(pbuf, pbuf_size, ptr);
 }
 
+static size_t write_literal_fmt(char *restrict *pbuf,
+                                size_t *pbuf_size,
+                                const struct fmt *fmt)
+{
+    return __evil_write_literal(pbuf, pbuf_size, fmt->start,
+                                (size_t)(fmt->end - fmt->start));
+}
+
 size_t __evil_write_formatted(char *restrict *pbuf,
                               size_t *pbuf_size,
                               int chars_written_so_far,
@@ -440,13 +448,13 @@ size_t __evil_write_formatted(char *restrict *pbuf,
     switch (fmt->type) {
     case TYPE_INVALID:
         __evil_ub("invalid format specifier: %.*s", fmt_size(fmt), fmt->start);
-        return __evil_write_literal(pbuf, pbuf_size, fmt->start,
-                                    (size_t)(fmt->end - fmt->start));
+        return write_literal_fmt(pbuf, pbuf_size, fmt);
     case TYPE_SIGNED_INT:
         if (fmt->flags & FLAG_ALTERNATIVE_FORM) {
             __evil_ub("'alternative form' modifier (#) behavior is undefined "
                       "for %%d conversion (%.*s)", (int)(fmt->end - fmt->start),
                       fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
         return write_signed(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT:
@@ -474,8 +482,7 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         default:
             __evil_ub("unexpected length specifier in %%s: %.*s",
                       fmt_size(fmt), fmt->start);
-            // TODO: print fmt->start as literal
-            return 0;
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
         return 0;
     case TYPE_STRING:
@@ -488,36 +495,27 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         default:
             __evil_ub("unexpected length specifier in %%s: %.*s",
                       fmt_size(fmt), fmt->start);
-            // TODO: print fmt->start as literal
-            return 0;
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
     case TYPE_POINTER:
         return write_pointer(pbuf, pbuf_size, fmt, args);
     case TYPE_NUM_CHARS_WRITTEN:
-        if (fmt->flags != 0
-                || fmt->min_width != MISSING
-                || fmt->precision != MISSING
-                || fmt->length != LENGTH_DEFAULT) {
+        if (fmt_has_any_modifiers(fmt)) {
             __evil_ub("specifying any flags to %%n is UB: %.*s",
                       fmt_size(fmt), fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
+        } else {
+            *va_arg(*args, int*) = chars_written_so_far;
+            return 0;
         }
-        *va_arg(*args, int*) = chars_written_so_far;
-        return 0;
     case TYPE_PERCENT:
-        if (fmt->flags != 0
-                || fmt->min_width != MISSING
-                || fmt->precision != MISSING
-                || fmt->length != LENGTH_DEFAULT) {
+        if (fmt_has_any_modifiers(fmt)) {
             __evil_ub("specifying any flags to %%%% is UB: %.*s",
                       fmt_size(fmt), fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
+        } else {
+            return __evil_write_literal(pbuf, pbuf_size, "%", 1);
         }
-        if (*pbuf_size > 0) {
-            **pbuf = '%';
-            ++*pbuf;
-            --*pbuf_size;
-
-        }
-        return 1;
     }
 
     // TODO: this should not be necessary

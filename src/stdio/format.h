@@ -3,6 +3,7 @@
 
 #include <assert.h>
 #include <limits.h>
+#include <stdbool.h>
 
 /*
  * 7.21.6.1.15:
@@ -69,6 +70,13 @@ struct fmt {
 static inline int fmt_size(const struct fmt *fmt) {
     assert(fmt->end - fmt->start <= INT_MAX);
     return (int)(fmt->end - fmt->start);
+}
+
+static inline bool fmt_has_any_modifiers(const struct fmt *fmt) {
+    return fmt->flags != 0
+        || fmt->min_width != MISSING
+        || fmt->precision != MISSING
+        || fmt->length != LENGTH_DEFAULT;
 }
 
 /**
