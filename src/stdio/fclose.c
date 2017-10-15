@@ -31,10 +31,12 @@ int fclose(FILE *stream)
      * > setvbuf function is disassociated from the stream (and deallocated
      * > if it was automatically allocated).
      */
-    int error = fflush(stream);
-    file_dealloc(stream);
-    if (_close(stream->fd) || error) {
-        goto fail;
+    {
+        int error = fflush(stream);
+        file_dealloc(stream);
+        if (_close(stream->fd) || error) {
+            goto fail;
+        }
     }
     
     /*
