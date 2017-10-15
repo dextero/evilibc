@@ -35,6 +35,9 @@ TEST_F(SnprintfTest, format_string) {
     EXPECT_EQ(5, test_snprintf(dst, sizeof(dst), "%sAB", "abc"));
     EXPECT_EQ("abcAB"s, string(dst));
 
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "% 2s", "abc"));
+    EXPECT_EQ("abc"s, string(dst));
+
     EXPECT_EQ(5, test_snprintf(dst, sizeof(dst), "% 5s", "abc"));
     EXPECT_EQ("  abc"s, string(dst));
 
