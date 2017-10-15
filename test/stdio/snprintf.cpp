@@ -114,10 +114,34 @@ TEST_F(SnprintfTest, format_char_outside_range) {
 TEST_F(SnprintfTest, format_int_decimal) {
     char dst[16];
 
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hhd", 123 + UINT8_MAX + 1));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%hhd", -123 - UINT8_MAX - 1));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hd", 123 + UINT16_MAX + 1));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%hd", -123 - UINT16_MAX - 1));
+    EXPECT_EQ("-123"s, string(dst));
+
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%d", 123));
     EXPECT_EQ("123"s, string(dst));
 
     EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%d", -123));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%ld", 123L));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%ld", -123L));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%lld", 123LL));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%lld", -123LL));
     EXPECT_EQ("-123"s, string(dst));
 }
 
@@ -147,11 +171,47 @@ TEST_F(SnprintfTest, format_int_zero_pad) {
     EXPECT_EQ("-0000123"s, string(dst));
 }
 
+TEST_F(SnprintfTest, format_int_precision) {
+    char dst[16];
+
+    EXPECT_EQ(8, test_snprintf(dst, sizeof(dst), "%.8d", 123));
+    EXPECT_EQ("00000123"s, string(dst));
+
+    EXPECT_EQ(9, test_snprintf(dst, sizeof(dst), "%.8d", -123));
+    EXPECT_EQ("-00000123"s, string(dst));
+}
+
 TEST_F(SnprintfTest, format_unsigned_decimal) {
     char dst[16];
 
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hhu", 123 + UINT8_MAX + 1));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%hu", 123 + UINT16_MAX + 1));
+    EXPECT_EQ("123"s, string(dst));
+
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%u", 123));
     EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%lu", 123L));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%llu", 123LL));
+    EXPECT_EQ("123"s, string(dst));
+}
+
+TEST_F(SnprintfTest, format_unsigned_octal) {
+    char dst[16];
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%o", 0123));
+    EXPECT_EQ("123"s, string(dst));
+}
+
+TEST_F(SnprintfTest, format_unsigned_octal_alternative) {
+    char dst[16];
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%#o", 0123));
+    EXPECT_EQ("0123"s, string(dst));
 }
 
 TEST_F(SnprintfTest, format_unsigned_hex) {
