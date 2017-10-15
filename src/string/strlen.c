@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 size_t strlen(const char* s)
@@ -15,7 +16,7 @@ size_t strlen(const char* s)
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (!s) {
+    if (__evil_is_null(s)) {
         __evil_ub("passing NULL to strlen is UB: strlen(%p)", s);
         return 0;
     }

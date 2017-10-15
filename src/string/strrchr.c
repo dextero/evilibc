@@ -24,7 +24,7 @@ char* strrchr(const char* s,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s == NULL) {
+    if (__evil_is_null(s)) {
         __evil_ub("passing NULL to strrchr is UB: strrchr(%p, %d)", s, c);
         return NULL;
     }

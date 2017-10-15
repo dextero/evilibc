@@ -2,6 +2,7 @@
 
 #include "string.h"
 
+#include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
 #if __GNUC__
@@ -25,7 +26,7 @@ void* memset(void* s,
      * > a type (after promotion) not expected by a function with variable
      * > number of arguments, the behavior is undefined.
      */
-    if (s == NULL) {
+    if (__evil_is_null(s)) {
         __evil_ub("passing NULL to memset is UB even if size is 0: "
                   "memset(%p, %d, %zu)", s, c, n);
         return NULL;
