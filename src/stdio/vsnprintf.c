@@ -160,7 +160,7 @@ static int write_string(char *restrict *pbuf,
 {
     struct fmt fmt = *fmt_const;
     long min_width = fetch_width(&fmt, args);
-    long precision = fetch_precision(&fmt, args, 1);
+    long precision = fetch_precision(&fmt, args, MISSING);
 
     const char *str = va_arg(*args, const char *);
     if (!str) {
