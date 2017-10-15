@@ -186,6 +186,12 @@ install(EXPORT evilibc_targets
         NAMESPACE evilibc::
         DESTINATION lib/cmake/evilibc)
 
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Evil libc implementation")
+set(CPACK_PACKAGE_VENDOR "dextero")
+set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+include(CPack)
+
 enable_testing()
 add_subdirectory(test EXCLUDE_FROM_ALL)
 
