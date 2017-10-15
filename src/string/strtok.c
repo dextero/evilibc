@@ -1,6 +1,7 @@
 #include <evil-config.h>
 
 #include "string.h"
+#include "assert.h"
 
 #include "internal/undefined_behavior.h"
 
@@ -63,7 +64,7 @@ char* strtok(char* restrict s1,
      * > The separator string pointed to by s2 may be different from call
      * > to call.
      */
-    saveptr += strspn(saveptr, s2);;
+    saveptr += strspn(saveptr, s2);
     if (!*saveptr) {
         return NULL;
     }
@@ -82,9 +83,12 @@ char* strtok(char* restrict s1,
      * > search for a token will start.
      */
     size_t token_len = strcspn(token_start, s2);
+    assert(token_len > 0);
+
     saveptr += token_len;
     if (*saveptr) {
         *saveptr++ = '\0';
     }
-    return token_len > 0 ? token_start : NULL;;
+
+    return token_start;
 }
