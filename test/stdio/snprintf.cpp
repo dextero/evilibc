@@ -309,3 +309,26 @@ TEST_F(SnprintfTest, literal_percent) {
         EXPECT_EQ("ab%h%c"s, string(dst));
     }
 }
+
+TEST_F(SnprintfTest, conversion_limit) {
+    char dst[4096];
+    char src[8192];
+    memset(src, 'A', sizeof(src));
+    src[sizeof(src) - 1] = '\0';
+
+    {
+        evil::IDBChecker checker{1};
+        EXPECT_EQ(4095, test_snprintf(dst, sizeof(dst), "%s", src));
+        EXPECT_EQ(string(4095, 'A'), string(dst));
+    }
+    {
+        evil::IDBChecker checker{1};
+        EXPECT_EQ(4095, test_snprintf(dst, sizeof(dst), "% 8192s", "A"));
+        EXPECT_EQ(string(4094, ' ') + "A", string(dst));
+    }
+    {
+        evil::IDBChecker checker{1};
+        EXPECT_EQ(4095, test_snprintf(dst, sizeof(dst), "%.8192s", src));
+        EXPECT_EQ(string(4095, 'A'), string(dst));
+    }
+}
