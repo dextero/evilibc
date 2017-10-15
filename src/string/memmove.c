@@ -5,6 +5,14 @@
 #include "internal/memory.h"
 #include "internal/undefined_behavior.h"
 
+#if __GNUC__
+/*
+ * GCC with -O2 optimizes loops that look like memcpy() to memcpy() call,
+ * making this memmove() call memcpy()
+ */
+# pragma GCC push_options
+# pragma GCC optimize("-fno-tree-loop-distribute-patterns")
+#endif // __GNUC__
 void* memmove(void* restrict s1,
               const void* restrict s2,
               size_t n)
@@ -64,3 +72,6 @@ void* memmove(void* restrict s1,
 
     return s1;
 }
+#if __GNUC__
+# pragma GCC pop_options
+#endif // __GNUC__
