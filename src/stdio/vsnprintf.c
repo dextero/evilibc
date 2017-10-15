@@ -16,6 +16,14 @@
 #define _STR(x) #x
 #define STR(x) _STR(x)
 
+static size_t write_literal_fmt(char *restrict *pbuf,
+                                size_t *pbuf_size,
+                                const struct fmt *fmt)
+{
+    return __evil_write_literal(pbuf, pbuf_size, fmt->start,
+                                (size_t)(fmt->end - fmt->start));
+}
+
 static size_t fill_literal(char *restrict *pbuf,
                            size_t *pbuf_size,
                            unsigned char c,
@@ -108,7 +116,6 @@ static size_t write_padded(char *restrict *pbuf,
     }
 
     size_t pad_size = 0;
-    size_t bytes_to_write = str_size;
 
     if (min_width != MISSING) {
         assert(min_width >= 0);
@@ -120,12 +127,11 @@ static size_t write_padded(char *restrict *pbuf,
          * > right, if the left adjustment flag, described later, has been
          * > given) to the field width.
          */
-        bytes_to_write = (size_t)min_width;
-        if (str_size > bytes_to_write) {
-            bytes_to_write = str_size;
+        if ((size_t)min_width < str_size) {
+            pad_size = 0;
+        } else {
+            pad_size = (size_t)min_width - str_size;
         }
-
-        pad_size = (size_t)min_width - str_size;
     }
 
     unsigned pad_char = (flags & FLAG_ZERO_PAD) ? '0' : ' ';
@@ -160,7 +166,7 @@ static int write_string(char *restrict *pbuf,
 {
     struct fmt fmt = *fmt_const;
     long min_width = fetch_width(&fmt, args);
-    long precision = fetch_precision(&fmt, args, 1);
+    long precision = fetch_precision(&fmt, args, MISSING);
 
     const char *str = va_arg(*args, const char *);
     if (!str) {
@@ -169,20 +175,13 @@ static int write_string(char *restrict *pbuf,
     }
 
     size_t str_size;
-    if (min_width == MISSING) {
+    if (precision == MISSING) {
         str_size = strlen(str);
-        if (precision != MISSING && (size_t)precision < str_size) {
-            str_size = (size_t)precision;
-        }
     } else {
-        assert(min_width >= 0);
         // str may have a null-terminator early
-        str_size = min_width;
-        if (precision != MISSING && (size_t)precision < str_size) {
-            str_size = (size_t)precision;
-        }
+        str_size = (size_t)precision;
 
-        for (size_t i = 0; i < str_size; ++i) {
+        for (size_t i = 0; i < (size_t)precision; ++i) {
             if (str[i] == '\0') {
                 str_size = (size_t)i;
                 break;
@@ -280,10 +279,10 @@ static size_t write_signed(char *restrict *pbuf,
     default:
         __evil_ub("unexpected length specifier in %%d: %.*s",
                   fmt_size(&fmt), fmt.start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt_const);
     }
 
-    // TODO: OMFG, reuquired precision can make this length completely
+    // TODO: OMFG, required precision can make this length completely
     // arbitrary
     char tmp[sizeof(STR(LLONG_MIN)) * 2] = "";
     bool is_negative = value < 0;
@@ -292,24 +291,28 @@ static size_t write_signed(char *restrict *pbuf,
     unsigned long long u_value = value > 0 ? (unsigned long long)value
                                            : (unsigned long long)-value;
     char *p = ull_to_str(tmp, sizeof(tmp), u_value, precision, 10, CASE_LOWER);
-
-    if (is_negative) {
-        *--p = '-';
-    } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
-        *--p = '+';
-    } else if (fmt.flags & FLAG_SPACE_PREFIX) {
-        /*
-         * > If the space and + flags both appear, the space flag is ignored.
-         */
-        *--p = ' ';
-    }
-
     size_t int_str_size = &tmp[sizeof(tmp)] - p;
 
     assert(min_width == MISSING || min_width >= 0);
     size_t width = min_width == MISSING ? int_str_size : (size_t)min_width;
 
-    return write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
+    size_t bytes_written = 0;
+    if (is_negative) {
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, "-", 1);
+        --width;
+    } else if (fmt.flags & FLAG_SIGN_REQUIRED) {
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, "+", 1);
+        --width;
+    } else if (fmt.flags & FLAG_SPACE_PREFIX) {
+        /*
+         * > If the space and + flags both appear, the space flag is ignored.
+         */
+        bytes_written += __evil_write_literal(pbuf, pbuf_size, " ", 1);
+        --width;
+    }
+
+    return bytes_written
+        + write_padded(pbuf, pbuf_size, p, int_str_size, width, fmt.flags);
 }
 
 static size_t write_unsigned(char *restrict *pbuf,
@@ -338,7 +341,6 @@ static size_t write_unsigned(char *restrict *pbuf,
         break;
     case LENGTH_LONG:
     case LENGTH_SIZE:
-    case LENGTH_PTRDIFF:
         {
             static_assert(sizeof(unsigned long) == sizeof(size_t), "");
             static_assert(sizeof(unsigned long) == sizeof(ptrdiff_t), "");
@@ -355,7 +357,7 @@ static size_t write_unsigned(char *restrict *pbuf,
     default:
         __evil_ub("unexpected length specifier in %%u: %.*s",
                   fmt_size(&fmt), fmt.start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt_const);
     }
 
     int base;
@@ -399,6 +401,7 @@ static size_t write_unsigned(char *restrict *pbuf,
             __evil_ub("'alternative form' modifier (#) behavior is undefined "
                       "for conversion %.*s", (int)(fmt.end - fmt.start),
                       fmt.start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt_const);
         }
     }
 
@@ -419,9 +422,9 @@ static int write_pointer(char *restrict *pbuf,
                          va_list *args)
 {
     if (fmt->length != LENGTH_DEFAULT) {
-        __evil_ub("unexpected length specifier in %%s: %.*s",
+        __evil_ub("unexpected length specifier in %%p: %.*s",
                   fmt_size(fmt), fmt->start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt);
     }
 
     /*
@@ -445,12 +448,13 @@ size_t __evil_write_formatted(char *restrict *pbuf,
     switch (fmt->type) {
     case TYPE_INVALID:
         __evil_ub("invalid format specifier: %.*s", fmt_size(fmt), fmt->start);
-        return 0;
+        return write_literal_fmt(pbuf, pbuf_size, fmt);
     case TYPE_SIGNED_INT:
         if (fmt->flags & FLAG_ALTERNATIVE_FORM) {
             __evil_ub("'alternative form' modifier (#) behavior is undefined "
                       "for %%d conversion (%.*s)", (int)(fmt->end - fmt->start),
                       fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
         return write_signed(pbuf, pbuf_size, fmt, args);
     case TYPE_UNSIGNED_INT:
@@ -478,8 +482,7 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         default:
             __evil_ub("unexpected length specifier in %%s: %.*s",
                       fmt_size(fmt), fmt->start);
-            // TODO: print fmt->start as literal
-            return 0;
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
         return 0;
     case TYPE_STRING:
@@ -492,36 +495,27 @@ size_t __evil_write_formatted(char *restrict *pbuf,
         default:
             __evil_ub("unexpected length specifier in %%s: %.*s",
                       fmt_size(fmt), fmt->start);
-            // TODO: print fmt->start as literal
-            return 0;
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
         }
     case TYPE_POINTER:
         return write_pointer(pbuf, pbuf_size, fmt, args);
     case TYPE_NUM_CHARS_WRITTEN:
-        if (fmt->flags != 0
-                || fmt->min_width != MISSING
-                || fmt->precision != MISSING
-                || fmt->length != LENGTH_DEFAULT) {
+        if (fmt_has_any_modifiers(fmt)) {
             __evil_ub("specifying any flags to %%n is UB: %.*s",
                       fmt_size(fmt), fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
+        } else {
+            *va_arg(*args, int*) = chars_written_so_far;
+            return 0;
         }
-        *va_arg(*args, int*) = chars_written_so_far;
-        return 0;
     case TYPE_PERCENT:
-        if (fmt->flags != 0
-                || fmt->min_width != MISSING
-                || fmt->precision != MISSING
-                || fmt->length != LENGTH_DEFAULT) {
+        if (fmt_has_any_modifiers(fmt)) {
             __evil_ub("specifying any flags to %%%% is UB: %.*s",
                       fmt_size(fmt), fmt->start);
+            return write_literal_fmt(pbuf, pbuf_size, fmt);
+        } else {
+            return __evil_write_literal(pbuf, pbuf_size, "%", 1);
         }
-        if (*pbuf_size > 0) {
-            **pbuf = '%';
-            ++*pbuf;
-            --*pbuf_size;
-
-        }
-        return 1;
     }
 
     // TODO: this should not be necessary
@@ -535,6 +529,7 @@ int vsnprintf(char* restrict s,
 {
     const char *segment_start = format;
     size_t chars_written = 0;
+    --n; // reserve space for terminating nullbyte
 
     // Argh, passing a pointer to va_list parameter does not work
     // https://stackoverflow.com/a/8048892/2339636
@@ -568,6 +563,9 @@ int vsnprintf(char* restrict s,
         chars_written += __evil_write_literal(&s, &n, segment_start,
                                               (size_t)(format - segment_start));
     }
+
+    ++n; // append terminating nullbyte
+    __evil_write_literal(&s, &n, "", 1);
 
     return chars_written;
 }

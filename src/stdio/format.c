@@ -68,7 +68,7 @@ static const char *parse_precision(const char *fmt,
     *out_precision = 0;
     const char *result = parse_width(fmt + 1, out_precision);
 
-    if (*out_precision == DEFAULT) {
+    if (*out_precision == MISSING) {
         /*
          * 7.21.6.1.4:
          * > if only the period is specified, the precision is taken as zero.
