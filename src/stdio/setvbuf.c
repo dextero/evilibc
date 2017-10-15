@@ -51,12 +51,12 @@ int setvbuf(FILE* restrict stream,
             ) {
         file_set_buffer(stream, buf, size, false);
     } else {
-        void *buf = malloc(size);
+        buf = (char *)malloc(size);
         if (!buf) {
             goto fail;
         }
 
-        file_set_buffer(stream, (char *)buf, size, true);
+        file_set_buffer(stream, buf, size, true);
     }
 
     stream->bufmode = mode;
