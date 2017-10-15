@@ -23,7 +23,8 @@ int __evil_rand(void)
         _seed ^= 0x54d4d555;
     }
 
-    return (int)(_seed & __EVIL_RAND_MAX);
+    assert(_seed != 0);
+    return (int)((_seed - 1) & __EVIL_RAND_MAX);
 }
 
 int __evil_rand_range(int min_inclusive,
