@@ -15,6 +15,14 @@ TEST_F(SnprintfTest, no_args) {
     ASSERT_EQ("abc"s, string(dst));
 }
 
+TEST_F(SnprintfTest, format_invalid) {
+    char dst[sizeof("%?")];
+    evil::UBChecker checker{1};
+
+    ASSERT_EQ(2, test_snprintf(dst, sizeof(dst), "%?"));
+    ASSERT_EQ("%?"s, string(dst));
+}
+
 TEST_F(SnprintfTest, format_string) {
     char dst[sizeof("abcAB")];
 
