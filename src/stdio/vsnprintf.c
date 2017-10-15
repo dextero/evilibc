@@ -283,7 +283,7 @@ static size_t write_signed(char *restrict *pbuf,
         return 0;
     }
 
-    // TODO: OMFG, reuquired precision can make this length completely
+    // TODO: OMFG, required precision can make this length completely
     // arbitrary
     char tmp[sizeof(STR(LLONG_MIN)) * 2] = "";
     bool is_negative = value < 0;
@@ -569,6 +569,7 @@ int vsnprintf(char* restrict s,
         chars_written += __evil_write_literal(&s, &n, segment_start,
                                               (size_t)(format - segment_start));
     }
+    __evil_write_literal(&s, &n, "", 1);
 
     return chars_written;
 }
