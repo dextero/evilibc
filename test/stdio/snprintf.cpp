@@ -121,6 +121,22 @@ TEST_F(SnprintfTest, format_int_decimal) {
     EXPECT_EQ("-123"s, string(dst));
 }
 
+TEST_F(SnprintfTest, format_int_decimal_prefixes) {
+    char dst[16];
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%+d", 123));
+    EXPECT_EQ("+123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%+d", -123));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "% d", 123));
+    EXPECT_EQ(" 123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "% d", -123));
+    EXPECT_EQ("-123"s, string(dst));
+}
+
 TEST_F(SnprintfTest, format_int_zero_pad) {
     char dst[16];
 
@@ -156,4 +172,14 @@ TEST_F(SnprintfTest, format_unsigned_hex_alternative) {
 
     EXPECT_EQ(5, test_snprintf(dst, sizeof(dst), "%#X", 0x1AF));
     EXPECT_EQ("0X1AF"s, string(dst));
+}
+
+TEST_F(SnprintfTest, format_unsigned_hex_alternative_zero_pad) {
+    char dst[16];
+
+    EXPECT_EQ(8, test_snprintf(dst, sizeof(dst), "%#08x", 0x1af));
+    EXPECT_EQ("0x0001af"s, string(dst));
+
+    EXPECT_EQ(8, test_snprintf(dst, sizeof(dst), "%#08X", 0x1AF));
+    EXPECT_EQ("0X0001AF"s, string(dst));
 }
