@@ -27,3 +27,26 @@ TEST_F(SnprintfTest, format_string) {
     ASSERT_EQ(5, test_snprintf(dst, sizeof(dst), "%sAB", "abc"));
     ASSERT_EQ("abcAB"s, string(dst));
 }
+
+TEST_F(SnprintfTest, format_char) {
+    char dst[sizeof("xAB")];
+
+    ASSERT_EQ(3, test_snprintf(dst, sizeof(dst), "AB%c", 'a'));
+    ASSERT_EQ("ABa"s, string(dst));
+
+    ASSERT_EQ(3, test_snprintf(dst, sizeof(dst), "A%cB", 'a'));
+    ASSERT_EQ("AaB"s, string(dst));
+
+    ASSERT_EQ(3, test_snprintf(dst, sizeof(dst), "%cAB", 'a'));
+    ASSERT_EQ("aAB"s, string(dst));
+}
+
+TEST_F(SnprintfTest, format_char_outside_range) {
+    char dst[sizeof("A")];
+
+    ASSERT_EQ(1, test_snprintf(dst, sizeof(dst), "%c", 'A' - 256));
+    ASSERT_EQ("A"s, string(dst));
+
+    ASSERT_EQ(1, test_snprintf(dst, sizeof(dst), "%c", 'A' + 256));
+    ASSERT_EQ("A"s, string(dst));
+}
