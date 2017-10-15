@@ -94,6 +94,14 @@ static struct list **get_free_chunk(size_t min_size)
     return chunk_insert(&g_free_chunks, &chunk->list);
 }
 
+#if __GNUC__
+/*
+ * `second` aliases `chunk`; strict aliasing optimizations must be disabled
+ * or the optimizer may consider this UB and make bad stuff happen.
+ */
+# pragma GCC push_options
+# pragma GCC optimize("-fno-strict-aliasing")
+#endif // __GNUC__
 static struct chunk *chunk_split(struct chunk *chunk,
                                  size_t first_size)
 {
@@ -112,6 +120,9 @@ static struct chunk *chunk_split(struct chunk *chunk,
     };
     return chunk;
 }
+#if __GNUC__
+# pragma GCC pop_options
+#endif // __GNUC__
 
 static struct chunk *chunk_shrink_to_fit(struct chunk *chunk,
                                          size_t required_size)
