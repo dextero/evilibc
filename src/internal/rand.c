@@ -6,7 +6,17 @@ static unsigned int _seed = 1;
 
 int __evil_rand(void)
 {
-    _seed = _seed * 48721u % (__EVIL_RAND_MAX + 1);
+    /*
+     * Linear Feedback Shift Register with 31-bit cycle
+     * https://en.wikipedia.org/wiki/Linear-feedback_shift_register
+     * http://www.onarm.com/forum/3202/
+     */
+    unsigned int lsb = _seed & 1;
+    _seed >>= 1;
+    if (lsb) {
+        _seed ^= 0x54d4d555;
+    }
+
     return (int)(_seed & __EVIL_RAND_MAX);
 }
 
