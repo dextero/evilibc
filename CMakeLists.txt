@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
 project(evilibc C CXX)
 
@@ -16,10 +16,11 @@ option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
 option(WITH_DETERMINISTIC_SETVBUF "Do not interpret MAY in setvbuf() spec literally" ON)
 
+add_subdirectory(os/linux-x86_64)
+
 configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
                @ONLY)
-include_directories("${CMAKE_CURRENT_BINARY_DIR}/config")
 
 add_library(evilibc
             include/stdio.h
@@ -92,21 +93,34 @@ add_library(evilibc
             src/stdio/fprintf.c
             src/stdio/fclose.c)
 
-set(EVILIBC_C_FLAGS
-    -nostdlib -nostdinc
-    -I${CMAKE_CURRENT_SOURCE_DIR}/include
-    -I${CMAKE_CURRENT_SOURCE_DIR}/os/include
-    -I${CMAKE_CURRENT_SOURCE_DIR}/os/linux-x86_64/include
-    -I${CMAKE_CURRENT_SOURCE_DIR}/src
-    -isystem /usr/include/x86_64-linux-gnu)
-set_target_properties(evilibc PROPERTIES
-                      COMPILE_OPTIONS "${EVILIBC_C_FLAGS}")
+target_include_directories(evilibc PRIVATE
+                           src)
+target_include_directories(evilibc PUBLIC
+                           $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/config>
+                           $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+                           $<INSTALL_INTERFACE:include>)
 
-install(DIRECTORY include DESTINATION include/evilibc)
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h" DESTINATION include/evilibc/include)
-install(FILES "$<TARGET_FILE:evilibc>" DESTINATION lib)
+target_compile_options(evilibc PRIVATE
+                       -nostdlib -nostdinc)
 
-add_subdirectory(os/linux-x86_64)
+target_compile_features(evilibc PUBLIC
+                          c_function_prototypes
+                          c_restrict
+                        PRIVATE
+                          c_static_assert)
+
+target_link_libraries(evilibc PUBLIC
+                      runtime)
+
+install(TARGETS evilibc EXPORT evilibc_targets
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+        RUNTIME DESTINATION bin
+        INCLUDES DESTINATION include/evilibc)
+install(EXPORT evilibc_targets
+        FILE evilibc_targets.cmake
+        NAMESPACE evilibc::
+        DESTINATION lib/cmake/evilibc)
 
 enable_testing()
 add_subdirectory(test)
