@@ -17,10 +17,9 @@ which gcovr || die "gcovr not found, exiting"
 
 mkdir -p "$BUILD_DIR"
 pushd "$BUILD_DIR"
-    cmake -D CMAKE_C_FLAGS="-fprofile-arcs -ftest-coverage" \
-          -D CMAKE_CXX_FLAGS="-fprofile-arcs -ftest-coverage" \
+    cmake -D CMAKE_C_FLAGS="-fprofile-arcs -ftest-coverage -DNDEBUG" \
+          -D CMAKE_CXX_FLAGS="-fprofile-arcs -ftest-coverage -DNDEBUG" \
           -D CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage" \
-          -D CMAKE_BUILD_TYPE=Release \
           "$PROJECT_ROOT"
     make -j$(nproc)
     make check
