@@ -9,8 +9,18 @@ extern "C" char *test_strstr(const char *, const char *);
 class StrstrTest : public evil::Test {};
 
 TEST_F(StrstrTest, null_str) {
-    evil::UBChecker checker{1};
-    ASSERT_EQ(NULL, test_strstr(NULL, ""));
+    {
+        evil::UBChecker checker{1};
+        ASSERT_EQ(NULL, test_strstr(NULL, ""));
+    }
+    {
+        evil::UBChecker checker{1};
+        ASSERT_EQ(NULL, test_strstr("", NULL));
+    }
+    {
+        evil::UBChecker checker{1};
+        ASSERT_EQ(NULL, test_strstr(NULL, NULL));
+    }
 }
 
 TEST_F(StrstrTest, empty_str) {
