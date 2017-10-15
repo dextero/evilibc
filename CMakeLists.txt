@@ -92,7 +92,6 @@ add_library(evilibc
             src/internal/list.h
             src/internal/undefined_behavior.c
             src/internal/rand.c
-            src/internal/syscall.h
             src/internal/rand.h
             src/internal/container_of.h
             src/internal/init.c
