@@ -4,6 +4,12 @@
 
 static unsigned int _seed = 1;
 
+void __evil_srand(unsigned int seed)
+{
+    assert(seed != 0);
+    _seed = seed;
+}
+
 int __evil_rand(void)
 {
     /*

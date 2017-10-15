@@ -12,6 +12,7 @@ static_assert(sizeof(int) == 4, "__evil_rand assumes 32-bit integers");
 
 #define __EVIL_RAND_MAX 0x7FFFFFFFU
 
+void __evil_srand(unsigned int seed);
 int __evil_rand(void);
 int __evil_rand_range(int min_inclusive,
                       int max_exclusive);
