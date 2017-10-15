@@ -155,6 +155,24 @@ TEST_F(SnprintfTest, format_int_decimal) {
     EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%lld", -123LL));
     EXPECT_EQ("-123"s, string(dst));
 
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%zd", (ssize_t)123));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%zd", (ssize_t)-123));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%jd", (intmax_t)123));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%jd", (intmax_t)-123));
+    EXPECT_EQ("-123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%td", (ptrdiff_t)123));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(4, test_snprintf(dst, sizeof(dst), "%td", (ptrdiff_t)-123));
+    EXPECT_EQ("-123"s, string(dst));
+
     {
         evil::UBChecker checker{1};
         EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%Ld", 123));
@@ -222,6 +240,17 @@ TEST_F(SnprintfTest, format_unsigned_decimal) {
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%llu", 123LL));
     EXPECT_EQ("123"s, string(dst));
 
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%zd", (size_t)123));
+    EXPECT_EQ("123"s, string(dst));
+
+    EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%jd", (uintmax_t)123));
+    EXPECT_EQ("123"s, string(dst));
+
+    {
+        evil::UBChecker checker{1};
+        EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%tu", (ptrdiff_t)123));
+        EXPECT_EQ("%tu"s, string(dst));
+    }
     {
         evil::UBChecker checker{1};
         EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%Lu", 123U));
