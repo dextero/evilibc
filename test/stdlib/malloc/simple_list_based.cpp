@@ -7,6 +7,9 @@
 using namespace std;
 using namespace testing;
 
+/* Magic constant that may be returned by malloc(0) */
+#define EVIL_PTR ((void *)0x1)
+
 namespace {
 
 class MemoryPool {
@@ -131,6 +134,16 @@ TEST_F(ReallocTest, behaves_like_malloc_if_ptr_null) {
     ASSERT_NE(test_realloc(NULL, 16), test_realloc(NULL, 16));
 }
 
+TEST_F(ReallocTest, behaves_like_malloc_if_ptr_evil) {
+    {
+        evil::IDBChecker checker{2};
+        ASSERT_EQ(test_realloc(EVIL_PTR, 0), test_realloc(EVIL_PTR, 0));
+    }
+
+    SizedMemoryPool<4096> pool;
+    ASSERT_NE(test_realloc(EVIL_PTR, 16), test_realloc(EVIL_PTR, 16));
+}
+
 TEST_F(ReallocTest, content_stays_the_same) {
     SizedMemoryPool<4096> pool;
 
@@ -236,17 +249,17 @@ TEST_F(FreeTest, free_double) {
 }
 
 TEST_F(FreeTest, invalid_ptr) {
-    SizedMemoryPool<4096> pool;
     evil::UBChecker checker{1};
-
     void *p = &p;
     test_free(p);
 }
 
 TEST_F(FreeTest, evil_ptr) {
-    SizedMemoryPool<4096> pool;
+    test_free(EVIL_PTR);
+}
 
-    /* Magic constant that may be returned by malloc(0) */
-    test_free((void *)0x1);
+
+TEST_F(FreeTest, null) {
+    test_free(NULL);
 }
 
