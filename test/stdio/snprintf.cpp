@@ -70,6 +70,9 @@ TEST_F(SnprintfTest, width) {
 TEST_F(SnprintfTest, precision) {
     char dst[16];
 
+    EXPECT_EQ(0, test_snprintf(dst, sizeof(dst), "%.s", "abcde"));
+    EXPECT_EQ(""s, string(dst));
+
     EXPECT_EQ(3, test_snprintf(dst, sizeof(dst), "%.3s", "abcde"));
     EXPECT_EQ("abc"s, string(dst));
 
