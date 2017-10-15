@@ -58,3 +58,13 @@ TEST_F(SnprintfTest, format_char_outside_range) {
     ASSERT_EQ(1, test_snprintf(dst, sizeof(dst), "%c", 'A' + 256));
     ASSERT_EQ("A"s, string(dst));
 }
+
+TEST_F(SnprintfTest, format_int) {
+    char dst[16];
+
+    ASSERT_EQ(3, test_snprintf(dst, sizeof(dst), "%d", 123));
+    ASSERT_EQ("123"s, string(dst));
+
+    ASSERT_EQ(4, test_snprintf(dst, sizeof(dst), "%d", -123));
+    ASSERT_EQ("-123"s, string(dst));
+}
