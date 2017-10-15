@@ -3,6 +3,10 @@
 
 #include "stdbool.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 bool __evil_regions_overlap(const void *a,
                             size_t a_size,
                             const void *b,
@@ -41,5 +45,9 @@ static bool __attribute__((noinline)) __evil_is_null(const void *p)
 #if __GNUC__
 # pragma GCC pop_options
 #endif // __GNUC__
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* __EVILIBC_INTERNAL_MEMORY_H */

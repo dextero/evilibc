@@ -4,6 +4,10 @@
 #include "assert.h"
 #include "stdbool.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 struct list {
     struct list *next;
 };
@@ -45,5 +49,9 @@ static inline struct list **list_find_ptr(struct list **plist,
 
     return plist;
 }
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* __EVILIBC_INTERNAL_LIST_H */

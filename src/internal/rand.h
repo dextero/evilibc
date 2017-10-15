@@ -4,6 +4,10 @@
 #include "assert.h"
 #include "stdbool.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 static_assert(sizeof(int) == 4, "__evil_rand assumes 32-bit integers");
 
 #define __EVIL_RAND_MAX 0x7FFFFFFFU
@@ -20,5 +24,9 @@ static inline bool __evil_rand_bool(void)
 {
     return __evil_rand_range(0, 2) == 1;
 }
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif /* __EVILIBC_INTERNAL_RAND_H */
