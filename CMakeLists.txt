@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(evilibc C CXX)
+set(evilibc_VERSION 0.1)
 
 set(WARNING_FLAGS
     -W
@@ -68,21 +69,24 @@ configure_file(config/evil-config.h.in
                "${CMAKE_CURRENT_BINARY_DIR}/config/evil-config.h"
                @ONLY)
 
+set(PUBLIC_INCLUDES
+    include/stdio.h
+    include/ctype.h
+    include/stdbool.h
+    include/evilibc.h
+    include/stdarg.h
+    include/signal.h
+    include/time.h
+    include/stdlib.h
+    include/limits.h
+    include/string.h
+    include/assert.h
+    include/errno.h
+    include/stddef.h
+    include/stdint.h)
+
 add_library(evilibc
-            include/stdio.h
-            include/ctype.h
-            include/stdbool.h
-            include/evilibc.h
-            include/stdarg.h
-            include/signal.h
-            include/time.h
-            include/stdlib.h
-            include/limits.h
-            include/string.h
-            include/assert.h
-            include/errno.h
-            include/stddef.h
-            include/stdint.h
+            ${PUBLIC_INCLUDES}
             src/evilibc.c
             src/internal/memory.h
             src/internal/list.h
@@ -144,10 +148,13 @@ target_include_directories(evilibc PRIVATE
 target_include_directories(evilibc PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/config>
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-                           $<INSTALL_INTERFACE:include>)
+                           $<INSTALL_INTERFACE:include/evilibc>)
 
 target_compile_options(evilibc PRIVATE
-                       -nostdlib -nostdinc ${WARNING_FLAGS})
+                       ${WARNING_FLAGS})
+
+target_compile_options(evilibc PUBLIC
+                       -nostdlib -nostdinc)
 
 target_compile_features(evilibc PUBLIC
                           c_function_prototypes
@@ -158,6 +165,17 @@ target_compile_features(evilibc PUBLIC
 target_link_libraries(evilibc PUBLIC
                       runtime)
 
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("${CMAKE_CURRENT_BINARY_DIR}/evilibc-version.cmake"
+                                 VERSION ${evilibc_VERSION}
+                                 COMPATIBILITY SameMajorVersion)
+
+install(FILES
+        "evilibc-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/evilibc-version.cmake"
+        DESTINATION lib/cmake/evilibc)
+install(FILES ${PUBLIC_INCLUDES}
+        DESTINATION include/evilibc)
 install(TARGETS evilibc EXPORT evilibc_targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
@@ -169,7 +187,7 @@ install(EXPORT evilibc_targets
         DESTINATION lib/cmake/evilibc)
 
 enable_testing()
-add_subdirectory(test)
+add_subdirectory(test EXCLUDE_FROM_ALL)
 
 add_custom_target(check COMMAND env GTEST_COLOR=1 ${CMAKE_CTEST_COMMAND} --verbose)
 add_dependencies(check all_tests)
