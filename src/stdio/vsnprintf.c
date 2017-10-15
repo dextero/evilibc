@@ -445,7 +445,8 @@ size_t __evil_write_formatted(char *restrict *pbuf,
     switch (fmt->type) {
     case TYPE_INVALID:
         __evil_ub("invalid format specifier: %.*s", fmt_size(fmt), fmt->start);
-        return 0;
+        return __evil_write_literal(pbuf, pbuf_size, fmt->start,
+                                    (size_t)(fmt->end - fmt->start));
     case TYPE_SIGNED_INT:
         if (fmt->flags & FLAG_ALTERNATIVE_FORM) {
             __evil_ub("'alternative form' modifier (#) behavior is undefined "
