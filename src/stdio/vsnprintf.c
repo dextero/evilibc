@@ -341,7 +341,6 @@ static size_t write_unsigned(char *restrict *pbuf,
         break;
     case LENGTH_LONG:
     case LENGTH_SIZE:
-    case LENGTH_PTRDIFF:
         {
             static_assert(sizeof(unsigned long) == sizeof(size_t), "");
             static_assert(sizeof(unsigned long) == sizeof(ptrdiff_t), "");
