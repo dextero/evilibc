@@ -529,6 +529,7 @@ int vsnprintf(char* restrict s,
 {
     const char *segment_start = format;
     size_t chars_written = 0;
+    --n; // reserve space for terminating nullbyte
 
     // Argh, passing a pointer to va_list parameter does not work
     // https://stackoverflow.com/a/8048892/2339636
@@ -562,6 +563,8 @@ int vsnprintf(char* restrict s,
         chars_written += __evil_write_literal(&s, &n, segment_start,
                                               (size_t)(format - segment_start));
     }
+
+    ++n; // append terminating nullbyte
     __evil_write_literal(&s, &n, "", 1);
 
     return chars_written;
