@@ -243,3 +243,10 @@ TEST_F(FreeTest, invalid_ptr) {
     test_free(p);
 }
 
+TEST_F(FreeTest, evil_ptr) {
+    SizedMemoryPool<4096> pool;
+
+    /* Magic constant that may be returned by malloc(0) */
+    test_free((void *)0x1);
+}
+
