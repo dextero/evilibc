@@ -63,6 +63,10 @@ static int parse_fopen_mode(const char *mode) {
      * > following, the file is open in the indicated mode. Otherwise, the
      * > behavior is undefined. 271)
      */
+    if (!mode) {
+        __evil_ub("passing NULL mode to fopen is UB");
+        return -1;
+    }
     if (!is_valid_open_mode(mode)) {
         __evil_ub("passing invalid mode (%s) to fopen is UB", mode);
         return -1;
