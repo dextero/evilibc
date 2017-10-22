@@ -35,6 +35,11 @@ int fflush(FILE* stream) {
         goto fail;
     }
 
+    if (stream->buffer_off == 0) {
+        /* Nothing to flush */
+        return 0;
+    }
+
     if (_write(stream->fd, stream->buffer, stream->buffer_off)
             != (ssize_t)stream->buffer_off) {
         /*
