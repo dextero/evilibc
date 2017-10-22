@@ -10,7 +10,10 @@
 
 #include "os/syscalls.h"
 
-FILE __evil_open_files[FOPEN_MAX];
+/* TODO: non-zero-init may increase library size quite a bit */
+FILE __evil_open_files[FOPEN_MAX] = {
+    [0 ... FOPEN_MAX-1] = { .fd = -1 }
+};
 
 FILE* __evilibc_stdin;
 FILE* __evilibc_stdout;
