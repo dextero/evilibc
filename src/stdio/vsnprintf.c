@@ -96,7 +96,7 @@ static long fetch_precision(struct fmt *fmt,
         break;
     }
 
-    assert(prec >= 0);
+    assert(prec >= 0 || prec == default_precision);
     return prec;
 }
 
