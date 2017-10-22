@@ -1,6 +1,10 @@
 #ifndef __EVILIBC_OS_SYSCALLS_H
 #define __EVILIBC_OS_SYSCALLS_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stddef.h>
 
 typedef long ssize_t;
@@ -34,5 +38,8 @@ ssize_t _write(int fd, const void *buf, size_t count);
 void *_sbrk(ptrdiff_t increment);
 void _exit(int exit_code) __attribute__((noreturn));
 
+#ifdef __cplusplus
+} /* extern "C" */
+#endif
 
 #endif // __EVILIBC_OS_SYSCALLS_H
