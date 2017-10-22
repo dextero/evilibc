@@ -32,7 +32,11 @@ int fclose(FILE *stream)
      * > if it was automatically allocated).
      */
     {
-        int error = fflush(stream);
+        int error = 0;
+        if (stream->file_flags & WRITE) {
+            error = fflush(stream);
+        }
+
         file_dealloc(stream);
         if (_close(stream->fd) || error) {
             goto fail;
