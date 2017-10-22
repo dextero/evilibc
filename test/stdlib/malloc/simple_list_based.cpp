@@ -1,4 +1,5 @@
 #include "Test.h"
+#include "SyscallsMock.h"
 
 #include <array>
 #include <memory>
@@ -9,51 +10,6 @@ using namespace testing;
 
 /* Magic constant that may be returned by malloc(0) */
 #define EVIL_PTR ((void *)0x1)
-
-namespace {
-
-class MemoryPool {
-public:
-    virtual char *sbrk(ptrdiff_t increment) = 0;
-};
-
-MemoryPool *g_pool;
-
-template <size_t N>
-class SizedMemoryPool : public MemoryPool {
-    array<char, N> _pool;
-    char *_brk;
-
-    MemoryPool *_prev_pool;
-
-public:
-    SizedMemoryPool()
-        : _pool(),
-          _brk(&_pool[0]) {
-        g_pool = this;
-    }
-
-    ~SizedMemoryPool() {
-        g_pool = nullptr;
-    }
-
-    virtual char *sbrk(ptrdiff_t increment) {
-        char *new_brk = _brk + increment;
-        if (new_brk > _pool.end()) {
-            return NULL;
-        }
-
-        char *old_brk = _brk;
-        _brk = new_brk;
-        return old_brk;
-    }
-};
-
-} // namespace
-
-extern "C" void *_sbrk(ptrdiff_t increment) {
-    return g_pool->sbrk(increment);
-}
 
 extern "C" void __evil_malloc_reset(void);
 extern "C" void *test_malloc(size_t);
@@ -82,7 +38,9 @@ TEST_F(MallocTest, zero_bytes) {
 }
 
 TEST_F(MallocTest, alloc_only) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     vector<void *> ptrs;
     for (size_t i = 0; i < 128; ++i) {
@@ -106,13 +64,16 @@ TEST_F(CallocTest, overflow) {
 }
 
 TEST_F(CallocTest, not_enough_memory) {
-    SizedMemoryPool<4096> pool;
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(8192)).WillOnce(Return(nullptr));
 
     ASSERT_EQ(nullptr, test_calloc(4096, 2));
 }
 
 TEST_F(CallocTest, alloc_only) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     vector<void *> ptrs;
     for (size_t i = 0; i < 128; ++i) {
@@ -130,7 +91,9 @@ TEST_F(ReallocTest, behaves_like_malloc_if_ptr_null) {
         ASSERT_EQ(test_realloc(NULL, 0), test_realloc(NULL, 0));
     }
 
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
     ASSERT_NE(test_realloc(NULL, 16), test_realloc(NULL, 16));
 }
 
@@ -140,12 +103,17 @@ TEST_F(ReallocTest, behaves_like_malloc_if_ptr_evil) {
         ASSERT_EQ(test_realloc(EVIL_PTR, 0), test_realloc(EVIL_PTR, 0));
     }
 
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+
     ASSERT_NE(test_realloc(EVIL_PTR, 16), test_realloc(EVIL_PTR, 16));
 }
 
 TEST_F(ReallocTest, content_stays_the_same) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     void *ptr = test_malloc(4);
     ASSERT_NE(nullptr, ptr);
@@ -165,7 +133,11 @@ TEST_F(ReallocTest, bad_ptr) {
 }
 
 TEST_F(ReallocTest, not_enough_memory) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(_))
+        .WillOnce(Return(heap))
+        .WillOnce(Return(nullptr));
 
     void *ptr = test_malloc(4);
     ASSERT_NE(nullptr, ptr);
@@ -173,7 +145,12 @@ TEST_F(ReallocTest, not_enough_memory) {
 }
 
 TEST_F(FreeTest, basic) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096))
+        .WillOnce(Return(heap))
+        .WillOnce(Return(nullptr))
+        .WillOnce(Return(nullptr));
 
     vector<void *> ptrs;
     for (void *ptr = test_malloc(16); ptr; ptr = test_malloc(16)) {
@@ -181,7 +158,6 @@ TEST_F(FreeTest, basic) {
     }
 
     // at this point, an allocation failed due to out-of-memory scenario
-    ASSERT_EQ(nullptr, test_malloc(16));
     test_free(ptrs.back());
     ptrs.pop_back();
 
@@ -195,7 +171,7 @@ TEST_F(FreeTest, basic) {
     ASSERT_NE(nullptr, ptrs[0]);
     ASSERT_EQ(nullptr, test_malloc(16));
 
-    // releasing all memory should allow for allocation of a bigger chunk
+    // releasing all memory should allow for allocation of a bigger heap
     for (void *p : ptrs) {
         test_free(p);
     }
@@ -205,7 +181,11 @@ TEST_F(FreeTest, basic) {
 }
 
 TEST_F(FreeTest, free_in_order) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096))
+        .WillOnce(Return(heap))
+        .WillOnce(Return(nullptr));
 
     vector<void *> ptrs;
     for (void *ptr = test_malloc(16); ptr; ptr = test_malloc(16)) {
@@ -218,7 +198,11 @@ TEST_F(FreeTest, free_in_order) {
 }
 
 TEST_F(FreeTest, free_in_reverse_order) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096))
+        .WillOnce(Return(heap))
+        .WillOnce(Return(nullptr));
 
     vector<void *> ptrs;
     for (void *ptr = test_malloc(16); ptr; ptr = test_malloc(16)) {
@@ -231,7 +215,9 @@ TEST_F(FreeTest, free_in_reverse_order) {
 }
 
 TEST_F(FreeTest, free_double) {
-    SizedMemoryPool<4096> pool;
+    char heap[4096];
+    evil::SyscallsMock syscalls;
+    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     void *a = test_malloc(16);
     void *b = test_malloc(16);
