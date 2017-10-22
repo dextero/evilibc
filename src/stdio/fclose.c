@@ -52,3 +52,12 @@ int fclose(FILE *stream)
 fail:
     return EOF;
 }
+
+void __evil_fclose_all(void)
+{
+    for (size_t i = 0;
+            i < sizeof(__evil_open_files) / sizeof(__evil_open_files[0]);
+            ++i) {
+        fclose(&__evil_open_files[i]);
+    }
+}
