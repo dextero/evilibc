@@ -7,6 +7,7 @@
 
 #include "UBChecker.h"
 #include "IDBChecker.h"
+#include "SyscallsMock.h"
 
 namespace evil {
 
@@ -14,6 +15,9 @@ class Test : public ::testing::Test
 {
     UBChecker _disallow_ub;
     IDBChecker _disallow_idb;
+
+protected:
+    evil::SyscallsMock _syscalls;
 };
 
 } // namespace evil

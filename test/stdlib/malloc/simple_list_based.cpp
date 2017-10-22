@@ -1,5 +1,4 @@
 #include "Test.h"
-#include "SyscallsMock.h"
 
 #include <array>
 #include <memory>
@@ -39,8 +38,7 @@ TEST_F(MallocTest, zero_bytes) {
 
 TEST_F(MallocTest, alloc_only) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     vector<void *> ptrs;
     for (size_t i = 0; i < 128; ++i) {
@@ -64,16 +62,14 @@ TEST_F(CallocTest, overflow) {
 }
 
 TEST_F(CallocTest, not_enough_memory) {
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(8192)).WillOnce(Return(nullptr));
+    EXPECT_CALL(_syscalls, _sbrk(8192)).WillOnce(Return(nullptr));
 
     ASSERT_EQ(nullptr, test_calloc(4096, 2));
 }
 
 TEST_F(CallocTest, alloc_only) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     vector<void *> ptrs;
     for (size_t i = 0; i < 128; ++i) {
@@ -92,8 +88,7 @@ TEST_F(ReallocTest, behaves_like_malloc_if_ptr_null) {
     }
 
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
     ASSERT_NE(test_realloc(NULL, 16), test_realloc(NULL, 16));
 }
 
@@ -104,16 +99,14 @@ TEST_F(ReallocTest, behaves_like_malloc_if_ptr_evil) {
     }
 
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     ASSERT_NE(test_realloc(EVIL_PTR, 16), test_realloc(EVIL_PTR, 16));
 }
 
 TEST_F(ReallocTest, content_stays_the_same) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     void *ptr = test_malloc(4);
     ASSERT_NE(nullptr, ptr);
@@ -134,8 +127,7 @@ TEST_F(ReallocTest, bad_ptr) {
 
 TEST_F(ReallocTest, not_enough_memory) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(_))
+    EXPECT_CALL(_syscalls, _sbrk(_))
         .WillOnce(Return(heap))
         .WillOnce(Return(nullptr));
 
@@ -146,8 +138,7 @@ TEST_F(ReallocTest, not_enough_memory) {
 
 TEST_F(FreeTest, basic) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096))
+    EXPECT_CALL(_syscalls, _sbrk(4096))
         .WillOnce(Return(heap))
         .WillOnce(Return(nullptr))
         .WillOnce(Return(nullptr));
@@ -182,8 +173,7 @@ TEST_F(FreeTest, basic) {
 
 TEST_F(FreeTest, free_in_order) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096))
+    EXPECT_CALL(_syscalls, _sbrk(4096))
         .WillOnce(Return(heap))
         .WillOnce(Return(nullptr));
 
@@ -199,8 +189,7 @@ TEST_F(FreeTest, free_in_order) {
 
 TEST_F(FreeTest, free_in_reverse_order) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096))
+    EXPECT_CALL(_syscalls, _sbrk(4096))
         .WillOnce(Return(heap))
         .WillOnce(Return(nullptr));
 
@@ -216,8 +205,7 @@ TEST_F(FreeTest, free_in_reverse_order) {
 
 TEST_F(FreeTest, free_double) {
     char heap[4096];
-    evil::SyscallsMock syscalls;
-    EXPECT_CALL(syscalls, _sbrk(4096)).WillOnce(Return(heap));
+    EXPECT_CALL(_syscalls, _sbrk(4096)).WillOnce(Return(heap));
 
     void *a = test_malloc(16);
     void *b = test_malloc(16);
