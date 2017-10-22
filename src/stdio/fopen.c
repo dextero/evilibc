@@ -74,27 +74,29 @@ static int parse_fopen_mode(const char *mode) {
 
     int flags = 0;
 
-    switch (mode[0]) {
-        case 'r':
-            flags |= READ;
-            break;
-        case 'w':
-            flags |= WRITE | TRUNCATE;
-            break;
-        case 'a':
-            flags |= WRITE | APPEND;
-            break;
-        case 'x':
-            flags |= EXCLUSIVE;
-            break;
-        case '+':
-            flags |= READ | WRITE;
-            break;
-        case 'b':
-            flags |= BINARY;
-            break;
-        default:
-            __builtin_unreachable();
+    while (*mode) {
+        switch (*mode++) {
+            case 'r':
+                flags |= READ;
+                break;
+            case 'w':
+                flags |= WRITE | TRUNCATE;
+                break;
+            case 'a':
+                flags |= WRITE | APPEND;
+                break;
+            case 'x':
+                flags |= EXCLUSIVE;
+                break;
+            case '+':
+                flags |= READ | WRITE;
+                break;
+            case 'b':
+                flags |= BINARY;
+                break;
+            default:
+                __builtin_unreachable();
+        }
     }
 
     return flags;
@@ -103,7 +105,7 @@ static int parse_fopen_mode(const char *mode) {
 static int open_flags_from_fopen_mode(int mode) {
     int open_flags = 0;
 
-    if (mode & (READ | WRITE)) {
+    if ((mode & READ) && (mode & WRITE)) {
         open_flags |= EVIL_O_RDWR;
     } else if (mode & READ) {
         open_flags |= EVIL_O_RDONLY;
@@ -163,7 +165,7 @@ static int file_open(FILE *f,
     f->buffer_needs_free = false;
     f->can_swap_buffer = true;
 
-    if (_isatty(f->fd)) {
+    if (!_isatty(f->fd)) {
         setvbuf(f, NULL, _IOFBF, 4096);
     }
 
