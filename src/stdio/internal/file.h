@@ -29,6 +29,8 @@ struct __evilibc_file {
 
 extern FILE __evil_open_files[FOPEN_MAX];
 
+void __evil_fclose_all(void);
+
 static inline void file_set_buffer(FILE *restrict stream,
                                    char *buffer,
                                    size_t buffer_size,
