@@ -12,7 +12,6 @@ target_compile_features(runtime PUBLIC
                           c_variadic_macros)
 
 target_include_directories(runtime SYSTEM PUBLIC
-                           /usr/include/x86_64-linux-gnu
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_include_directories(runtime PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>

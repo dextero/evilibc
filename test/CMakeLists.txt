@@ -30,8 +30,6 @@ target_link_libraries(evilibc_test_utils gtest)
 target_include_directories(evilibc_test_utils INTERFACE
                            "${CMAKE_CURRENT_SOURCE_DIR}"
                            "${CMAKE_CURRENT_SOURCE_DIR}/../src")
-target_include_directories(evilibc_test_utils SYSTEM INTERFACE
-                           /usr/include/x86_64-linux-gnu)
 
 add_executable(all_tests
                internal/rand.cpp

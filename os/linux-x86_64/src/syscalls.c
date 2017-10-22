@@ -1,4 +1,3 @@
-#define _NO_INCLUDES
 #include "os/syscalls.h"
 
 #include "stdarg.h"
@@ -87,12 +86,18 @@
         return (RetT)result;                            \
     }
 
-SYSCALL(__NR_access, int, _access, const char *, path, int, flags)
 SYSCALL(__NR_close, int, _close, int, fd)
 SYSCALL(__NR_getpid, long, _getpid)
 SYSCALL(__NR_kill, int, _kill, long, pid, int, sig)
-SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
 SYSCALL(__NR_write, ssize_t, _write, int, fd, const void *, buf, size_t, count)
+
+/*
+ * TODO: These implementations depend on access_flags and open_flags enum values
+ * matching the ones used by Linux kernel. To avoid mismatches, a manual
+ * EVIL_* -> * constant mapping should be done.
+ */
+SYSCALL(__NR_access, int, _access, const char *, path, int, flags)
+SYSCALL(__NR_open, int, _open, const char *, path, int, flags, int, mode)
 
 int _isatty(int fd) {
     // TODO: ??? glibc seems to do this

@@ -97,23 +97,23 @@ static int open_flags_from_fopen_mode(int mode) {
     int open_flags = 0;
 
     if (mode & (READ | WRITE)) {
-        open_flags |= O_RDWR;
+        open_flags |= EVIL_O_RDWR;
     } else if (mode & READ) {
-        open_flags |= O_RDONLY;
+        open_flags |= EVIL_O_RDONLY;
     } else if (mode & WRITE) {
-        open_flags |= O_WRONLY | O_CREAT;
+        open_flags |= EVIL_O_WRONLY | EVIL_O_CREAT;
     }
 
     if (mode & APPEND) {
-        open_flags |= O_APPEND;
+        open_flags |= EVIL_O_APPEND;
     }
 
     if (mode & EXCLUSIVE) {
-        open_flags |= O_EXCL;
+        open_flags |= EVIL_O_EXCL;
     }
 
     if (mode & TRUNCATE) {
-        open_flags |= O_TRUNC;
+        open_flags |= EVIL_O_TRUNC;
     }
 
     return open_flags;
@@ -133,7 +133,7 @@ static int file_open(FILE *f,
      * > mode argument) fails if the file does not exist or cannot be read.
      */
     if ((f->file_flags & READ)
-            && _access(filename, R_OK) != 0) {
+            && _access(filename, EVIL_R_OK) != 0) {
         return -1;
     }
 
