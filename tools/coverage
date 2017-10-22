@@ -22,8 +22,7 @@ pushd "$BUILD_DIR"
           -D CMAKE_EXE_LINKER_FLAGS="-fprofile-arcs -ftest-coverage" \
           -D CMAKE_BUILD_TYPE=Debug \
           "$PROJECT_ROOT"
-    make -j$(nproc)
-    make check
+    make -j$(nproc) check
 
     mkdir -p "$OUTPUT_DIR"
     gcovr . --html \
