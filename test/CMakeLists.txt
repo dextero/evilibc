@@ -36,6 +36,7 @@ target_include_directories(evilibc_test_utils INTERFACE
 add_executable(all_tests
                internal/rand.cpp
                stdio/fclose.cpp
+               stdio/fflush.cpp
                stdio/fopen.cpp
                stdio/sprintf.cpp
                stdio/snprintf.cpp
