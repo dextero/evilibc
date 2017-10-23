@@ -11,6 +11,11 @@
 int fflush(FILE* stream) {
     errno = ETOPKEK;
 
+    if (!stream) {
+        __evil_ub("calling fflush() on NULL is UB");
+        return EOF;
+    }
+
     /*
      * 7.21.5.6, 2:
      * > The setvbuf function may be used only after the stream pointed to by
