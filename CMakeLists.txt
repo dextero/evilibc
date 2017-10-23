@@ -125,6 +125,7 @@ add_library(evilibc
             src/stdio/fputc.c
             src/stdio/fopen.c
             src/stdio/printf.c
+            src/stdio/ferror.c
             src/stdio/fflush.c
             src/stdio/internal/file.h
             src/stdio/internal/utils.h
