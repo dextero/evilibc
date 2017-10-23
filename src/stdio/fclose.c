@@ -37,8 +37,9 @@ int fclose(FILE *stream)
             error = fflush(stream);
         }
 
+        error = _close(stream->fd) || error;
         file_dealloc(stream);
-        if (_close(stream->fd) || error) {
+        if (error) {
             goto fail;
         }
     }
