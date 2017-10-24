@@ -3,21 +3,15 @@
 #include <unistd.h>
 
 using namespace ::testing;
+using namespace std;
 
 extern "C" void __evil_init(void);
 extern "C" void __evil_cleanup(void);
 
 namespace evil {
 
-namespace {
-
-ssize_t do_write(int fd, const void *p, size_t n) {
-    return write(fd, p, n);
-}
-
-} // namespace
-
-Test::Test() {
+void Test::EnableStandardIOStreams()
+{
     evil::SyscallsMock syscalls;
 
     EXPECT_CALL(syscalls, _isatty(_))
@@ -34,15 +28,33 @@ Test::Test() {
     EXPECT_CALL(syscalls, _open("/dev/stderr", _, _))
         .WillOnce(Return(2));
 
-    EXPECT_CALL(_syscalls, _write(1, _, _))
-        .WillRepeatedly(Invoke(do_write));
-    EXPECT_CALL(_syscalls, _write(2, _, _))
-        .WillRepeatedly(Invoke(do_write));
-
     __evil_init();
+
+    EXPECT_CALL(_syscalls, _write(1, _, _))
+        .WillRepeatedly(Invoke(write));
+    EXPECT_CALL(_syscalls, _write(2, _, _))
+        .WillRepeatedly(Invoke(write));
 }
 
-Test::~Test() {
+void Test::EnableHeap()
+{
+    _memory_pool = make_unique<SizedMemoryPool<1024 * 1024>>();
+
+    EXPECT_CALL(_syscalls, _sbrk(_))
+        .WillRepeatedly(Invoke(
+                    [this](ptrdiff_t incr) {
+                        return _memory_pool->sbrk(incr);
+                    }));
+}
+
+void Test::SetUp()
+{
+    EnableStandardIOStreams();
+    EnableHeap();
+}
+
+void Test::TearDown()
+{
     evil::SyscallsMock syscalls;
 
     EXPECT_CALL(syscalls, _close(_))

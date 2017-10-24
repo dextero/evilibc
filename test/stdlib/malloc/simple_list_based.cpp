@@ -10,16 +10,13 @@ using namespace testing;
 /* Magic constant that may be returned by malloc(0) */
 #define EVIL_PTR ((void *)0x1)
 
-extern "C" void __evil_malloc_reset(void);
 extern "C" void *test_malloc(size_t);
 extern "C" void *test_calloc(size_t, size_t);
 extern "C" void *test_realloc(void *, size_t);
 extern "C" void test_free(void *);
 
 class TestBase : public evil::Test {
-    void SetUp() {
-        __evil_malloc_reset();
-    }
+    virtual void EnableHeap() {}
 };
 
 class MallocTest : public TestBase {};
