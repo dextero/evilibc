@@ -13,7 +13,6 @@ extern "C" int test_fwrite(const void *data,
 extern "C" int test_fflush(FILE *f);
 extern "C" int test_fclose(FILE *f);
 extern "C" int test_ferror(FILE *f);
-extern "C" void __evil_malloc_reset(void);
 
 class FflushTest : public evil::Test {
 public:
@@ -69,4 +68,20 @@ TEST_F(FflushTest, short_write) {
 
     EXPECT_EQ(EVIL_EOF, test_fflush(_f));
     EXPECT_NE(0, test_ferror(_f));
+}
+
+TEST_F(FflushTest, success) {
+    const char data[] = "foo";
+    EXPECT_EQ(sizeof(data), test_fwrite(data, 1, sizeof(data), _f));
+
+    EXPECT_CALL(_syscalls, _write(3, _, 4))
+        .WillOnce(Return(4));
+
+    EXPECT_EQ(0, test_fflush(_f));
+    EXPECT_EQ(0, test_ferror(_f));
+}
+
+TEST_F(FflushTest, readonly_file) {
+    evil::UBChecker checker{1};
+    EXPECT_EQ(EVIL_EOF, test_fflush(stdin));
 }
