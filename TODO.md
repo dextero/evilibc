@@ -94,7 +94,7 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
     - [ ] `tmpnam`
   - [ ] file access functions:
     - [x] `fclose`
-    - [ ] `fflush`
+    - [x] `fflush`
     - [x] `fopen`
     - [ ] `freopen`
     - [ ] `setbuf`
