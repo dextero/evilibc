@@ -27,8 +27,9 @@ add_library(evilibc_test_utils
             IDBChecker.h
             SyscallsMock.cpp
             SyscallsMock.h
+            Test.cpp
             Test.h)
-target_link_libraries(evilibc_test_utils runtime_stub gtest gmock)
+target_link_libraries(evilibc_test_utils evilibc_test runtime_stub gtest gmock)
 target_include_directories(evilibc_test_utils INTERFACE
                            "${CMAKE_CURRENT_SOURCE_DIR}"
                            "${CMAKE_CURRENT_SOURCE_DIR}/../src")
@@ -62,6 +63,6 @@ add_executable(all_tests
                string/strspn.cpp
                string/strstr.cpp
                string/strtok.cpp)
-target_link_libraries(all_tests evilibc_test evilibc_test_utils gmock_main)
+target_link_libraries(all_tests evilibc_test_utils gmock_main)
 
 add_test(NAME all COMMAND $<TARGET_FILE:all_tests>)

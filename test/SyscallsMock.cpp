@@ -1,6 +1,6 @@
 #include "SyscallsMock.h"
 
-thread_local evil::SyscallsMock* evil::SyscallsMock::instance;
+thread_local std::stack<evil::SyscallsMock*> evil::SyscallsMock::_instance_stack;
 
 #define EXPAND(A) A
 #define _CONCAT(A, B) A##B
@@ -32,7 +32,7 @@ thread_local evil::SyscallsMock* evil::SyscallsMock::instance;
 
 #define SYSCALL(RetT, Name, ...) \
     RetT Name(_ARG_LIST(__VA_ARGS__)) { \
-        return ::evil::SyscallsMock::instance->Name(_ARG_CALL(__VA_ARGS__)); \
+        return ::evil::SyscallsMock::instance()->Name(_ARG_CALL(__VA_ARGS__)); \
     }
 
 extern "C" {
@@ -47,7 +47,7 @@ SYSCALL(ssize_t, _write, int, fd, const void *, buf, size_t, count);
 SYSCALL(void *, _sbrk, ptrdiff_t, increment);
 
 void _exit(int code) {
-    ::evil::SyscallsMock::instance->_exit(code);
+    ::evil::SyscallsMock::instance()->_exit(code);
     __builtin_unreachable();
 }
 

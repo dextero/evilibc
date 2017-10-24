@@ -18,6 +18,9 @@ class Test : public ::testing::Test
 
 protected:
     evil::SyscallsMock _syscalls;
+
+    Test();
+    virtual ~Test();
 };
 
 } // namespace evil

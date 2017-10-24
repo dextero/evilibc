@@ -3,15 +3,23 @@
 
 #include <gmock/gmock.h>
 
+#include <string>
+#include <stack>
+
 #include "os/syscalls.h"
 
 namespace evil {
 
-struct SyscallsMock
+class SyscallsMock
 {
-    static thread_local SyscallsMock *instance;
-    SyscallsMock() { instance = this; }
-    ~SyscallsMock() { instance = nullptr; }
+private:
+    static thread_local std::stack<SyscallsMock *> _instance_stack;
+
+public:
+    SyscallsMock() { _instance_stack.push(this); }
+    ~SyscallsMock() { _instance_stack.pop(); }
+
+    static SyscallsMock *instance() { return _instance_stack.top(); }
 
     MOCK_METHOD2(_access, int(const char *path, int mode));
     MOCK_METHOD1(_close,  int(int fd));
