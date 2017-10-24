@@ -9,3 +9,7 @@ void __evil_init(void) {
     stdout = fopen("/dev/stdout", "a");
     stderr = fopen("/dev/stderr", "a");
 }
+
+void __evil_cleanup(void) {
+    __evil_fclose_all();
+}
