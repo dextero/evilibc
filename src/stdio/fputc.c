@@ -34,7 +34,7 @@ int fputc(int c,
      * TODO: text stream shenanigans with whitespace before newlines
      * TODO: locking
      */
-    unsigned char uc = (unsigned char)uc;
+    unsigned char uc = (unsigned char)c;
 
     switch (stream->bufmode) {
     case _IOFBF:
