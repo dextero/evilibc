@@ -30,7 +30,8 @@ pushd "$BUILD_DIR"
             --root="$PROJECT_ROOT" \
             --output="$OUTPUT_HTML" \
             --exclude="$PROJECT_ROOT/build" \
-            --exclude="$PROJECT_ROOT/test"
+            --exclude="$PROJECT_ROOT/test" \
+            --exclude="$PROJECT_ROOT/os"
 popd
 
 cat <<EOF
