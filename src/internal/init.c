@@ -12,6 +12,6 @@ void __evil_init(void) {
 }
 
 void __evil_cleanup(void) {
-    __evil_malloc_reset();
     __evil_fclose_all();
+    __evil_malloc_reset();
 }
