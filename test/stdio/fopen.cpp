@@ -48,6 +48,8 @@ TEST_F(FopenTest, read_inaccessible) {
 }
 
 TEST_F(FopenTest, open_failed) {
+    EXPECT_CALL(_syscalls, _access("path", _))
+        .WillOnce(Return(0));
     EXPECT_CALL(_syscalls, _open("path", _, _))
         .WillOnce(Return(-1));
 
