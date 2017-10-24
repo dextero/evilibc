@@ -14,12 +14,7 @@ extern "C" FILE* test_fopen(const char* filename,
                             const char* mode);
 
 class FopenTest : public evil::Test {
-    virtual void TearDown() {
-        EXPECT_CALL(_syscalls, _close(_))
-            .WillRepeatedly(Return(0));
-
-        __evil_fclose_all();
-    }
+    virtual void EnableStandardIOStreams() {}
 };
 
 TEST_F(FopenTest, invalid_mode) {
@@ -60,9 +55,6 @@ TEST_F(FopenTest, open_failed) {
 }
 
 TEST_F(FopenTest, buffered) {
-    char heap[4096];
-    EXPECT_CALL(_syscalls, _sbrk(4096))
-        .WillOnce(Return(heap));
     EXPECT_CALL(_syscalls, _isatty(_))
         .WillOnce(Return(0));
     EXPECT_CALL(_syscalls, _access("path", _))
