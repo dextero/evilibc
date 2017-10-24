@@ -119,7 +119,7 @@ static size_t write_padded(char *restrict *pbuf,
 
     if (min_width != MISSING) {
         assert(min_width >= 0);
-        assert(min_width < (long)CONVERSION_LIMIT);
+        assert(min_width <= (long)CONVERSION_LIMIT);
 
         /*
          * > If the converted value has fewer characters than the field
