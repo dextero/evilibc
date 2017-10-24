@@ -62,7 +62,7 @@ TEST_F(FflushTest, failed_write) {
 
 TEST_F(FflushTest, short_write) {
     const char data[] = "foo";
-    EXPECT_EQ(sizeof(data), test_fwrite(data, sizeof(data), 1, _f));
+    EXPECT_EQ(sizeof(data), test_fwrite(data, 1, sizeof(data), _f));
 
     EXPECT_CALL(_syscalls, _write(3, _, 4))
         .WillOnce(Return(2));
