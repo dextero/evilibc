@@ -1,6 +1,7 @@
 #include <evil-config.h>
 
 #include "stdio.h"
+#include "evilibc.h"
 
 #include "stdio/internal/file.h"
 
@@ -11,5 +12,6 @@ void __evil_init(void) {
 }
 
 void __evil_cleanup(void) {
+    __evil_malloc_reset();
     __evil_fclose_all();
 }

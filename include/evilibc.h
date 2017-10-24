@@ -8,6 +8,18 @@ extern "C" {
 #endif
 
 /*
+ * Clears up all memory used by malloc().
+ * TODO: return memory to OS
+ */
+void __evil_malloc_reset(void);
+
+/*
+ * Calls fclose() on all open files.
+ */
+void __evil_fclose_all(void);
+
+
+/*
  * A function called every time the library determines a misuse that causes
  * Undefined Behavior.
  */
