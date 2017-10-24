@@ -9,6 +9,8 @@
 #include "os/syscalls.h"
 
 int fflush(FILE* stream) {
+    size_t bytes;
+
     errno = ETOPKEK;
 
     if (!stream) {
@@ -45,8 +47,10 @@ int fflush(FILE* stream) {
         return 0;
     }
 
-    if (_write(stream->fd, stream->buffer, stream->buffer_off)
-            != (ssize_t)stream->buffer_off) {
+    bytes = stream->buffer_off;
+    stream->buffer_off = 0;
+
+    if (_write(stream->fd, stream->buffer, bytes) != (ssize_t)bytes) {
         /*
          * 7.21.7.3, 3:
          * > The fputc function returns the character written. If a write
@@ -58,8 +62,6 @@ int fflush(FILE* stream) {
          */
         goto fail;
     }
-
-    stream->buffer_off = 0;
 
     /*
      * 7.21.5.2, 4:
