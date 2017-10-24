@@ -37,11 +37,8 @@ TEST_F(FcloseTest, failing_close) {
 }
 
 TEST_F(FcloseTest, failing_flush) {
-    char heap[4096];
     EXPECT_CALL(_syscalls, _isatty(_))
         .WillOnce(Return(0));
-    EXPECT_CALL(_syscalls, _sbrk(_))
-        .WillOnce(Return(heap));
     EXPECT_CALL(_syscalls, _open(_, _, _))
         .WillOnce(Return(3));
 
