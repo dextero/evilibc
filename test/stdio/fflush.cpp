@@ -17,7 +17,6 @@ extern "C" void __evil_malloc_reset(void);
 
 class FflushTest : public evil::Test {
 public:
-    char _heap[4096];
     FILE *_f;
 
     virtual void SetUp() {
@@ -25,8 +24,6 @@ public:
 
         EXPECT_CALL(_syscalls, _isatty(_))
             .WillOnce(Return(0));
-        EXPECT_CALL(_syscalls, _sbrk(4096))
-            .WillOnce(Return(_heap));
         EXPECT_CALL(_syscalls, _open(_, _, _))
             .WillOnce(Return(3));
 
@@ -39,7 +36,6 @@ public:
             .WillOnce(Return(0));
         EXPECT_EQ(0, test_fclose(_f));
 
-        __evil_malloc_reset();
         evil::Test::TearDown();
     }
 };
