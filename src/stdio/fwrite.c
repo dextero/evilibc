@@ -3,11 +3,19 @@
 #include "stdio.h"
 
 #include "internal/file.h"
+#include "internal/memory.h"
+#include "internal/undefined_behavior.h"
 
 size_t fwrite(const void* restrict ptr,
               size_t size,
               size_t nmemb,
               FILE* restrict stream) {
+    if (__evil_is_null(ptr) || __evil_is_null(stream)) {
+        __evil_ub("Passing NULL to fwrite() is UB: fwrite(%p, %zu, %zu, %p)",
+                  ptr, size, nmemb, stream);
+        return 0;
+    }
+
     /*
      * 7.21.8.2.2:
      * > The fwrite function writes, from the array pointed to by ptr, up to
