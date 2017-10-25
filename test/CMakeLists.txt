@@ -39,6 +39,7 @@ add_executable(all_tests
                stdio/fclose.cpp
                stdio/fflush.cpp
                stdio/fopen.cpp
+               stdio/fwrite.cpp
                stdio/sprintf.cpp
                stdio/snprintf.cpp
                stdio/vsprintf.cpp
