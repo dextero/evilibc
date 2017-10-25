@@ -17,6 +17,9 @@ target_include_directories(runtime PUBLIC
                            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>
                            $<INSTALL_INTERFACE:../include>)
 
+install(FILES
+        "runtime-config.cmake"
+        DESTINATION lib/cmake/evilibc_runtime)
 install(TARGETS runtime EXPORT runtime_targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
