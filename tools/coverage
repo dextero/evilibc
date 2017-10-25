@@ -40,4 +40,5 @@ cat <<EOF
 Coverage report: $OUTPUT_HTML
 EOF
 
-xdg-open "$OUTPUT_HTML"
+which gio >/dev/null && gio open "$OUTPUT_HTML" \
+    || xdg-open "$OUTPUT_HTML"
