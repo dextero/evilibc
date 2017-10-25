@@ -7,31 +7,31 @@ extern "C" {
 
 #if WITH_POSIX || WITH_FIXED_WIDTH_TYPES
 
-# ifndef __INT8_MIN__
-#  define __INT8_MIN__ (-128)
-# endif
 # ifndef __INT8_MAX__
 #  define __INT8_MAX__ 127
 # endif
-# ifndef __INT16_MIN__
-#  define __INT16_MIN__ (-32768)
+# ifndef __INT8_MIN__
+#  define __INT8_MIN__ (-__INT8_MAX__ - 1)
 # endif
 # ifndef __INT16_MAX__
 #  define __INT16_MAX__ 32767
 # endif
-# ifndef __INT32_MIN__
-#  define __INT32_MIN__ (-2147483648)
+# ifndef __INT16_MIN__
+#  define __INT16_MIN__ (-__INT16_MAX__ - 1)
 # endif
 # ifndef __INT32_MAX__
 #  define __INT32_MAX__ 2147483647
 # endif
+# ifndef __INT32_MIN__
+#  define __INT32_MIN__ (-__INT32_MAX__ - 1)
+# endif
 
 # if WITH_64BIT_FIXED_WIDTH_TYPES
-#  ifndef __INT64_MIN__
-#   define __INT64_MIN__ (-9223372036854775807LL - 1LL)
-#  endif
 #  ifndef __INT64_MAX__
 #   define __INT64_MAX__ 9223372036854775807LL
+#  endif
+#  ifndef __INT64_MIN__
+#   define __INT64_MIN__ (-__INT64_MAX__ - 1LL)
 #  endif
 # endif // WITH_64BIT_FIXED_WIDTH_TYPES
 
