@@ -28,7 +28,7 @@ extern "C" {
 
 # if WITH_64BIT_FIXED_WIDTH_TYPES
 #  ifndef __INT64_MIN__
-#   define __INT64_MIN__ (-9223372036854775808LL)
+#   define __INT64_MIN__ (-9223372036854775807LL - 1LL)
 #  endif
 #  ifndef __INT64_MAX__
 #   define __INT64_MAX__ 9223372036854775807LL
