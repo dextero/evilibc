@@ -13,6 +13,8 @@
 #cmakedefine WITH_64BIT_FIXED_WIDTH_TYPES 1
 #cmakedefine WITH_INTPTR_TYPES 1
 
+#cmakedefine WITH_FLOATING_POINT_TIME_T 1
+
 #cmakedefine WITH_USABLE_MALLOC 1
 #cmakedefine WITH_DETERMINISTIC_SETVBUF 1
 
