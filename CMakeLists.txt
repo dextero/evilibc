@@ -83,7 +83,8 @@ set(PUBLIC_INCLUDES
     include/assert.h
     include/errno.h
     include/stddef.h
-    include/stdint.h)
+    include/stdint.h
+    include/inttypes.h)
 
 add_library(evilibc
             ${PUBLIC_INCLUDES}
