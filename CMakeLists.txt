@@ -78,6 +78,7 @@ set(PUBLIC_INCLUDES
     include/evilibc.h
     include/inttypes.h
     include/limits.h
+    include/math.h
     include/signal.h
     include/stdarg.h
     include/stdbool.h

@@ -40,6 +40,19 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
 - [ ] `<limits.h>`
 - [ ] `<locale.h>`
 - [ ] `<math.h>`
+  - [x] `float_t`, `double_t` types
+  - [ ] macros:
+    - [x] `HUGE_VAL`, `HUGE_VALF`, `HUGE_VALL`
+    - [x] `INFINITY`
+    - [x] `NAN`
+    - [x] `FP_INFINITE`, `FP_NAN`, `FP_NORMAL`, `FP_SUBNORMAL`, `FP_ZERO`
+    - [ ] `FP_FAST_FMA`, `FP_FAST_FMAF`, `FP_FAST_FMAL`
+    - [x] `FP_ILOGB0`, `FP_ILOGBNAN`
+    - [x] `MATH_ERRNO`, MATH_ERREXCEPT`
+    - [ ] `math_errhandling`
+    - [ ] `is*` macros
+    - [ ] comparison macros
+  - [ ] functions
 - [ ] `<setjmp.h>`
 - [ ] `<signal.h>`
   - [x] `sig_atomic_t` type
