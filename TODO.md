@@ -28,6 +28,14 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
 - [ ] `<fenv.h>`
 - [ ] `<float.h>`
 - [ ] `<inttypes.h>`
+  - [ ] `imaxdiv_t` type
+  - [x] `PRI*`, `SCN*` macros
+  - [ ] `imaxabs`
+  - [ ] `imaxdiv`
+  - [ ] `strtoimax`
+  - [ ] `strtoumax`
+  - [ ] `wcstoimax`
+  - [ ] `wcstoumax`
 - [ ] `<iso646.h>`
 - [ ] `<limits.h>`
 - [ ] `<locale.h>`
