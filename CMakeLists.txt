@@ -10,6 +10,8 @@ option(WITH_FIXED_WIDTH_TYPES "Support optional intN_t/uintN_t types" OFF)
 option(WITH_64BIT_FIXED_WIDTH_TYPES "Support optional int64_t/uint64_t types" OFF)
 option(WITH_INTPTR_TYPES "Support intptr_t/uintptr_t types" OFF)
 
+option(WITH_FLOATING_POINT_TIME_T "Define time_t as a floating-point type" ON)
+
 option(WITH_USABLE_MALLOC "Prevent malloc/calloc/realloc from leaking memory (see malloc implemnetation for details)" ON)
 option(WITH_DETERMINISTIC_SETVBUF "Do not interpret MAY in setvbuf() spec literally" ON)
 

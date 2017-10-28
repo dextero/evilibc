@@ -249,6 +249,18 @@ Note: not-yet-implemented headers do not have their contents listed in detail.
 - [ ] `<tgmath.h>`
 - [ ] `<threads.h>`
 - [ ] `<time.h>`
+  - [x] `CLOCKS_PER_SEC`, `TIME_UTC` macros
+  - [x] `clock_t`, `time_t`, `struct timespec`, `struct tm` types
+  - [ ] `clock`
+  - [ ] `difftime`
+  - [ ] `mktime`
+  - [ ] `time`
+  - [ ] `timespec_get`
+  - [ ] `asctime`
+  - [ ] `ctime`
+  - [ ] `gmtime`
+  - [ ] `localtime`
+  - [ ] `strftime`
 - [ ] `<uchar.h>`
 - [ ] `<wchar.h>`
 - [ ] `<wctype.h>`
