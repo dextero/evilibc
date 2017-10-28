@@ -70,79 +70,81 @@ configure_file(config/evil-config.h.in
                @ONLY)
 
 set(PUBLIC_INCLUDES
-    include/stdio.h
-    include/ctype.h
-    include/stdbool.h
-    include/evilibc.h
-    include/stdarg.h
-    include/signal.h
-    include/time.h
-    include/stdlib.h
-    include/limits.h
-    include/string.h
     include/assert.h
+    include/ctype.h
     include/errno.h
+    include/evilibc.h
+    include/inttypes.h
+    include/limits.h
+    include/signal.h
+    include/stdarg.h
+    include/stdbool.h
     include/stddef.h
     include/stdint.h
-    include/inttypes.h)
+    include/stdio.h
+    include/stdlib.h
+    include/string.h
+    include/time.h
+    )
 
 add_library(evilibc
             ${PUBLIC_INCLUDES}
+            src/ctype/ctype.c
+            src/errno/errno.c
             src/evilibc.c
-            src/internal/memory.h
-            src/internal/list.h
-            src/internal/undefined_behavior.c
-            src/internal/rand.c
-            src/internal/rand.h
             src/internal/container_of.h
             src/internal/init.c
+            src/internal/list.h
             src/internal/memory.c
+            src/internal/memory.h
+            src/internal/rand.c
+            src/internal/rand.h
+            src/internal/undefined_behavior.c
             src/internal/undefined_behavior.h
-            src/errno/errno.c
-            src/stdlib/malloc/simple_list_based.c
-            src/stdlib/abort.c
             src/signal/raise.c
-            src/string/strtok.c
-            src/string/strerror.c
-            src/string/strlen.c
-            src/string/memmove.c
-            src/string/memcpy.c
-            src/string/strncat.c
-            src/string/strcspn.c
-            src/string/strpbrk.c
-            src/string/strchr.c
-            src/string/strspn.c
-            src/string/strrchr.c
-            src/string/strcpy.c
-            src/string/strcat.c
-            src/string/strncpy.c
-            src/string/memset.c
-            src/string/strstr.c
-            src/string/strcmp.c
-            src/string/memcmp.c
-            src/string/memchr.c
-            src/string/strncmp.c
-            src/ctype/ctype.c
-            src/stdio/fputc.c
-            src/stdio/fopen.c
-            src/stdio/printf.c
+            src/stdio/fclose.c
             src/stdio/ferror.c
             src/stdio/fflush.c
-            src/stdio/internal/file.h
-            src/stdio/internal/utils.h
-            src/stdio/internal/utils.c
-            src/stdio/fwrite.c
-            src/stdio/setbuf.c
-            src/stdio/sprintf.c
-            src/stdio/vsprintf.c
-            src/stdio/vsnprintf.c
-            src/stdio/setvbuf.c
-            src/stdio/snprintf.c
+            src/stdio/fopen.c
             src/stdio/format.c
             src/stdio/format.h
-            src/stdio/vfprintf.c
             src/stdio/fprintf.c
-            src/stdio/fclose.c)
+            src/stdio/fputc.c
+            src/stdio/fwrite.c
+            src/stdio/internal/file.h
+            src/stdio/internal/utils.c
+            src/stdio/internal/utils.h
+            src/stdio/printf.c
+            src/stdio/setbuf.c
+            src/stdio/setvbuf.c
+            src/stdio/snprintf.c
+            src/stdio/sprintf.c
+            src/stdio/vfprintf.c
+            src/stdio/vsnprintf.c
+            src/stdio/vsprintf.c
+            src/stdlib/abort.c
+            src/stdlib/malloc/simple_list_based.c
+            src/string/memchr.c
+            src/string/memcmp.c
+            src/string/memcpy.c
+            src/string/memmove.c
+            src/string/memset.c
+            src/string/strcat.c
+            src/string/strchr.c
+            src/string/strcmp.c
+            src/string/strcpy.c
+            src/string/strcspn.c
+            src/string/strerror.c
+            src/string/strlen.c
+            src/string/strncat.c
+            src/string/strncmp.c
+            src/string/strncpy.c
+            src/string/strpbrk.c
+            src/string/strrchr.c
+            src/string/strspn.c
+            src/string/strstr.c
+            src/string/strtok.c
+            )
 
 target_include_directories(evilibc PRIVATE
                            src)
