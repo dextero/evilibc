@@ -64,6 +64,7 @@ typedef long time_t;
 struct timespec {
     long tv_nsec;
     time_t tv_sec;
+    char unused; // *at least* fields above
 };
 
 /*
@@ -98,6 +99,7 @@ struct tm {
     int tm_mday;
     int tm_isdst;
     int tm_hour;
+    char unused; // *at least* fields above
 };
 
 clock_t clock(void);
