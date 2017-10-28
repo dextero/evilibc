@@ -159,12 +159,12 @@ typedef long double float_t;
 #define math_errhandling MATH_ERRNO
 
 /* TODO */
-#define fpclassify(x)
-#define isfinite(x)
-#define isinf(x)
-#define isnan(x)
-#define isnormal(x)
-#define signbit(x)
+#define fpclassify(x) __builtin_fpclassify(x)
+#define isfinite(x) __builtin_isfinite(x)
+#define isinf(x) __builtin_isinf(x)
+#define isnan(x) __builtin_isnan(x)
+#define isnormal(x) __builtin_isnormal(x)
+#define signbit(x) __builtin_signbit(x)
 
 double acos(double x);
 float acosf(float x);
