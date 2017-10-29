@@ -5,7 +5,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
-enum __evilibc_file_flag {
+enum __evil_file_flag {
     READ = (1 << 0),
     WRITE = (1 << 1),
     APPEND = (1 << 2),
@@ -14,7 +14,7 @@ enum __evilibc_file_flag {
     TRUNCATE = (1 << 5),
 };
 
-struct __evilibc_file {
+struct __evil_file {
     int fd;
     int file_flags;
     int bufmode;

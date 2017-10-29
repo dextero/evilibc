@@ -19,7 +19,7 @@ extern "C" {
  * > whether a read/write error has occurred, and an end-of-file indicator
  * > that records whether the end of the file has been reached; [...]
  */
-typedef struct __evilibc_file FILE;
+typedef struct __evil_file FILE;
 
 /*
  * 7.21.1:
@@ -143,13 +143,13 @@ typedef union {
  * > objects associated, respectively, with the standard error, input, and
  * > output streams.
  */
-#define stdin  __evilibc_stdin
-#define stdout __evilibc_stdout
-#define stderr __evilibc_stderr
+#define stdin  __evil_stdin
+#define stdout __evil_stdout
+#define stderr __evil_stderr
 
-extern FILE* __evilibc_stdin;
-extern FILE* __evilibc_stdout;
-extern FILE* __evilibc_stderr;
+extern FILE* __evil_stdin;
+extern FILE* __evil_stdout;
+extern FILE* __evil_stderr;
 
 int remove(const char* filename);
 int rename(const char* old_name,

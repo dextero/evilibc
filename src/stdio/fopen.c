@@ -15,9 +15,9 @@ FILE __evil_open_files[FOPEN_MAX] = {
     [0 ... FOPEN_MAX-1] = { .fd = -1 }
 };
 
-FILE* __evilibc_stdin;
-FILE* __evilibc_stdout;
-FILE* __evilibc_stderr;
+FILE* __evil_stdin;
+FILE* __evil_stdout;
+FILE* __evil_stderr;
 
 
 static bool is_valid_open_mode(const char *mode) {
