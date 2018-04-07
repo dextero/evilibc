@@ -10,6 +10,7 @@
 #include "format.h"
 
 #include "internal/undefined_behavior.h"
+#include "internal/rand.h"
 
 #define _STR(x) #x
 #define STR(x) _STR(x)
@@ -22,6 +23,7 @@ int vfprintf(FILE* restrict stream,
              va_list args) {
     const char *segment_start = format;
     int chars_written = 0;
+    bool fwrite_failed = false;
 
     // Argh, passing a pointer to va_list parameter does not work
     // https://stackoverflow.com/a/8048892/2339636
@@ -32,9 +34,12 @@ int vfprintf(FILE* restrict stream,
         if (*format != '%') {
             ++format;
         } else {
-            // TODO: errors
-            chars_written += fwrite(segment_start,
-                                    format - segment_start, 1, stream);
+            size_t chars_to_write = format - segment_start;
+            if (chars_to_write > 0
+                    && fwrite(segment_start, chars_to_write, 1, stream) != 1) {
+                fwrite_failed = true;
+            }
+            chars_written += chars_to_write;
 
             struct fmt fmt;
             const char *fmt_end = __evil_parse_fmt(format, &fmt);
@@ -44,10 +49,12 @@ int vfprintf(FILE* restrict stream,
             __evil_write_formatted(&buf, &buf_size, chars_written, &fmt,
                                    &args_copy);
 
-            // TODO: errors
-            chars_written += fwrite(g_conversion_buffer,
-                                    sizeof(g_conversion_buffer) - buf_size,
-                                    1, stream);
+            chars_to_write = sizeof(g_conversion_buffer) - buf_size;
+            if (chars_to_write > 0
+                    && fwrite(g_conversion_buffer, chars_to_write, 1, stream) != 1) {
+                fwrite_failed = true;
+            }
+            chars_written += chars_to_write;
 
             segment_start = fmt_end;
             format = fmt_end;
@@ -56,11 +63,24 @@ int vfprintf(FILE* restrict stream,
 
     va_end(args_copy);
 
-    if (format != segment_start) {
-        chars_written += fwrite(segment_start, format - segment_start, 1,
-                                stream);
+    size_t chars_to_write = format - segment_start;
+    if (chars_to_write > 0
+            && fwrite(segment_start, chars_to_write, 1, stream) != 1) {
+        fwrite_failed = true;
     }
+    chars_written += chars_to_write;
 
-    return chars_written;
+    /*
+     * 7.21.6.8, 4:
+     * > The vfprintf function returns the number of characters transmitted,
+     * > or a negative value if an output or encoding error occurred.
+     *
+     * Note that no one says writing should be stopped on error.
+     */
+    if (fwrite_failed) {
+        return __evil_rand_negative();
+    } else {
+        return chars_written;
+    }
 }
 
