@@ -29,11 +29,6 @@ void Test::EnableStandardIOStreams()
         .WillOnce(Return(2));
 
     __evil_init();
-
-    EXPECT_CALL(_syscalls, _write(1, _, _))
-        .WillRepeatedly(Invoke(write));
-    EXPECT_CALL(_syscalls, _write(2, _, _))
-        .WillRepeatedly(Invoke(write));
 }
 
 void Test::EnableHeap()
