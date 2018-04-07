@@ -43,6 +43,7 @@ add_executable(all_tests
                stdio/sprintf.cpp
                stdio/snprintf.cpp
                stdio/vsprintf.cpp
+               stdio/vfprintf.cpp
                stdlib/malloc/simple_list_based.cpp
                string/memchr.cpp
                string/memcmp.cpp
